@@ -1,0 +1,71 @@
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from rest_framework import generics
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from apps.courses.models import Lesson
+
+from .badges import PLACEHOLDER_BADGES
+from .models import Progress, Recommendation
+from .serializers import ProgressSerializer, ProgressUpdateSerializer, RecommendationSerializer
+
+
+class LessonProgressView(APIView):
+    """POST /lessons/{id}/progress/ — create or update the user's progress on a lesson."""
+
+    def post(self, request, lesson_id):
+        lesson = get_object_or_404(Lesson, pk=lesson_id, course__is_published=True)
+        serializer = ProgressUpdateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        progress, _ = Progress.objects.get_or_create(user=request.user, lesson=lesson)
+        for field, value in serializer.validated_data.items():
+            setattr(progress, field, value)
+        progress.last_attempt_at = timezone.now()
+        if progress.status == Progress.Status.COMPLETED and progress.completed_at is None:
+            progress.completed_at = timezone.now()
+        progress.save()
+
+        return Response(ProgressSerializer(progress).data)
+
+
+class RecommendationListView(generics.ListAPIView):
+    serializer_class = RecommendationSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        return (
+            Recommendation.objects.filter(user=self.request.user, is_read=False)
+            .select_related("lesson__course")
+            .order_by("-confidence")[:5]
+        )
+
+
+class DashboardStatsView(APIView):
+    """GET /dashboard/stats/ — profile stats + badges for the current user."""
+
+    def get(self, request):
+        user = request.user
+        lessons_completed = Progress.objects.filter(
+            user=user, status=Progress.Status.COMPLETED
+        ).count()
+        lessons_in_progress = Progress.objects.filter(
+            user=user, status=Progress.Status.IN_PROGRESS
+        ).count()
+        total_lessons = Lesson.objects.filter(course__is_published=True).count()
+        overall_progress_pct = (
+            round(lessons_completed / total_lessons * 100) if total_lessons else 0
+        )
+        badges = PLACEHOLDER_BADGES
+        return Response(
+            {
+                "lessons_completed": lessons_completed,
+                "lessons_in_progress": lessons_in_progress,
+                "total_lessons": total_lessons,
+                "overall_progress_pct": overall_progress_pct,
+                "badges": badges,
+                "badges_unlocked": sum(1 for b in badges if b["unlocked"]),
+                "badges_total": len(badges),
+            }
+        )
