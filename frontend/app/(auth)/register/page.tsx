@@ -35,12 +35,8 @@ export default function RegisterPage() {
     "w-full rounded-lg border border-white/10 bg-craft-950 px-4 py-2.5 text-white placeholder:text-slate-600 focus:border-craft-accent focus:outline-none";
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-6 py-12">
-      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-craft-900/60 p-8">
-        <Link href="/" className="text-lg font-bold text-white">
-          <span aria-hidden>⚡</span> Agent<span className="text-craft-accent">Craft</span>
-        </Link>
-        <h1 className="mt-6 text-2xl font-bold text-white">Create your account</h1>
+    <div className="w-full max-w-md rounded-2xl border border-white/10 bg-craft-900/60 p-8">
+        <h1 className="text-2xl font-bold text-white">Create your account</h1>
         <p className="mt-1 text-sm text-slate-400">Start learning AI agents from zero.</p>
 
         {error && (
@@ -80,6 +76,5 @@ export default function RegisterPage() {
           <Link href="/login" className="text-craft-glow hover:underline">Log in</Link>
         </p>
       </div>
-    </main>
   );
 }

@@ -3,7 +3,9 @@
 import { FormEvent, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
+import { CircleUserRound } from "lucide-react";
 import { changePassword, updateProfile } from "@/lib/api/auth";
+import { BadgeIcon } from "@/components/dashboard/BadgeIcon";
 import { getDashboardStats } from "@/lib/api/courses";
 import { useAuthStore } from "@/stores/authStore";
 
@@ -46,15 +48,20 @@ export default function ProfilePage() {
       {tab === "profile" && (
         <div className="mt-8 space-y-8">
           <div className="flex flex-wrap items-center gap-5 rounded-2xl border border-white/10 bg-craft-900/60 p-6">
-            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-craft-accent/20 text-3xl">
-              {equippedBadge?.icon ?? "🧑‍🚀"}
+            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-craft-accent/20 text-craft-glow">
+              {equippedBadge ? (
+                <BadgeIcon name={equippedBadge.icon} className="h-8 w-8" />
+              ) : (
+                <CircleUserRound className="h-8 w-8" />
+              )}
             </span>
             <div>
               <h2 className="text-lg font-semibold text-white">{user?.username}</h2>
               <p className="text-sm text-slate-400">{user?.email}</p>
               {equippedBadge && (
-                <p className="mt-1 text-xs text-craft-glow">
-                  {equippedBadge.icon} {equippedBadge.name} equipped
+                <p className="mt-1 flex items-center gap-1.5 text-xs text-craft-glow">
+                  <BadgeIcon name={equippedBadge.icon} className="h-3.5 w-3.5" />
+                  {equippedBadge.name} equipped
                 </p>
               )}
             </div>
@@ -85,7 +92,10 @@ export default function ProfilePage() {
                   )}
                   title={badge.description}
                 >
-                  <p className="text-3xl">{badge.icon}</p>
+                  <BadgeIcon
+                    name={badge.icon}
+                    className={"mx-auto h-8 w-8 " + (badge.unlocked ? "text-craft-glow" : "text-slate-600")}
+                  />
                   <p className="mt-2 text-sm font-medium text-white">{badge.name}</p>
                   <p className="mt-1 text-xs text-slate-500">{badge.description}</p>
                   {badge.equipped && (

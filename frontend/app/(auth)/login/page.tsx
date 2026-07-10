@@ -26,12 +26,8 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center px-6">
-      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-craft-900/60 p-8">
-        <Link href="/" className="text-lg font-bold text-white">
-          <span aria-hidden>⚡</span> Agent<span className="text-craft-accent">Craft</span>
-        </Link>
-        <h1 className="mt-6 text-2xl font-bold text-white">Welcome back</h1>
+    <div className="w-full max-w-md rounded-2xl border border-white/10 bg-craft-900/60 p-8">
+        <h1 className="text-2xl font-bold text-white">Welcome back</h1>
         <p className="mt-1 text-sm text-slate-400">Log in to continue your learning path.</p>
 
         {error && (
@@ -78,6 +74,5 @@ export default function LoginPage() {
           <Link href="/register" className="text-craft-glow hover:underline">Create an account</Link>
         </p>
       </div>
-    </main>
   );
 }

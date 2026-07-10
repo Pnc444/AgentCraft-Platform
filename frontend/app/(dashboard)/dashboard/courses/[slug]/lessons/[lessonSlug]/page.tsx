@@ -3,16 +3,18 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle2, PlayCircle, Wrench } from "lucide-react";
+import { BookOpen, CheckCircle2, FileText, LifeBuoy, MapPin, PlayCircle, RefreshCw, Timer, Wrench } from "lucide-react";
 import { getLesson, updateLessonProgress } from "@/lib/api/courses";
 import type { LessonStatus } from "@/types";
 
-const STATUS_UI: Record<string, { text: string; pct: number }> = {
-  completed: { text: "✅ You've completed this lesson!", pct: 100 },
-  in_progress: { text: "🔄 In progress — keep going!", pct: 50 },
-  not_started: { text: "⏳ Not started yet", pct: 0 },
-  stuck: { text: "🆘 Marked as needing help", pct: 50 },
-};
+const STATUS_UI = {
+  completed: { text: "You've completed this lesson!", pct: 100, Icon: CheckCircle2, cls: "text-emerald-400" },
+  in_progress: { text: "In progress — keep going!", pct: 50, Icon: RefreshCw, cls: "text-craft-glow" },
+  not_started: { text: "Not started yet", pct: 0, Icon: Timer, cls: "text-slate-500" },
+  stuck: { text: "Marked as needing help", pct: 50, Icon: LifeBuoy, cls: "text-amber-400" },
+} as const;
+
+type StatusKey = keyof typeof STATUS_UI;
 
 export default function LessonDetailPage() {
   const { slug, lessonSlug } = useParams<{ slug: string; lessonSlug: string }>();
@@ -37,7 +39,7 @@ export default function LessonDetailPage() {
   if (isLoading) return <p className="animate-pulse text-slate-500">Loading lesson…</p>;
   if (!lesson) return <p className="text-slate-400">Lesson not found.</p>;
 
-  const statusUi = STATUS_UI[lesson.status] ?? STATUS_UI.not_started;
+  const statusUi = STATUS_UI[lesson.status as StatusKey] ?? STATUS_UI.not_started;
 
   return (
     <div className="mx-auto max-w-4xl">
@@ -53,19 +55,23 @@ export default function LessonDetailPage() {
       <div className="mt-8 space-y-6">
         {lesson.content ? (
           <div className="rounded-2xl border border-white/10 bg-craft-900/60 p-6">
-            <h2 className="text-lg font-semibold text-white">📖 Lesson Content</h2>
+            <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
+              <BookOpen className="h-5 w-5 text-craft-glow" /> Lesson Content
+            </h2>
             <div className="mt-4 whitespace-pre-wrap text-slate-300">{lesson.content}</div>
           </div>
         ) : (
           <div className="rounded-2xl border border-white/10 bg-craft-900/60 p-12 text-center">
-            <p className="text-4xl">📄</p>
+            <FileText className="mx-auto h-10 w-10 text-slate-600" />
             <p className="mt-3 text-slate-400">Lesson content coming soon.</p>
           </div>
         )}
 
         {lesson.lesson_type === "sandbox" && (
           <div className="rounded-2xl border border-white/10 bg-craft-900/60 p-6">
-            <h2 className="text-lg font-semibold text-white">🛠️ Sandbox</h2>
+            <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
+              <Wrench className="h-5 w-5 text-craft-glow" /> Sandbox
+            </h2>
             <p className="mt-2 text-sm text-slate-400">
               Launch a hands-on environment to practice what you learn.
             </p>
@@ -81,8 +87,13 @@ export default function LessonDetailPage() {
         )}
 
         <div className="rounded-2xl border border-white/10 bg-craft-900/60 p-6">
-          <h2 className="text-lg font-semibold text-white">📍 Your Progress</h2>
-          <p className="mt-2 text-sm text-slate-300">{statusUi.text}</p>
+          <h2 className="flex items-center gap-2 text-lg font-semibold text-white">
+            <MapPin className="h-5 w-5 text-craft-glow" /> Your Progress
+          </h2>
+          <p className="mt-2 flex items-center gap-2 text-sm text-slate-300">
+            <statusUi.Icon className={"h-4 w-4 " + statusUi.cls} />
+            {statusUi.text}
+          </p>
           <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-craft-800">
             <div
               className="h-full rounded-full bg-gradient-to-r from-craft-accent to-craft-glow transition-all"

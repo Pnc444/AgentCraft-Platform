@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useAuthStore } from "@/stores/authStore";
+import { Logo } from "@/components/shared/Logo";
 
 export function SiteHeader() {
   const accessToken = useAuthStore((s) => s.accessToken);
@@ -11,10 +12,7 @@ export function SiteHeader() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-craft-950/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <Link href="/" className="flex items-center gap-2 text-lg font-bold text-white">
-          <span aria-hidden>⚡</span>
-          Agent<span className="text-craft-accent">Craft</span>
-        </Link>
+        <Logo />
         <nav className="hidden items-center gap-8 text-sm text-slate-400 sm:flex">
           <a href="#about" className="transition-colors hover:text-white">About</a>
           <a href="#features" className="transition-colors hover:text-white">Features</a>

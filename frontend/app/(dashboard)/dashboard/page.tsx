@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { BookOpen, Clock } from "lucide-react";
+import { BookOpen, Clock, Inbox } from "lucide-react";
 import { getCourses } from "@/lib/api/courses";
 import { useAuthStore } from "@/stores/authStore";
 import { DifficultyBadge } from "@/components/dashboard/DifficultyBadge";
@@ -13,10 +13,12 @@ export default function StudentDashboardPage() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <h1 className="text-2xl font-bold text-white">Hello, {user?.username} 👋</h1>
+      <h1 className="text-2xl font-bold text-white">Hello, {user?.username}</h1>
       <p className="mt-1 text-slate-400">Your personalized learning path</p>
 
-      <h2 className="mt-8 flex items-center gap-2 text-lg font-semibold text-white">📚 Courses</h2>
+      <h2 className="mt-8 flex items-center gap-2 text-lg font-semibold text-white">
+        <BookOpen className="h-5 w-5 text-craft-glow" /> Courses
+      </h2>
 
       {isLoading && <p className="mt-6 animate-pulse text-slate-500">Loading courses…</p>}
 
@@ -60,7 +62,7 @@ export default function StudentDashboardPage() {
 
         {courses?.length === 0 && (
           <div className="rounded-2xl border border-white/10 bg-craft-900/60 p-12 text-center">
-            <p className="text-4xl">📭</p>
+            <Inbox className="mx-auto h-10 w-10 text-slate-600" />
             <p className="mt-3 text-slate-400">No courses available yet. Check back soon!</p>
           </div>
         )}

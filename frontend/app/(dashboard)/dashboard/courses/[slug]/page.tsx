@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { Check } from "lucide-react";
+import { Check, FileText } from "lucide-react";
 import clsx from "clsx";
 import { getCourse } from "@/lib/api/courses";
 import { DifficultyBadge } from "@/components/dashboard/DifficultyBadge";
@@ -68,7 +68,7 @@ export default function CourseDetailPage() {
 
         {course.lessons.length === 0 && (
           <div className="rounded-2xl border border-white/10 bg-craft-900/60 p-12 text-center">
-            <p className="text-4xl">📝</p>
+            <FileText className="mx-auto h-10 w-10 text-slate-600" />
             <p className="mt-3 text-slate-400">No lessons in this course yet.</p>
           </div>
         )}
