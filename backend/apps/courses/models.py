@@ -46,6 +46,9 @@ class Course(models.Model):
     slug = models.SlugField(unique=True)
     description = models.TextField(blank=True)
     skill = models.ForeignKey(Skill, on_delete=models.CASCADE, related_name="courses")
+    order = models.PositiveIntegerField(
+        default=0, help_text="Display order in the curriculum sidebar"
+    )
     difficulty = models.PositiveSmallIntegerField(
         default=1, help_text="1=beginner, 2=intermediate, 3=advanced"
     )
@@ -59,7 +62,7 @@ class Course(models.Model):
     objects = CourseQuerySet.as_manager()
 
     class Meta:
-        ordering = ["skill__order", "difficulty", "title"]
+        ordering = ["order", "skill__order", "title"]
 
     def __str__(self):
         return self.title
@@ -79,6 +82,10 @@ class Lesson(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField()
     content = models.TextField(blank=True, help_text="Markdown lesson content/instructions")
+    video_url = models.URLField(
+        blank=True,
+        help_text="Optional YouTube watch, youtu.be, or embed URL (shown in a 16:9 player)",
+    )
     lesson_type = models.CharField(
         max_length=30, choices=LessonType.choices, default=LessonType.THEORY
     )

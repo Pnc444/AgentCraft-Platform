@@ -19,6 +19,10 @@ class Progress(models.Model):
     )
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.NOT_STARTED)
     score = models.FloatField(null=True, blank=True, help_text="Quiz/assessment score 0-100")
+    video_watched = models.BooleanField(
+        default=False,
+        help_text="True when the student has finished the lesson video (if any)",
+    )
     time_spent_minutes = models.PositiveIntegerField(default=0)
     hints_requested = models.PositiveIntegerField(default=0)
     last_attempt_at = models.DateTimeField(null=True, blank=True)

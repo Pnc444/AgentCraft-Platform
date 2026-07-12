@@ -55,6 +55,28 @@ export async function updateProfile(data: Partial<Pick<User, "first_name" | "las
   return user;
 }
 
+export async function uploadAvatar(file: File): Promise<User> {
+  const body = new FormData();
+  body.append("avatar", file);
+  const user = await apiClient<User>("/auth/me/", {
+    method: "PATCH",
+    body,
+  });
+  useAuthStore.getState().setUser(user);
+  return user;
+}
+
+export async function removeAvatar(): Promise<User> {
+  const body = new FormData();
+  body.append("clear_avatar", "1");
+  const user = await apiClient<User>("/auth/me/", {
+    method: "PATCH",
+    body,
+  });
+  useAuthStore.getState().setUser(user);
+  return user;
+}
+
 export function changePassword(currentPassword: string, newPassword: string): Promise<{ detail: string }> {
   return apiClient<{ detail: string }>("/auth/password/change/", {
     method: "POST",

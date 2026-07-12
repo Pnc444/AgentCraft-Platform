@@ -2,8 +2,8 @@ import Link from "next/link";
 import clsx from "clsx";
 
 /**
- * AgentCraft logo — planet with an orbit ring, plus optional wordmark.
- * Inline SVG so it scales crisply and adapts to the dark theme.
+ * Planet mark with a tilted orbit ring.
+ * Paint order: back arc → planet → front arc (so the ring wraps around).
  */
 export function LogoIcon({ className }: { className?: string }) {
   return (
@@ -14,35 +14,43 @@ export function LogoIcon({ className }: { className?: string }) {
       className={clsx("h-8 w-8", className)}
       aria-hidden
     >
-      {/* planet */}
-      <circle cx="24" cy="24" r="13" fill="#0b1230" stroke="#a5b4fc" strokeWidth="1.5" />
-      {/* highlight */}
+      <g transform="rotate(-18 24 24)">
+        {/* Back half of the ring (behind the planet) */}
+        <path
+          d="M3 24 A21 7.5 0 0 1 45 24"
+          stroke="#22D3EE"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+      </g>
+
+      {/* Planet */}
+      <circle cx="24" cy="24" r="13" fill="#0b1230" stroke="#67E8F9" strokeWidth="1.5" />
       <circle cx="19" cy="19" r="4.5" fill="#1e2a5e" />
-      {/* orbit ring (tilted ellipse) */}
-      <ellipse
-        cx="24"
-        cy="24"
-        rx="21"
-        ry="7.5"
-        stroke="#3b82f6"
-        strokeWidth="2.5"
-        transform="rotate(-18 24 24)"
-      />
-      {/* satellite dot on the ring */}
-      <circle cx="42.5" cy="17" r="3" fill="#3b82f6" />
+
+      <g transform="rotate(-18 24 24)">
+        {/* Front half of the ring (in front of the planet) */}
+        <path
+          d="M3 24 A21 7.5 0 0 0 45 24"
+          stroke="#22D3EE"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+        />
+        {/* Satellite on the front arc */}
+        <circle cx="42" cy="20.5" r="3" fill="#22D3EE" />
+      </g>
     </svg>
   );
 }
 
 interface LogoProps {
-  /** Where the logo links to. Defaults to "/". */
   href?: string;
-  /** Hide the "AgentCraft" text and show only the planet icon. */
   iconOnly?: boolean;
   className?: string;
+  inverted?: boolean;
 }
 
-export function Logo({ href = "/", iconOnly = false, className }: LogoProps) {
+export function Logo({ href = "/", iconOnly = false, className, inverted = false }: LogoProps) {
   return (
     <Link
       href={href}
@@ -51,8 +59,13 @@ export function Logo({ href = "/", iconOnly = false, className }: LogoProps) {
     >
       <LogoIcon />
       {!iconOnly && (
-        <span className="text-lg font-bold tracking-tight text-white">
-          Agent<span className="text-blue-500">Craft</span>
+        <span
+          className={clsx(
+            "text-lg font-bold tracking-tight",
+            inverted ? "text-white" : "text-craft-ink"
+          )}
+        >
+          Agent<span className="text-[#22D3EE]">Craft</span>
         </span>
       )}
     </Link>

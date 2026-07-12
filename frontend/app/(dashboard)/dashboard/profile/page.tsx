@@ -1,18 +1,15 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
-import { CircleUserRound } from "lucide-react";
-import { changePassword, updateProfile } from "@/lib/api/auth";
+import { changePassword, removeAvatar, updateProfile, uploadAvatar } from "@/lib/api/auth";
 import { BadgeIcon } from "@/components/dashboard/BadgeIcon";
+import { UserAvatar } from "@/components/shared/UserAvatar";
 import { getDashboardStats } from "@/lib/api/courses";
 import { useAuthStore } from "@/stores/authStore";
 
 type Tab = "profile" | "settings";
-
-const inputCls =
-  "w-full rounded-lg border border-white/10 bg-craft-950 px-4 py-2.5 text-white placeholder:text-slate-600 focus:border-craft-accent focus:outline-none";
 
 export default function ProfilePage() {
   const user = useAuthStore((s) => s.user);
@@ -23,59 +20,63 @@ export default function ProfilePage() {
   const equippedBadge = stats?.badges.find((b) => b.equipped);
 
   return (
-    <div className="mx-auto max-w-4xl">
-      <h1 className="text-2xl font-bold text-white">Your Profile</h1>
-      <p className="mt-1 text-slate-400">Track your journey and manage your account</p>
-
-      <div className="mt-6 flex gap-2 border-b border-white/10">
-        {(["profile", "settings"] as Tab[]).map((t) => (
-          <button
-            key={t}
-            type="button"
-            onClick={() => setTab(t)}
-            className={clsx(
-              "border-b-2 px-4 py-2.5 text-sm font-medium capitalize transition-colors",
-              tab === t
-                ? "border-craft-accent text-white"
-                : "border-transparent text-slate-400 hover:text-white"
-            )}
-          >
-            {t}
-          </button>
-        ))}
+    <div className="mx-auto max-w-5xl animate-fade-up">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">Profile</h1>
+          <p className="mt-0.5 text-sm text-slate-500">Account and progress</p>
+        </div>
+        <div className="flex rounded-full border border-slate-200 bg-white p-0.5 text-sm font-semibold">
+          {(["profile", "settings"] as Tab[]).map((t) => (
+            <button
+              key={t}
+              type="button"
+              onClick={() => setTab(t)}
+              className={clsx(
+                "rounded-full px-3.5 py-1.5 capitalize transition",
+                tab === t
+                  ? "bg-cyan-500 text-white"
+                  : "text-slate-500 hover:text-slate-900"
+              )}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
       </div>
 
       {tab === "profile" && (
-        <div className="mt-8 space-y-8">
-          <div className="flex flex-wrap items-center gap-5 rounded-2xl border border-white/10 bg-craft-900/60 p-6">
-            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-craft-accent/20 text-craft-glow">
-              {equippedBadge ? (
-                <BadgeIcon name={equippedBadge.icon} className="h-8 w-8" />
-              ) : (
-                <CircleUserRound className="h-8 w-8" />
-              )}
-            </span>
-            <div>
-              <h2 className="text-lg font-semibold text-white">{user?.username}</h2>
-              <p className="text-sm text-slate-400">{user?.email}</p>
+        <div className="mt-5 space-y-4">
+          <div className="card flex flex-wrap items-center gap-4 p-4">
+            {user?.avatar ? (
+              <UserAvatar size="lg" />
+            ) : equippedBadge ? (
+              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-cyan-50 text-cyan-600">
+                <BadgeIcon name={equippedBadge.icon} className="h-7 w-7" />
+              </span>
+            ) : (
+              <UserAvatar size="lg" />
+            )}
+            <div className="min-w-0 flex-1">
+              <h2 className="truncate text-base font-semibold text-slate-900">{user?.username}</h2>
+              <p className="truncate text-sm text-slate-500">{user?.email}</p>
               {equippedBadge && (
-                <p className="mt-1 flex items-center gap-1.5 text-xs text-craft-glow">
-                  <BadgeIcon name={equippedBadge.icon} className="h-3.5 w-3.5" />
-                  {equippedBadge.name} equipped
+                <p className="mt-1 flex items-center gap-1 text-xs font-medium text-cyan-600">
+                  <BadgeIcon name={equippedBadge.icon} className="h-3 w-3" />
+                  {equippedBadge.name}
                 </p>
               )}
             </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            <StatCard label="Lessons completed" value={stats?.lessons_completed ?? 0} />
-            <StatCard label="In progress" value={stats?.lessons_in_progress ?? 0} />
-            <StatCard label="Overall progress" value={`${stats?.overall_progress_pct ?? 0}%`} />
+            <div className="flex w-full gap-2 sm:ml-auto sm:w-auto">
+              <StatChip label="Done" value={stats?.lessons_completed ?? 0} />
+              <StatChip label="Active" value={stats?.lessons_in_progress ?? 0} />
+              <StatChip label="Progress" value={`${stats?.overall_progress_pct ?? 0}%`} />
+            </div>
           </div>
 
           <div>
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-white">Badges</h2>
+              <h2 className="text-lg font-semibold text-slate-900">Badges</h2>
               <p className="text-sm text-slate-500">
                 {stats?.badges_unlocked ?? 0} of {stats?.badges_total ?? 0} unlocked
               </p>
@@ -85,21 +86,22 @@ export default function ProfilePage() {
                 <div
                   key={badge.id}
                   className={clsx(
-                    "rounded-xl border p-4 text-center",
-                    badge.unlocked
-                      ? "border-craft-accent/40 bg-craft-accent/5"
-                      : "border-white/10 bg-craft-900/40 opacity-50"
+                    "card p-4 text-center",
+                    badge.unlocked ? "border-cyan-400/30" : "opacity-50"
                   )}
                   title={badge.description}
                 >
                   <BadgeIcon
                     name={badge.icon}
-                    className={"mx-auto h-8 w-8 " + (badge.unlocked ? "text-craft-glow" : "text-slate-600")}
+                    className={
+                      "mx-auto h-8 w-8 " +
+                      (badge.unlocked ? "text-cyan-600" : "text-slate-500")
+                    }
                   />
-                  <p className="mt-2 text-sm font-medium text-white">{badge.name}</p>
+                  <p className="mt-2 text-sm font-medium text-slate-900">{badge.name}</p>
                   <p className="mt-1 text-xs text-slate-500">{badge.description}</p>
                   {badge.equipped && (
-                    <p className="mt-2 text-xs font-medium text-craft-glow">Equipped</p>
+                    <p className="mt-2 text-xs font-semibold text-cyan-600">Equipped</p>
                   )}
                 </div>
               ))}
@@ -109,7 +111,8 @@ export default function ProfilePage() {
       )}
 
       {tab === "settings" && (
-        <div className="mt-8 grid gap-8 lg:grid-cols-2">
+        <div className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <AvatarForm />
           <ProfileForm />
           <PasswordForm />
         </div>
@@ -118,11 +121,104 @@ export default function ProfilePage() {
   );
 }
 
-function StatCard({ label, value }: { label: string; value: number | string }) {
+function StatChip({ label, value }: { label: string; value: number | string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-craft-900/60 p-6">
-      <p className="text-3xl font-bold text-white">{value}</p>
-      <p className="mt-1 text-sm text-slate-400">{label}</p>
+    <div className="min-w-0 flex-1 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-center sm:flex-none sm:min-w-[4.5rem]">
+      <p className="text-base font-bold tabular-nums text-slate-900">{value}</p>
+      <p className="text-[10px] font-medium uppercase tracking-wide text-slate-500">{label}</p>
+    </div>
+  );
+}
+
+function FormMessage({ message, error }: { message: string | null; error: string | null }) {
+  if (message) return <p className="text-xs text-emerald-700">{message}</p>;
+  if (error) return <p className="text-xs text-amber-700">{error}</p>;
+  return null;
+}
+
+function AvatarForm() {
+  const user = useAuthStore((s) => s.user);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const uploadMutation = useMutation({
+    mutationFn: (file: File) => uploadAvatar(file),
+    onSuccess: () => {
+      setMessage("Photo updated.");
+      setError(null);
+      if (inputRef.current) inputRef.current.value = "";
+    },
+    onError: (err) => {
+      setError(err instanceof Error ? err.message : "Upload failed");
+      setMessage(null);
+    },
+  });
+
+  const removeMutation = useMutation({
+    mutationFn: () => removeAvatar(),
+    onSuccess: () => {
+      setMessage("Photo removed.");
+      setError(null);
+    },
+    onError: (err) => {
+      setError(err instanceof Error ? err.message : "Could not remove photo");
+      setMessage(null);
+    },
+  });
+
+  function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      setError("Image must be 2MB or smaller.");
+      setMessage(null);
+      return;
+    }
+    uploadMutation.mutate(file);
+  }
+
+  const busy = uploadMutation.isPending || removeMutation.isPending;
+
+  return (
+    <div className="card flex h-full flex-col space-y-3 p-4">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-sm font-semibold text-slate-900">Profile photo</h2>
+        <FormMessage message={message} error={error} />
+      </div>
+      <div className="flex flex-1 flex-col items-center justify-center gap-3 py-2">
+        <UserAvatar size="lg" />
+        <p className="text-center text-xs text-slate-500">
+          JPEG, PNG, WebP, GIF, HEIC · max 2MB · auto-compressed
+        </p>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/jpeg,image/png,image/webp,image/gif,image/heic,image/heif,.heic,.heif"
+          className="hidden"
+          onChange={onFileChange}
+        />
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => inputRef.current?.click()}
+          className="btn-primary flex-1 px-4 py-2 text-xs"
+        >
+          {uploadMutation.isPending ? "Uploading…" : "Upload"}
+        </button>
+        {user?.avatar && (
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => removeMutation.mutate()}
+            className="btn-secondary flex-1 px-4 py-2 text-xs"
+          >
+            {removeMutation.isPending ? "…" : "Remove"}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
@@ -139,7 +235,7 @@ function ProfileForm() {
   const mutation = useMutation({
     mutationFn: () => updateProfile({ first_name: firstName, last_name: lastName, email }),
     onSuccess: () => {
-      setMessage("Profile updated successfully.");
+      setMessage("Saved.");
       setError(null);
       queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
     },
@@ -155,31 +251,47 @@ function ProfileForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-2xl border border-white/10 bg-craft-900/60 p-6">
-      <h2 className="text-lg font-semibold text-white">Profile details</h2>
-      {message && <p className="mt-3 text-sm text-emerald-300">{message}</p>}
-      {error && <p className="mt-3 text-sm text-red-300">{error}</p>}
-      <div className="mt-4 space-y-4">
-        <div>
-          <label htmlFor="firstName" className="mb-1 block text-sm text-slate-300">First name</label>
-          <input id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" className={inputCls} />
-        </div>
-        <div>
-          <label htmlFor="lastName" className="mb-1 block text-sm text-slate-300">Last name</label>
-          <input id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" className={inputCls} />
-        </div>
-        <div>
-          <label htmlFor="email" className="mb-1 block text-sm text-slate-300">Email</label>
-          <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required className={inputCls} />
-        </div>
-        <button
-          type="submit"
-          disabled={mutation.isPending}
-          className="rounded-lg bg-craft-accent px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-indigo-500 disabled:opacity-50"
-        >
-          {mutation.isPending ? "Saving…" : "Save changes"}
-        </button>
+    <form onSubmit={handleSubmit} className="card flex h-full flex-col space-y-3 p-4">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-sm font-semibold text-slate-900">Details</h2>
+        <FormMessage message={message} error={error} />
       </div>
+      <div className="grid flex-1 grid-cols-2 gap-2 content-start">
+        <Field label="First name" id="firstName">
+          <input
+            id="firstName"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            placeholder="First"
+            className="input-field px-3 py-2 text-sm"
+          />
+        </Field>
+        <Field label="Last name" id="lastName">
+          <input
+            id="lastName"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            placeholder="Last"
+            className="input-field px-3 py-2 text-sm"
+          />
+        </Field>
+        <div className="col-span-2">
+          <Field label="Email" id="email">
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              required
+              className="input-field px-3 py-2 text-sm"
+            />
+          </Field>
+        </div>
+      </div>
+      <button type="submit" disabled={mutation.isPending} className="btn-primary px-4 py-2 text-xs">
+        {mutation.isPending ? "Saving…" : "Save"}
+      </button>
     </form>
   );
 }
@@ -194,7 +306,7 @@ function PasswordForm() {
   const mutation = useMutation({
     mutationFn: () => changePassword(currentPassword, newPassword),
     onSuccess: () => {
-      setMessage("Password updated successfully.");
+      setMessage("Password updated.");
       setError(null);
       setCurrentPassword("");
       setNewPassword("");
@@ -209,7 +321,7 @@ function PasswordForm() {
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      setError("New passwords do not match.");
+      setError("Passwords do not match.");
       setMessage(null);
       return;
     }
@@ -217,31 +329,65 @@ function PasswordForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-2xl border border-white/10 bg-craft-900/60 p-6">
-      <h2 className="text-lg font-semibold text-white">Change password</h2>
-      {message && <p className="mt-3 text-sm text-emerald-300">{message}</p>}
-      {error && <p className="mt-3 text-sm text-red-300">{error}</p>}
-      <div className="mt-4 space-y-4">
-        <div>
-          <label htmlFor="currentPassword" className="mb-1 block text-sm text-slate-300">Current password</label>
-          <input id="currentPassword" type="password" value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} required className={inputCls} />
-        </div>
-        <div>
-          <label htmlFor="newPassword" className="mb-1 block text-sm text-slate-300">New password</label>
-          <input id="newPassword" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required className={inputCls} />
-        </div>
-        <div>
-          <label htmlFor="confirmPassword" className="mb-1 block text-sm text-slate-300">Confirm new password</label>
-          <input id="confirmPassword" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required className={inputCls} />
-        </div>
-        <button
-          type="submit"
-          disabled={mutation.isPending}
-          className="rounded-lg bg-craft-accent px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-indigo-500 disabled:opacity-50"
-        >
-          {mutation.isPending ? "Updating…" : "Update password"}
-        </button>
+    <form onSubmit={handleSubmit} className="card flex h-full flex-col space-y-3 p-4">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-sm font-semibold text-slate-900">Password</h2>
+        <FormMessage message={message} error={error} />
       </div>
+      <div className="flex flex-1 flex-col gap-2">
+        <Field label="Current" id="currentPassword">
+          <input
+            id="currentPassword"
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            required
+            className="input-field px-3 py-2 text-sm"
+          />
+        </Field>
+        <Field label="New" id="newPassword">
+          <input
+            id="newPassword"
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            required
+            className="input-field px-3 py-2 text-sm"
+          />
+        </Field>
+        <Field label="Confirm" id="confirmPassword">
+          <input
+            id="confirmPassword"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            className="input-field px-3 py-2 text-sm"
+          />
+        </Field>
+      </div>
+      <button type="submit" disabled={mutation.isPending} className="btn-primary px-4 py-2 text-xs">
+        {mutation.isPending ? "Updating…" : "Update"}
+      </button>
     </form>
+  );
+}
+
+function Field({
+  label,
+  id,
+  children,
+}: {
+  label: string;
+  id: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label htmlFor={id} className="mb-1 block text-xs font-medium text-slate-500">
+        {label}
+      </label>
+      {children}
+    </div>
   );
 }

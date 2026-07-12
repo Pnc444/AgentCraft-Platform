@@ -16,15 +16,40 @@ class LessonProgressView(APIView):
 
     def post(self, request, lesson_id):
         lesson = get_object_or_404(Lesson, pk=lesson_id, course__is_published=True)
-        serializer = ProgressUpdateSerializer(data=request.data)
+        serializer = ProgressUpdateSerializer(data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
 
         progress, _ = Progress.objects.get_or_create(user=request.user, lesson=lesson)
         for field, value in serializer.validated_data.items():
             setattr(progress, field, value)
         progress.last_attempt_at = timezone.now()
-        if progress.status == Progress.Status.COMPLETED and progress.completed_at is None:
-            progress.completed_at = timezone.now()
+        # Completing a lesson with a video requires watching it first.
+        if (
+            progress.status == Progress.Status.COMPLETED
+            and (lesson.video_url or "").strip()
+            and not progress.video_watched
+        ):
+            return Response(
+                {
+                    "detail": "Watch the lesson video before completing this lesson.",
+                    "missing": "video",
+                },
+                status=400,
+            )
+        if progress.status == Progress.Status.COMPLETED:
+            score = progress.score
+            if score is None or score < 80:
+                return Response(
+                    {
+                        "detail": "Pass the Recap Quiz with 80% or higher to complete this lesson.",
+                        "missing": "quiz",
+                    },
+                    status=400,
+                )
+            if progress.completed_at is None:
+                progress.completed_at = timezone.now()
+        elif "status" in serializer.validated_data:
+            progress.completed_at = None
         progress.save()
 
         return Response(ProgressSerializer(progress).data)
