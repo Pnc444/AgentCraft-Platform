@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useAuthStore } from "@/stores/authStore";
 import { Logo } from "@/components/shared/Logo";
+import { UserAvatar } from "@/components/shared/UserAvatar";
 
 export function SiteHeader() {
   const accessToken = useAuthStore((s) => s.accessToken);
@@ -10,32 +11,28 @@ export function SiteHeader() {
   const isAuthed = hasHydrated && !!accessToken;
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-craft-950/80 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <Logo />
-        <nav className="hidden items-center gap-8 text-sm text-slate-400 sm:flex">
-          <a href="#about" className="transition-colors hover:text-white">About</a>
-          <a href="#features" className="transition-colors hover:text-white">Features</a>
-          <a href="#roadmap" className="transition-colors hover:text-white">Roadmap</a>
-        </nav>
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#0F172A]/95 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-6 px-6">
+        <Logo inverted />
+
         <div className="flex items-center gap-3">
           {isAuthed ? (
-            <Link
-              href="/dashboard"
-              className="rounded-lg bg-craft-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-500"
-            >
-              Dashboard
+            <Link href="/dashboard/profile" className="rounded-full" title="Profile">
+              <UserAvatar size="md" className="ring-1 ring-cyan-400/40" />
             </Link>
           ) : (
             <>
-              <Link href="/login" className="px-3 py-2 text-sm text-slate-300 transition-colors hover:text-white">
+              <Link
+                href="/login"
+                className="px-3 py-2 text-sm text-slate-300 transition hover:text-white"
+              >
                 Log in
               </Link>
               <Link
                 href="/register"
-                className="rounded-lg bg-craft-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-500"
+                className="rounded-full bg-cyan-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-400"
               >
-                Join Now
+                Join now
               </Link>
             </>
           )}

@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { Check, FileText } from "lucide-react";
+import { Check, CircleDashed, FileText } from "lucide-react";
 import clsx from "clsx";
 import { getCourse } from "@/lib/api/courses";
 import { DifficultyBadge } from "@/components/dashboard/DifficultyBadge";
+import { ProgressBar } from "@/components/shared/ProgressBar";
 
 export default function CourseDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -16,60 +17,95 @@ export default function CourseDetailPage() {
     enabled: !!slug,
   });
 
-  if (isLoading) return <p className="animate-pulse text-slate-500">Loading course…</p>;
-  if (!course) return <p className="text-slate-400">Course not found.</p>;
+  if (isLoading) return <p className="animate-pulse text-slate-400">Loading course…</p>;
+  if (!course) return <p className="text-slate-500">Course not found.</p>;
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto max-w-3xl animate-fade-up">
       <p className="text-sm text-slate-500">
-        <Link href="/dashboard" className="text-craft-glow hover:underline">Dashboard</Link>
+        <Link href="/dashboard" className="font-medium text-cyan-600 hover:underline">
+          Dashboard
+        </Link>
         <span aria-hidden> / </span>
         {course.lessons.length} lessons
       </p>
-      <div className="mt-2 flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-bold text-white">{course.title}</h1>
+
+      <div className="mt-3 flex flex-wrap items-center gap-3">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">{course.title}</h1>
         <DifficultyBadge difficulty={course.difficulty} />
       </div>
-      {course.description && <p className="mt-3 max-w-2xl text-slate-400">{course.description}</p>}
 
-      <h2 className="mt-10 text-lg font-semibold text-white">Lessons</h2>
-      <div className="mt-4 space-y-3">
+      {course.description && (
+        <p className="mt-3 max-w-2xl leading-relaxed text-slate-500">{course.description}</p>
+      )}
+
+      <div className="mt-6 rounded-2xl bg-[#0F172A] p-5 text-white">
+        <div className="mb-2 flex justify-between text-sm text-slate-400">
+          <span>
+            {course.completed_lessons} of {course.total_lessons} complete
+          </span>
+          <span className="font-semibold text-cyan-400">{course.completion_pct}%</span>
+        </div>
+        <ProgressBar
+          className="bg-slate-700"
+          barClassName="bg-cyan-400"
+          value={course.completion_pct}
+        />
+      </div>
+
+      <h2 className="mt-10 text-lg font-bold text-slate-900">Lessons</h2>
+      <div className="mt-4 space-y-2">
         {course.lessons.map((lesson, i) => {
           const completed = lesson.status === "completed";
+          const inProgress = lesson.status === "in_progress";
+          const cta = completed ? "Review" : inProgress ? "Continue" : "Start";
+
           return (
             <div
               key={lesson.id}
               className={clsx(
-                "flex items-center gap-4 rounded-xl border p-4",
-                completed
-                  ? "border-emerald-500/30 bg-emerald-950/10"
-                  : "border-white/10 bg-craft-900/60"
+                "card flex items-center gap-4 p-4 transition hover:shadow-soft",
+                completed && "border-emerald-200 bg-emerald-50/50"
               )}
             >
               <span
                 className={clsx(
                   "flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold",
-                  completed ? "bg-emerald-500/20 text-emerald-300" : "bg-craft-800 text-slate-300"
+                  completed
+                    ? "bg-emerald-100 text-emerald-700"
+                    : inProgress
+                      ? "bg-cyan-50 text-cyan-700"
+                      : "bg-slate-100 text-slate-600"
                 )}
               >
-                {completed ? <Check className="h-4 w-4" /> : i + 1}
+                {completed ? (
+                  <Check className="h-4 w-4" />
+                ) : inProgress ? (
+                  <CircleDashed className="h-4 w-4" />
+                ) : (
+                  i + 1
+                )}
               </span>
-              <span className="min-w-0 flex-1 truncate font-medium text-white">{lesson.title}</span>
-              <span className="shrink-0 text-xs text-slate-500">{lesson.estimated_minutes} min</span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-semibold text-slate-900">{lesson.title}</p>
+                <p className="mt-0.5 text-xs capitalize text-slate-400">
+                  {lesson.lesson_type.replace("_", " ")} · {lesson.estimated_minutes} min
+                </p>
+              </div>
               <Link
                 href={`/dashboard/courses/${course.slug}/lessons/${lesson.slug}`}
-                className="shrink-0 rounded-lg border border-white/15 px-4 py-2 text-sm text-slate-200 transition-colors hover:border-craft-accent hover:text-white"
+                className="btn-secondary shrink-0 px-4 py-2"
               >
-                {completed ? "Review" : "Start"}
+                {cta}
               </Link>
             </div>
           );
         })}
 
         {course.lessons.length === 0 && (
-          <div className="rounded-2xl border border-white/10 bg-craft-900/60 p-12 text-center">
-            <FileText className="mx-auto h-10 w-10 text-slate-600" />
-            <p className="mt-3 text-slate-400">No lessons in this course yet.</p>
+          <div className="card p-12 text-center">
+            <FileText className="mx-auto h-10 w-10 text-slate-300" />
+            <p className="mt-3 text-slate-500">No lessons in this course yet.</p>
           </div>
         )}
       </div>

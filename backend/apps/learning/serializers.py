@@ -6,7 +6,7 @@ from .models import Progress, Recommendation
 class ProgressUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Progress
-        fields = ["status", "score", "time_spent_minutes"]
+        fields = ["status", "score", "time_spent_minutes", "video_watched"]
 
 
 class ProgressSerializer(serializers.ModelSerializer):
@@ -14,7 +14,14 @@ class ProgressSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Progress
-        fields = ["lesson_id", "status", "score", "time_spent_minutes", "completed_at"]
+        fields = [
+            "lesson_id",
+            "status",
+            "score",
+            "time_spent_minutes",
+            "video_watched",
+            "completed_at",
+        ]
 
 
 class RecommendationSerializer(serializers.ModelSerializer):

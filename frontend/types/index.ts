@@ -6,6 +6,7 @@ export interface User {
   last_name: string;
   role: "student" | "ai_instructor";
   skill_profile: Record<string, number>;
+  avatar: string | null;
 }
 
 export type LessonStatus = "not_started" | "in_progress" | "completed" | "stuck";
@@ -32,6 +33,9 @@ export interface LessonSummary {
 
 export interface LessonDetail extends LessonSummary {
   content: string;
+  video_url: string;
+  video_watched: boolean;
+  score: number | null;
   sandbox_config: Record<string, unknown>;
   course_slug: string;
   course_title: string;
@@ -43,6 +47,7 @@ export interface Course {
   slug: string;
   description: string;
   skill: Skill;
+  order: number;
   difficulty: 1 | 2 | 3;
   total_lessons: number;
   completed_lessons: number;

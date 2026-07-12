@@ -10,3 +10,4 @@ class User(AbstractUser):
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.STUDENT)
     skill_profile = models.JSONField(default=dict, blank=True)
     # skill_profile stores: {"git": 0.3, "python": 0.1, "docker": 0.0, ...}
+    avatar = models.ImageField(upload_to="avatars/", blank=True, null=True)

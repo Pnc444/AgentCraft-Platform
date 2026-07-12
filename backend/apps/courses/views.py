@@ -14,6 +14,14 @@ def progress_map(user, lessons):
     )
 
 
+def progress_records(user, lessons):
+    """Map of lesson_id -> Progress row for the given user."""
+    return {
+        row.lesson_id: row
+        for row in Progress.objects.filter(user=user, lesson__in=lessons)
+    }
+
+
 class CourseListView(generics.ListAPIView):
     serializer_class = CourseListSerializer
     pagination_class = None
@@ -40,9 +48,9 @@ class CourseDetailView(generics.RetrieveAPIView):
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context["progress_map"] = progress_map(
-            self.request.user, self.get_object().lessons.all()
-        )
+        lessons = self.get_object().lessons.all()
+        context["progress_map"] = progress_map(self.request.user, lessons)
+        context["progress_records"] = progress_records(self.request.user, lessons)
         return context
 
 
@@ -59,5 +67,7 @@ class LessonDetailView(generics.RetrieveAPIView):
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context["progress_map"] = progress_map(self.request.user, [self.get_object()])
+        lesson = self.get_object()
+        context["progress_map"] = progress_map(self.request.user, [lesson])
+        context["progress_records"] = progress_records(self.request.user, [lesson])
         return context

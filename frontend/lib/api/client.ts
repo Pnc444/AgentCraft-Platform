@@ -59,16 +59,26 @@ export async function apiClient<T>(
   retried = false
 ): Promise<T> {
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
     ...(options.headers as Record<string, string>),
   };
+
+  const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
+  if (!isFormData && !headers["Content-Type"]) {
+    headers["Content-Type"] = "application/json";
+  }
 
   const token = useAuthStore.getState().accessToken;
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, { ...options, headers });
 
-  if (response.status === 401 && !retried && endpoint !== "/auth/token/refresh/") {
+  if (
+    response.status === 401 &&
+    !retried &&
+    endpoint !== "/auth/token/" &&
+    endpoint !== "/auth/token/refresh/" &&
+    endpoint !== "/auth/register/"
+  ) {
     const newToken = await tryRefreshAccessToken();
     if (newToken) return apiClient<T>(endpoint, options, true);
     useAuthStore.getState().logout();

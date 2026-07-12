@@ -2,47 +2,43 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bot, CircleUserRound, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import clsx from "clsx";
 import { useAuthStore } from "@/stores/authStore";
+import { UserAvatar } from "@/components/shared/UserAvatar";
 
 interface TopbarProps {
   onOpenSidebar: () => void;
-  onToggleAiPanel: () => void;
 }
 
-export function Topbar({ onOpenSidebar, onToggleAiPanel }: TopbarProps) {
+export function Topbar({ onOpenSidebar }: TopbarProps) {
   const user = useAuthStore((s) => s.user);
   const pathname = usePathname();
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-4 border-b border-white/5 bg-craft-900/50 px-6">
-      <button type="button" onClick={onOpenSidebar} className="text-slate-400 hover:text-white lg:hidden" aria-label="Open menu">
+    <header className="flex h-16 shrink-0 items-center gap-4 border-b border-slate-200 bg-white px-6">
+      <button
+        type="button"
+        onClick={onOpenSidebar}
+        className="text-slate-500 transition hover:text-slate-900 lg:hidden"
+        aria-label="Open menu"
+      >
         <Menu className="h-5 w-5" />
       </button>
 
       <div className="min-w-0 flex-1" />
 
-      <button
-        type="button"
-        onClick={onToggleAiPanel}
-        className="text-slate-400 hover:text-white xl:hidden"
-        aria-label="Toggle AI assistant"
-      >
-        <Bot className="h-5 w-5" />
-      </button>
-
       <Link
         href="/dashboard/profile"
         className={clsx(
-          "flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm transition-colors",
+          "flex items-center gap-2 rounded-full border px-2 py-1.5 pr-3 text-sm font-medium transition",
           pathname === "/dashboard/profile"
-            ? "border-craft-accent/50 bg-craft-accent/10 text-white"
-            : "border-white/10 text-slate-300 hover:border-white/25 hover:text-white"
+            ? "border-cyan-300 bg-cyan-50 text-cyan-800"
+            : "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900"
         )}
         title="View your profile"
       >
-        <CircleUserRound className="h-4 w-4" />
+        <UserAvatar size="sm" />
         {user?.username ?? "Profile"}
       </Link>
     </header>

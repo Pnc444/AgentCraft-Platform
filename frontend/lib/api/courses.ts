@@ -22,11 +22,20 @@ export function getLesson(courseSlug: string, lessonSlug: string): Promise<Lesso
 
 export function updateLessonProgress(
   lessonId: number,
-  status: LessonStatus
-): Promise<{ lesson_id: number; status: LessonStatus }> {
+  data: {
+    status?: LessonStatus;
+    score?: number;
+    video_watched?: boolean;
+  }
+): Promise<{
+  lesson_id: number;
+  status: LessonStatus;
+  score: number | null;
+  video_watched: boolean;
+}> {
   return apiClient(`/lessons/${lessonId}/progress/`, {
     method: "POST",
-    body: JSON.stringify({ status }),
+    body: JSON.stringify(data),
   });
 }
 

@@ -11,6 +11,10 @@ const nextConfig = {
         source: "/api/v1/:path*",
         destination: `${internalApiUrl}/api/v1/:path*`,
       },
+      {
+        source: "/media/:path*",
+        destination: `${internalApiUrl}/media/:path*`,
+      },
     ];
   },
 };

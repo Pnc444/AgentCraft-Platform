@@ -18,7 +18,14 @@ class LessonListSerializer(serializers.ModelSerializer):
         model = Lesson
         fields = ["id", "title", "slug", "lesson_type", "order", "estimated_minutes", "status"]
 
+    def _progress(self, obj):
+        return self.context.get("progress_records", {}).get(obj.id)
+
     def get_status(self, obj):
+        progress = self._progress(obj)
+        if progress:
+            return progress.status
+        # Backward-compatible map of lesson_id -> status string
         progress_map = self.context.get("progress_map", {})
         return progress_map.get(obj.id, Progress.Status.NOT_STARTED)
 
@@ -26,14 +33,29 @@ class LessonListSerializer(serializers.ModelSerializer):
 class LessonDetailSerializer(LessonListSerializer):
     course_slug = serializers.CharField(source="course.slug", read_only=True)
     course_title = serializers.CharField(source="course.title", read_only=True)
+    video_watched = serializers.SerializerMethodField()
+    score = serializers.SerializerMethodField()
 
     class Meta(LessonListSerializer.Meta):
         fields = LessonListSerializer.Meta.fields + [
             "content",
+            "video_url",
+            "video_watched",
+            "score",
             "sandbox_config",
             "course_slug",
             "course_title",
         ]
+
+    def get_video_watched(self, obj):
+        if not (obj.video_url or "").strip():
+            return True
+        progress = self._progress(obj)
+        return bool(progress and progress.video_watched)
+
+    def get_score(self, obj):
+        progress = self._progress(obj)
+        return progress.score if progress else None
 
 
 class CourseListSerializer(serializers.ModelSerializer):
@@ -51,6 +73,7 @@ class CourseListSerializer(serializers.ModelSerializer):
             "slug",
             "description",
             "skill",
+            "order",
             "difficulty",
             "total_lessons",
             "completed_lessons",
