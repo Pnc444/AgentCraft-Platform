@@ -13,14 +13,16 @@ interface ThemeToggleProps {
 }
 
 export function ThemeToggle({ className, compact = false, inverted = false }: ThemeToggleProps) {
-  const { theme, toggleTheme, ready } = useTheme();
+  const { theme, toggleTheme, ready, transitioning } = useTheme();
   const isDark = theme === "dark";
 
   return (
     <button
       type="button"
-      onClick={toggleTheme}
-      disabled={!ready}
+      onClick={(e) => {
+        toggleTheme({ x: e.clientX, y: e.clientY });
+      }}
+      disabled={!ready || transitioning}
       className={clsx(
         "inline-flex items-center justify-center gap-2 rounded-full border transition duration-300",
         "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500",
