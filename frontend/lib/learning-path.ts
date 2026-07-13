@@ -50,5 +50,5 @@ export function deriveLearningPath(courses: Course[], details: CourseDetail[]) {
 }
 
 export function lessonHref(ref: LessonRef) {
-  return `/dashboard/courses/${ref.courseSlug}/lessons/${ref.lesson.slug}`;
+  return `/dashboard/courses/${ref.courseSlug}/lessons/${ref.lesson.slug}/content`;
 }

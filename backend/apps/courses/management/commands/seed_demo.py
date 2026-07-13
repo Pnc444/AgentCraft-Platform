@@ -2,7 +2,8 @@ from django.core.management.base import BaseCommand
 
 from apps.accounts.models import User
 from apps.courses.models import Course, Lesson, Skill
-from apps.learning.models import Progress
+from apps.learning.badges import evaluate_badges_for_user, seed_badges
+from apps.learning.models import Progress, UserBadge
 
 
 def placeholder(title: str) -> str:
@@ -336,6 +337,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Curriculum is the only content on the site for now.
+        UserBadge.objects.all().delete()
         Progress.objects.all().delete()
         Lesson.objects.all().delete()
         Course.objects.all().delete()
@@ -385,8 +387,12 @@ class Command(BaseCommand):
         student.set_password("demo1234")
         student.save()
 
+        badge_count = seed_badges()
+        evaluate_badges_for_user(student)
+
         self.stdout.write(self.style.SUCCESS("Curriculum seeded (Modules 1–8)."))
         self.stdout.write(f"Modules: {Course.objects.count()} · Lessons: {Lesson.objects.count()}")
+        self.stdout.write(f"Badges: {badge_count}")
         self.stdout.write("Login: demo_student / demo1234")
         self.stdout.write(
             "Edit lessons (Markdown + YouTube video_url) in Django admin → Courses / Lessons."

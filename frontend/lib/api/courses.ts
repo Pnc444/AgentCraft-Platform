@@ -1,6 +1,5 @@
 import { apiClient } from "./client";
 import type {
-  Course,
   CourseDetail,
   DashboardStats,
   LessonDetail,
@@ -8,8 +7,9 @@ import type {
   Recommendation,
 } from "@/types";
 
-export function getCourses(): Promise<Course[]> {
-  return apiClient<Course[]>("/courses/");
+/** Courses with nested lesson summaries + progress (single request). */
+export function getCourses(): Promise<CourseDetail[]> {
+  return apiClient<CourseDetail[]>("/courses/");
 }
 
 export function getCourse(slug: string): Promise<CourseDetail> {

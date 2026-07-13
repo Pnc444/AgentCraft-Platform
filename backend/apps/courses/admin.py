@@ -14,6 +14,7 @@ class LessonInline(admin.StackedInline):
         "order",
         "estimated_minutes",
         "video_url",
+        "require_full_watch",
         "content",
         "sandbox_config",
     )
@@ -83,10 +84,12 @@ class LessonAdmin(admin.ModelAdmin):
         (
             "Video (optional)",
             {
-                "fields": ("video_url",),
+                "fields": ("video_url", "require_full_watch"),
                 "description": (
                     "Paste a YouTube watch, youtu.be, or embed link. "
-                    "It displays in a horizontal 16:9 player on the lesson page."
+                    "When set, students get a Video tab in the lesson (16:9 player). "
+                    "Use “Require full watch” to lock the Recap Quiz until they finish the video, "
+                    "or uncheck it to let them skip."
                 ),
             },
         ),

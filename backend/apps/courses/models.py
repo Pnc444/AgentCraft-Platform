@@ -86,6 +86,13 @@ class Lesson(models.Model):
         blank=True,
         help_text="Optional YouTube watch, youtu.be, or embed URL (shown in a 16:9 player)",
     )
+    require_full_watch = models.BooleanField(
+        default=True,
+        help_text=(
+            "If enabled, students must watch the video to the end before the Recap Quiz unlocks. "
+            "Turn off to let them skip the video."
+        ),
+    )
     lesson_type = models.CharField(
         max_length=30, choices=LessonType.choices, default=LessonType.THEORY
     )

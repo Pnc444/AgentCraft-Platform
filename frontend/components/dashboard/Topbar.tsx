@@ -6,6 +6,7 @@ import { Menu } from "lucide-react";
 import clsx from "clsx";
 import { useAuthStore } from "@/stores/authStore";
 import { UserAvatar } from "@/components/shared/UserAvatar";
+import { ThemeToggle } from "@/components/shared/ThemeToggle";
 
 interface TopbarProps {
   onOpenSidebar: () => void;
@@ -16,11 +17,11 @@ export function Topbar({ onOpenSidebar }: TopbarProps) {
   const pathname = usePathname();
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-4 border-b border-slate-200 bg-white px-6">
+    <header className="relative z-20 flex h-16 shrink-0 items-center gap-4 border-b border-craft-border bg-craft-surface/95 px-6 shadow-soft backdrop-blur-sm">
       <button
         type="button"
         onClick={onOpenSidebar}
-        className="text-slate-500 transition hover:text-slate-900 lg:hidden"
+        className="text-craft-muted transition hover:text-craft-ink lg:hidden"
         aria-label="Open menu"
       >
         <Menu className="h-5 w-5" />
@@ -28,13 +29,15 @@ export function Topbar({ onOpenSidebar }: TopbarProps) {
 
       <div className="min-w-0 flex-1" />
 
+      <ThemeToggle compact />
+
       <Link
         href="/dashboard/profile"
         className={clsx(
-          "flex items-center gap-2 rounded-full border px-2 py-1.5 pr-3 text-sm font-medium transition",
+          "flex items-center gap-2 rounded-full border px-2 py-1.5 pr-3 text-sm font-medium shadow-soft transition duration-300 hover:shadow-card",
           pathname === "/dashboard/profile"
-            ? "border-cyan-300 bg-cyan-50 text-cyan-800"
-            : "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900"
+            ? "border-cyan-300 bg-cyan-50 text-cyan-800 dark:border-cyan-500/40 dark:bg-cyan-500/10 dark:text-cyan-200"
+            : "border-craft-border text-craft-muted hover:border-craft-faint hover:text-craft-ink"
         )}
         title="View your profile"
       >

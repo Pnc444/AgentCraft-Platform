@@ -1,15 +1,20 @@
 import type { QueryClient } from "@tanstack/react-query";
-import type { Course, CourseDetail, LessonDetail, LessonStatus } from "@/types";
+import type { CourseDetail, LessonDetail, LessonStatus } from "@/types";
 
-/** Refresh all learning/progress caches after a status change. */
-export function invalidateLearningProgress(
-  queryClient: QueryClient,
-  opts?: { courseSlug?: string; lessonSlug?: string }
-) {
-  void queryClient.invalidateQueries({ queryKey: ["courses"] });
+type InvalidateOpts = {
+  courseSlug?: string;
+  lessonSlug?: string;
+  /** When true, only refresh list/stats counts — skip refetching course/lesson detail. */
+  light?: boolean;
+};
+
+/** Refresh learning/progress caches after a status change (scoped by default). */
+export function invalidateLearningProgress(queryClient: QueryClient, opts?: InvalidateOpts) {
   void queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
-  void queryClient.invalidateQueries({ queryKey: ["course"] });
-  void queryClient.invalidateQueries({ queryKey: ["lesson"] });
+
+  if (opts?.light) return;
+
+  void queryClient.invalidateQueries({ queryKey: ["courses"] });
   if (opts?.courseSlug) {
     void queryClient.invalidateQueries({ queryKey: ["course", opts.courseSlug] });
   }
@@ -52,10 +57,15 @@ export function patchLessonStatusInCache(
     };
   });
 
-  queryClient.setQueryData<Course[]>(["courses"], (old) => {
+  queryClient.setQueryData<CourseDetail[]>(["courses"], (old) => {
     if (!old) return old;
     return old.map((course) => {
       if (course.slug !== courseSlug) return course;
+      const lessons = course.lessons?.map((lesson) => {
+        if (lesson.slug !== lessonSlug) return lesson;
+        previousStatus = previousStatus ?? lesson.status;
+        return { ...lesson, status: nextStatus };
+      });
       let completed = course.completed_lessons;
       const wasCompleted = previousStatus === "completed";
       const nowCompleted = nextStatus === "completed";
@@ -64,6 +74,7 @@ export function patchLessonStatusInCache(
       const total = course.total_lessons || 1;
       return {
         ...course,
+        lessons: lessons ?? course.lessons,
         completed_lessons: completed,
         completion_pct: Math.round((completed / total) * 100),
       };
