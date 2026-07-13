@@ -114,10 +114,9 @@ class UserSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        request = self.context.get("request")
         if instance.avatar:
-            url = instance.avatar.url
-            data["avatar"] = request.build_absolute_uri(url) if request else url
+            # Relative /media/... so the Next.js rewrite proxies it (works in Docker too).
+            data["avatar"] = instance.avatar.url
         else:
             data["avatar"] = None
         return data

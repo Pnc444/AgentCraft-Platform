@@ -35,17 +35,18 @@ export function runThemeBlurTransition(
     zIndex: "99999",
     pointerEvents: "none",
     backdropFilter: "blur(0px)",
-    WebkitBackdropFilter: "blur(0px)",
     background:
       next === "dark" ? "rgba(10, 16, 28, 0)" : "rgba(248, 250, 252, 0)",
-    transition: `backdrop-filter ${BLUR_MS}ms ease-out, -webkit-backdrop-filter ${BLUR_MS}ms ease-out, background ${BLUR_MS}ms ease-out`,
+    transition: `backdrop-filter ${BLUR_MS}ms ease-out, background ${BLUR_MS}ms ease-out`,
   });
+  // Safari
+  overlay.style.setProperty("-webkit-backdrop-filter", "blur(0px)");
   document.body.appendChild(overlay);
 
   void overlay.offsetWidth;
 
   overlay.style.backdropFilter = "blur(7px)";
-  overlay.style.WebkitBackdropFilter = "blur(7px)";
+  overlay.style.setProperty("-webkit-backdrop-filter", "blur(7px)");
   overlay.style.background =
     next === "dark" ? "rgba(10, 16, 28, 0.12)" : "rgba(248, 250, 252, 0.16)";
 
@@ -58,7 +59,7 @@ export function runThemeBlurTransition(
 
       window.setTimeout(() => {
         overlay.style.backdropFilter = "blur(0px)";
-        overlay.style.WebkitBackdropFilter = "blur(0px)";
+        overlay.style.setProperty("-webkit-backdrop-filter", "blur(0px)");
         overlay.style.background =
           next === "dark" ? "rgba(10, 16, 28, 0)" : "rgba(248, 250, 252, 0)";
         root.style.filter = "blur(0px)";
