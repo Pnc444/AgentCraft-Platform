@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowRight, BookOpen, CheckCircle2, ChevronDown, Clock, Inbox } from "lucide-react";
 import { getCourses, getDashboardStats } from "@/lib/api/courses";
-import { deriveLearningPath, lessonHref } from "@/lib/learning-path";
+import { deriveLearningPath, lessonHref, type LessonRef } from "@/lib/learning-path";
+import { prefetchLessonNav } from "@/lib/prefetch-lesson";
 import { useAuthStore } from "@/stores/authStore";
 import { DifficultyBadge } from "@/components/dashboard/DifficultyBadge";
 import { ProgressBar } from "@/components/shared/ProgressBar";
@@ -14,6 +16,7 @@ import { Reveal } from "@/components/shared/Reveal";
 export default function StudentDashboardPage() {
   const user = useAuthStore((s) => s.user);
   const queryClient = useQueryClient();
+  const router = useRouter();
   const [pathOpen, setPathOpen] = useState(false);
   const { data: courses, isLoading } = useQuery({
     queryKey: ["courses"],
@@ -29,6 +32,26 @@ export default function StudentDashboardPage() {
 
   const path = courses ? deriveLearningPath(courses, courses) : null;
   const detailsReady = !!courses;
+
+  // Warm continue + upcoming lessons so Continue feels instant
+  useEffect(() => {
+    if (!path?.continueTarget) return;
+    prefetchLessonNav(queryClient, path.continueTarget, router);
+    for (const ref of path.upcoming.slice(0, 2)) {
+      prefetchLessonNav(queryClient, ref, router);
+    }
+    // Only re-run when the continue lesson identity changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    path?.continueTarget?.courseSlug,
+    path?.continueTarget?.lesson.slug,
+    queryClient,
+    router,
+  ]);
+
+  function warm(ref: LessonRef) {
+    prefetchLessonNav(queryClient, ref, router);
+  }
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -56,7 +79,13 @@ export default function StudentDashboardPage() {
                   {path.continueTarget.lesson.estimated_minutes} min ·{" "}
                   {path.continueTarget.lesson.lesson_type.replace("_", " ")}
                 </p>
-                <Link href={lessonHref(path.continueTarget)} className="btn-primary mt-5">
+                <Link
+                  href={lessonHref(path.continueTarget)}
+                  className="btn-primary mt-5"
+                  onMouseEnter={() => warm(path.continueTarget!)}
+                  onFocus={() => warm(path.continueTarget!)}
+                  onTouchStart={() => warm(path.continueTarget!)}
+                >
                   Continue <ArrowRight className="h-4 w-4" />
                 </Link>
               </div>
@@ -133,6 +162,8 @@ export default function StudentDashboardPage() {
                   <li key={`${ref.courseSlug}-${ref.lesson.id}`}>
                     <Link
                       href={lessonHref(ref)}
+                      onMouseEnter={() => warm(ref)}
+                      onFocus={() => warm(ref)}
                       className="flex items-start gap-2 rounded-xl px-2 py-2 text-sm transition hover:bg-craft-soft"
                     >
                       <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
@@ -162,6 +193,8 @@ export default function StudentDashboardPage() {
                 <li key={`${ref.courseSlug}-${ref.lesson.id}`}>
                   <Link
                     href={lessonHref(ref)}
+                    onMouseEnter={() => warm(ref)}
+                    onFocus={() => warm(ref)}
                     className="flex items-center justify-between gap-4 py-3 transition hover:opacity-80"
                   >
                     <span>
