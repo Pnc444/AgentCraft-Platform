@@ -61,6 +61,16 @@ function groupCoursesBySkill(courses: CourseDetail[]): LearningPath[] {
     .sort((a, b) => a.skill.order - b.skill.order || a.skill.name.localeCompare(b.skill.name));
 }
 
+/** Next module to open for a skill path: in-progress, else first unfinished, else first. */
+function continueCourseForPath(path: LearningPath): CourseDetail | null {
+  if (!path.courses.length) return null;
+  const inProgress = path.courses.find((c) => c.completion_pct > 0 && c.completion_pct < 100);
+  if (inProgress) return inProgress;
+  const notStarted = path.courses.find((c) => c.completion_pct === 0);
+  if (notStarted) return notStarted;
+  return path.courses[0];
+}
+
 interface SidebarProps {
   mobileOpen: boolean;
   onMobileClose: () => void;
@@ -114,6 +124,15 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
 
   function togglePath(slug: string) {
     setOpenPaths((prev) => ({ ...prev, [slug]: !prev[slug] }));
+  }
+
+  function openPathCourse(path: LearningPath) {
+    const target = continueCourseForPath(path);
+    setLessonsOpen(true);
+    setOpenPaths((prev) => ({ ...prev, [path.skill.slug]: true }));
+    if (!target) return;
+    onMobileClose();
+    router.push(`/dashboard/courses/${target.slug}`);
   }
 
   function handleLogout() {
@@ -229,25 +248,36 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
               const pathActive = path.courses.some((c) => pathname.includes(`/courses/${c.slug}`));
               return (
                 <div key={path.skill.slug} className="space-y-1.5">
-                  <button
-                    type="button"
-                    onClick={() => togglePath(path.skill.slug)}
+                  <div
                     className={clsx(
-                      "flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium transition",
+                      "flex items-center rounded-lg transition",
                       isOpen || pathActive
                         ? "text-craft-ink"
                         : "text-craft-muted hover:text-craft-ink"
                     )}
-                    aria-expanded={isOpen}
                   >
-                    <ChevronRight
-                      className={clsx(
-                        "h-3.5 w-3.5 shrink-0 transition-transform",
-                        isOpen && "rotate-90"
-                      )}
-                    />
-                    <span className="min-w-0 flex-1 truncate text-left">{path.skill.name}</span>
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => togglePath(path.skill.slug)}
+                      className="p-1.5 text-craft-faint hover:text-craft-ink"
+                      aria-expanded={isOpen}
+                      aria-label={`${isOpen ? "Collapse" : "Expand"} ${path.skill.name}`}
+                    >
+                      <ChevronRight
+                        className={clsx(
+                          "h-3.5 w-3.5 shrink-0 transition-transform",
+                          isOpen && "rotate-90"
+                        )}
+                      />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openPathCourse(path)}
+                      className="min-w-0 flex-1 truncate py-1.5 pr-2 text-left text-sm font-medium hover:underline"
+                    >
+                      {path.skill.name}
+                    </button>
+                  </div>
 
                   <PathProgressCard
                     completed={path.completed}
