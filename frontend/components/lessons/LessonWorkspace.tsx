@@ -60,6 +60,7 @@ export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
     queryKey: ["lesson", slug, lessonSlug],
     queryFn: () => getLesson(slug, lessonSlug),
     enabled: !!slug && !!lessonSlug,
+    staleTime: 5 * 60_000,
   });
 
   const cachedCourse = slug ? queryClient.getQueryData<CourseDetail>(["course", slug]) : undefined;
@@ -67,11 +68,26 @@ export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
     queryKey: ["course", slug],
     queryFn: () => getCourse(slug),
     enabled: !!slug,
+    staleTime: 5 * 60_000,
     initialData: cachedCourse,
     initialDataUpdatedAt: cachedCourse
       ? queryClient.getQueryState(["course", slug])?.dataUpdatedAt
       : undefined,
   });
+
+  // Prefetch neighbor lessons for snappy prev/next
+  useEffect(() => {
+    if (!course?.lessons?.length || !lessonSlug) return;
+    const idx = course.lessons.findIndex((l) => l.slug === lessonSlug);
+    const neighbors = [course.lessons[idx - 1], course.lessons[idx + 1]].filter(Boolean);
+    for (const neighbor of neighbors) {
+      void queryClient.prefetchQuery({
+        queryKey: ["lesson", slug, neighbor!.slug],
+        queryFn: () => getLesson(slug, neighbor!.slug),
+        staleTime: 5 * 60_000,
+      });
+    }
+  }, [course, lessonSlug, queryClient, slug]);
 
   const progressMutation = useMutation({
     mutationFn: (data: ProgressPayload) => updateLessonProgress(lesson!.id, data),
