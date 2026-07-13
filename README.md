@@ -29,6 +29,7 @@ agentcraft-platform/
 ```bash
 cp .env.example .env          # fill in SECRET_KEY at minimum
 docker-compose up --build
+# CHECK BUG FIXES AT THE BOTTOM OF THE PAGE
 ```
 
 | Service | URL |
@@ -98,3 +99,23 @@ GET    /api/v1/dashboard/stats/       profile stats + badges
 
 - AI Tutor chat (Anthropic API) — panel UI is in place, backend integration pending
 - Sandbox lessons (Docker-in-Docker practice environments)
+
+## Docker Bug Fixes
+
+### "Module not found" after pulling new frontend dependencies
+
+`docker compose up` builds fine but the frontend errors with something like
+`Module not found: Can't resolve 'some-package'`, even though the package is listed in
+`frontend/package.json`.
+
+```bash
+docker compose down
+docker compose up --build -V
+```
+## more aggressive reset
+
+```bash
+docker compose down -v
+docker compose up --build
+```
+
