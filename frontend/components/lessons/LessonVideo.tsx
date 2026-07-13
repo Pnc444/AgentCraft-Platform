@@ -147,7 +147,7 @@ export function LessonVideo({
 
   return (
     <div className="space-y-2">
-      <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-black shadow-elevated ring-1 ring-black/20">
+      <div className="overflow-hidden rounded-xl border border-craft-border bg-black shadow-elevated ring-1 ring-black/20">
         <div className="relative aspect-video w-full">
           {watched ? (
             <iframe
@@ -164,7 +164,7 @@ export function LessonVideo({
           )}
         </div>
       </div>
-      <p className="text-xs text-slate-500">
+      <p className="text-xs text-craft-muted">
         {watched
           ? "Video watched — you can take the Recap Quiz."
           : "Watch the video to the end before taking the Recap Quiz."}

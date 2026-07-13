@@ -23,7 +23,7 @@ export default function LessonVideoPage() {
 
   return (
     <div className="space-y-4">
-      <LessonSection title="Video" icon={<MonitorPlay className="h-4 w-4 text-cyan-600" />}>
+      <LessonSection title="Video" icon={<MonitorPlay className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />}>
         <LessonVideo
           url={videoUrl}
           title={lesson.title}
@@ -33,11 +33,11 @@ export default function LessonVideoPage() {
         {lesson.video_watched ? (
           <p className="mt-3 text-sm text-emerald-700">Video watched — you can take the Recap Quiz.</p>
         ) : lesson.require_full_watch ? (
-          <p className="mt-3 text-sm text-slate-500">
+          <p className="mt-3 text-sm text-craft-muted">
             Watch all the way through to unlock the Recap Quiz.
           </p>
         ) : (
-          <p className="mt-3 text-sm text-slate-500">
+          <p className="mt-3 text-sm text-craft-muted">
             This video is optional — you can skip ahead to the Recap Quiz anytime.
           </p>
         )}

@@ -9,7 +9,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC]">
+    <div className="flex min-h-screen bg-craft-canvas">
       <Sidebar mobileOpen={sidebarOpen} onMobileClose={() => setSidebarOpen(false)} />
 
       <div className="relative flex min-w-0 flex-1 flex-col">
@@ -24,7 +24,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         <button
           type="button"
           aria-label="Close menu"
-          className="fixed inset-0 z-30 bg-slate-900/30 lg:hidden"
+          className="fixed inset-0 z-30 bg-craft-navy/40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
       )}

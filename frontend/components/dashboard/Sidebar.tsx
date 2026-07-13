@@ -126,14 +126,14 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition",
       collapsed && "justify-center px-0",
       active
-        ? "bg-cyan-50 text-cyan-800 shadow-soft ring-1 ring-cyan-100/80"
-        : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+        ? "bg-craft-accent-soft text-cyan-800 shadow-soft ring-1 ring-cyan-500/20 dark:text-cyan-200"
+        : "text-craft-muted hover:bg-craft-soft hover:text-craft-ink"
     );
 
   return (
     <aside
       className={clsx(
-        "fixed inset-y-0 left-0 z-40 flex flex-col border-r border-slate-200/80 bg-white shadow-soft transition-all lg:static lg:translate-x-0 lg:shadow-[4px_0_24px_rgba(15,23,42,0.04)]",
+        "fixed inset-y-0 left-0 z-40 flex flex-col border-r border-craft-border bg-craft-surface shadow-soft transition-all lg:static lg:translate-x-0 lg:shadow-[4px_0_24px_rgba(15,23,42,0.04)] dark:lg:shadow-[4px_0_24px_rgba(0,0,0,0.35)]",
         collapsed ? "w-16" : "w-72",
         mobileOpen ? "translate-x-0" : "-translate-x-full"
       )}
@@ -156,7 +156,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           <button
             type="button"
             onClick={toggleCollapsed}
-            className="hidden text-slate-400 transition hover:text-slate-700 lg:block"
+            className="hidden text-craft-faint transition hover:text-craft-ink lg:block"
             aria-label="Collapse sidebar"
           >
             <PanelLeftClose className="h-5 w-5" />
@@ -168,7 +168,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         <button
           type="button"
           onClick={toggleCollapsed}
-          className="mx-auto mb-1 hidden text-slate-400 transition hover:text-slate-700 lg:block"
+          className="mx-auto mb-1 hidden text-craft-faint transition hover:text-craft-ink lg:block"
           aria-label="Expand sidebar"
         >
           <PanelLeftOpen className="h-5 w-5" />
@@ -223,7 +223,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         </button>
 
         {!collapsed && lessonsOpen && (
-          <div className="ml-2 space-y-2 border-l border-slate-200 pl-2">
+          <div className="ml-2 space-y-2 border-l border-craft-border pl-2">
             {learningPaths.map((path) => {
               const isOpen = !!openPaths[path.skill.slug];
               const pathActive = path.courses.some((c) => pathname.includes(`/courses/${c.slug}`));
@@ -235,8 +235,8 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
                     className={clsx(
                       "flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium transition",
                       isOpen || pathActive
-                        ? "text-slate-900"
-                        : "text-slate-500 hover:text-slate-900"
+                        ? "text-craft-ink"
+                        : "text-craft-muted hover:text-craft-ink"
                     )}
                     aria-expanded={isOpen}
                   >
@@ -256,7 +256,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
                   />
 
                   {isOpen && (
-                    <div className="ml-3 space-y-1 border-l border-slate-200 pl-2">
+                    <div className="ml-3 space-y-1 border-l border-craft-border pl-2">
                       {path.courses.map((course) => (
                         <CourseTreeItem
                           key={course.slug}
@@ -265,7 +265,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
                         />
                       ))}
                       {path.courses.length === 0 && (
-                        <p className="px-2 py-2 text-sm text-slate-400">No modules yet.</p>
+                        <p className="px-2 py-2 text-sm text-craft-faint">No modules yet.</p>
                       )}
                     </div>
                   )}
@@ -273,13 +273,13 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
               );
             })}
             {learningPaths.length === 0 && (
-              <p className="px-2 py-2 text-sm text-slate-400">No learning paths yet.</p>
+              <p className="px-2 py-2 text-sm text-craft-faint">No learning paths yet.</p>
             )}
           </div>
         )}
       </nav>
 
-      <div className={clsx("border-t border-slate-200 p-3", collapsed && "px-2")}>
+      <div className={clsx("border-t border-craft-border p-3", collapsed && "px-2")}>
         <button type="button" onClick={handleLogout} className={navItemCls(false)} title="Log out">
           <LogOut className="h-4 w-4 shrink-0" />
           {!collapsed && "Log out"}
@@ -299,16 +299,16 @@ function PathProgressCard({
   progressPct: number;
 }) {
   return (
-    <div className="mx-1 mb-0.5 rounded-lg bg-slate-50 px-2.5 py-2 ring-1 ring-slate-200/70">
+    <div className="mx-1 mb-0.5 rounded-lg bg-craft-soft px-2.5 py-2 ring-1 ring-craft-border">
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[11px] font-medium text-slate-500">Progress</p>
-        <p className="text-[11px] tabular-nums text-slate-400">
+        <p className="text-[11px] font-medium text-craft-muted">Progress</p>
+        <p className="text-[11px] tabular-nums text-craft-faint">
           {completed}/{total}
-          <span className="ml-1 text-slate-300">·</span>
-          <span className="ml-1 text-cyan-700">{progressPct}%</span>
+          <span className="ml-1 text-craft-faint">·</span>
+          <span className="ml-1 text-cyan-700 dark:text-cyan-400">{progressPct}%</span>
         </p>
       </div>
-      <ProgressBar className="mt-1.5 h-1 border-slate-200" value={progressPct} />
+      <ProgressBar className="mt-1.5 h-1 border-craft-border" value={progressPct} />
     </div>
   );
 }
@@ -356,13 +356,13 @@ function CourseTreeItem({ course, onNavigate }: CourseTreeItemProps) {
       <div
         className={clsx(
           "flex items-center rounded-lg transition",
-          isActiveCourse ? "text-slate-900" : "text-slate-500 hover:text-slate-900"
+          isActiveCourse ? "text-craft-ink" : "text-craft-muted hover:text-craft-ink"
         )}
       >
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="p-1.5 text-slate-400 hover:text-slate-700"
+          className="p-1.5 text-craft-faint hover:text-craft-ink"
           aria-expanded={open}
           aria-label={`${open ? "Collapse" : "Expand"} ${course.title}`}
         >
@@ -382,13 +382,13 @@ function CourseTreeItem({ course, onNavigate }: CourseTreeItemProps) {
         >
           {course.title}
         </Link>
-        <span className="pr-2 text-xs tabular-nums text-slate-400">
+        <span className="pr-2 text-xs tabular-nums text-craft-faint">
           {completedCount}/{totalCount}
         </span>
       </div>
 
       {open && (
-        <div className="ml-4 space-y-0.5 border-l border-slate-200 pl-2">
+        <div className="ml-4 space-y-0.5 border-l border-craft-border pl-2">
           {lessons.map((lesson) => {
             const href = `/dashboard/courses/${course.slug}/lessons/${lesson.slug}/content`;
             const active =
@@ -406,8 +406,8 @@ function CourseTreeItem({ course, onNavigate }: CourseTreeItemProps) {
                 className={clsx(
                   "flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition",
                   active
-                    ? "bg-cyan-50 font-medium text-cyan-800"
-                    : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                    ? "bg-craft-accent-soft font-medium text-cyan-800 dark:text-cyan-200"
+                    : "text-craft-muted hover:bg-craft-soft hover:text-craft-ink"
                 )}
               >
                 {completed ? (
@@ -415,14 +415,14 @@ function CourseTreeItem({ course, onNavigate }: CourseTreeItemProps) {
                 ) : inProgress ? (
                   <CircleDashed className="h-3.5 w-3.5 shrink-0 text-cyan-600" />
                 ) : (
-                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-slate-300" />
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-craft-faint" />
                 )}
                 <span className="truncate">{lesson.title}</span>
               </Link>
             );
           })}
           {needsFetch && !detail && (
-            <p className="px-2 py-1.5 text-xs text-slate-400">Loading…</p>
+            <p className="px-2 py-1.5 text-xs text-craft-faint">Loading…</p>
           )}
         </div>
       )}

@@ -1,25 +1,34 @@
 import {
   Award,
   Bot,
-  Code,
+  Compass,
   Container,
-  Flame,
-  GitBranch,
-  Moon,
+  Hash,
+  Lightbulb,
+  MessageSquare,
+  Rocket,
+  Sparkles,
   Star,
   Target,
+  Trophy,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 
 const ICONS: Record<string, LucideIcon> = {
   target: Target,
-  "git-branch": GitBranch,
-  container: Container,
-  code: Code,
-  flame: Flame,
+  lightbulb: Lightbulb,
+  hash: Hash,
+  compass: Compass,
+  "message-square": MessageSquare,
   bot: Bot,
+  container: Container,
+  rocket: Rocket,
+  zap: Zap,
+  sparkles: Sparkles,
+  trophy: Trophy,
   star: Star,
-  moon: Moon,
+  award: Award,
 };
 
 export function BadgeIcon({ name, className }: { name: string; className?: string }) {

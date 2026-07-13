@@ -62,10 +62,11 @@ export function Logo({ href = "/", iconOnly = false, className, inverted = false
         <span
           className={clsx(
             "text-lg font-bold tracking-tight",
-            inverted ? "text-white" : "text-craft-ink"
+            inverted ? "text-[#F8FAFC]" : "text-craft-ink"
           )}
         >
-          Agent<span className="text-[#22D3EE]">Craft</span>
+          Agent
+          <span className={inverted ? "text-[#67E8F9]" : "text-[#22D3EE]"}>Craft</span>
         </span>
       )}
     </Link>

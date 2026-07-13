@@ -49,11 +49,11 @@ export function CheckpointQuiz({ questions, onPassed }: CheckpointQuizProps) {
   }
 
   if (!bank.length) {
-    return <p className="text-sm text-slate-500">—</p>;
+    return <p className="text-sm text-craft-muted">—</p>;
   }
 
   if (!question) {
-    return <p className="text-sm text-slate-500">No checkpoint question available.</p>;
+    return <p className="text-sm text-craft-muted">No checkpoint question available.</p>;
   }
 
   const isCorrect = revealed && selected === question.answer_index;
@@ -61,11 +61,11 @@ export function CheckpointQuiz({ questions, onPassed }: CheckpointQuizProps) {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-craft-muted">
         Answer correctly to pass. You can retry as many times as you need.
       </p>
 
-      <p className="text-base font-medium text-slate-900">{question.prompt}</p>
+      <p className="text-base font-medium text-craft-ink">{question.prompt}</p>
 
       <ul className="space-y-2">
         {question.options.map((option, index) => {
@@ -82,10 +82,10 @@ export function CheckpointQuiz({ questions, onPassed }: CheckpointQuizProps) {
                 }}
                 className={clsx(
                   "w-full rounded-xl border px-4 py-3 text-left text-sm transition",
-                  chosen && !revealed && "border-cyan-400 bg-cyan-50 text-slate-900",
+                  chosen && !revealed && "border-cyan-400 bg-craft-accent-soft text-craft-ink",
                   chosen && isCorrect && "border-emerald-400 bg-emerald-50 text-emerald-800",
                   chosen && isWrong && "border-amber-400 bg-amber-50 text-amber-800",
-                  !chosen && "border-slate-200 bg-white text-slate-900 hover:border-slate-300",
+                  !chosen && "border-craft-border bg-craft-surface text-craft-ink hover:border-craft-border",
                   revealed &&
                     index === question.answer_index &&
                     !chosen &&

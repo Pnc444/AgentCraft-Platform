@@ -98,4 +98,3 @@ GET    /api/v1/dashboard/stats/       profile stats + badges
 
 - AI Tutor chat (Anthropic API) — panel UI is in place, backend integration pending
 - Sandbox lessons (Docker-in-Docker practice environments)
-- Real badge unlocking driven by lesson completion

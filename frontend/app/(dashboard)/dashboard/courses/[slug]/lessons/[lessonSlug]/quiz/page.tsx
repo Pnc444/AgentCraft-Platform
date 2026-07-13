@@ -27,7 +27,7 @@ export default function LessonQuizPage() {
     <div className="space-y-4">
       <LessonSection
         title="Recap Quiz"
-        icon={<ClipboardCheck className="h-4 w-4 text-cyan-600" />}
+        icon={<ClipboardCheck className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />}
       >
         <RecapQuiz
           questions={checkpointQuestions}

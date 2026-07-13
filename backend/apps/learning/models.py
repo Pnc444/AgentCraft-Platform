@@ -2,6 +2,59 @@ from django.conf import settings
 from django.db import models
 
 
+class Badge(models.Model):
+    """Achievement definition shown on the student profile."""
+
+    class Criteria(models.TextChoices):
+        LESSONS_COMPLETED = "lessons_completed", "Lessons completed"
+        COURSE_COMPLETED = "course_completed", "Course completed"
+        PERFECT_QUIZ = "perfect_quiz", "Perfect quiz score"
+        PATH_COMPLETE = "path_complete", "Entire learning path complete"
+
+    slug = models.SlugField(unique=True, max_length=80)
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=255)
+    icon = models.CharField(
+        max_length=50,
+        help_text="Lucide icon key used by the frontend BadgeIcon map",
+    )
+    criteria_type = models.CharField(max_length=32, choices=Criteria.choices)
+    criteria_value = models.CharField(
+        max_length=120,
+        blank=True,
+        help_text="Threshold (e.g. '1') or course slug for course_completed",
+    )
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["order", "name"]
+
+    def __str__(self):
+        return self.name
+
+
+class UserBadge(models.Model):
+    """A badge unlocked by a specific student."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="badges"
+    )
+    badge = models.ForeignKey(Badge, on_delete=models.CASCADE, related_name="awards")
+    unlocked_at = models.DateTimeField(auto_now_add=True)
+    equipped = models.BooleanField(
+        default=False,
+        help_text="Shown as the student's profile accent badge",
+    )
+
+    class Meta:
+        unique_together = [["user", "badge"]]
+        ordering = ["-unlocked_at"]
+
+    def __str__(self):
+        return f"{self.user.username} · {self.badge.name}"
+
+
 class Progress(models.Model):
     """Tracks a student's progress through lessons."""
 

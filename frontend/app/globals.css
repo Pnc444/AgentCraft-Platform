@@ -3,26 +3,92 @@
 @tailwind utilities;
 
 :root {
+  color-scheme: light;
+
   --craft-canvas: #f8fafc;
   --craft-surface: #ffffff;
   --craft-card: #ffffff;
+  --craft-soft: #f1f5f9;
   --craft-border: #e2e8f0;
   --craft-ink: #0f172a;
   --craft-muted: #64748b;
+  --craft-faint: #94a3b8;
   --craft-accent: #06b6d4;
+  --craft-secondary: #0891b2;
+  --craft-accent-soft: #ecfeff;
   --craft-cyan: #22d3ee;
+  --craft-glow: #22d3ee;
+  --craft-navy: #0f172a;
+  --craft-navy-soft: #1e293b;
   --craft-success: #10b981;
   --craft-warning: #f59e0b;
-  --craft-navy: #0f172a;
+  --craft-hero: #0f172a;
+  --craft-inverse: #ffffff;
+  --craft-inverse-muted: #94a3b8;
+  --craft-grid: #e2e8f0;
+  --craft-ring: rgba(15, 23, 42, 0.03);
+
+  --shadow-soft: 0 2px 4px rgba(15, 23, 42, 0.04), 0 12px 28px rgba(15, 23, 42, 0.08);
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.05), 0 8px 20px rgba(15, 23, 42, 0.06),
+    0 20px 40px rgba(15, 23, 42, 0.05);
+  --shadow-elevated: 0 2px 4px rgba(15, 23, 42, 0.04), 0 12px 28px rgba(15, 23, 42, 0.08),
+    0 28px 56px rgba(15, 23, 42, 0.07);
+  --shadow-float: 0 4px 8px rgba(15, 23, 42, 0.05), 0 18px 40px rgba(15, 23, 42, 0.1),
+    0 40px 72px rgba(15, 23, 42, 0.08);
+  --shadow-btn: 0 1px 2px rgba(15, 23, 42, 0.1), 0 6px 16px rgba(6, 182, 212, 0.32);
+  --shadow-btn-hover: 0 2px 4px rgba(15, 23, 42, 0.12), 0 10px 24px rgba(6, 182, 212, 0.4);
+  --shadow-navy: 0 4px 12px rgba(15, 23, 42, 0.22), 0 18px 44px rgba(15, 23, 42, 0.2);
+  --shadow-header: 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 24px rgba(15, 23, 42, 0.18);
+}
+
+.dark {
+  color-scheme: dark;
+
+  /* Deep navy academy — cyan accents, not purple */
+  --craft-canvas: #0a101c;
+  --craft-surface: #111827;
+  --craft-card: #151d2e;
+  --craft-soft: #1a2336;
+  --craft-border: #2a3548;
+  --craft-ink: #f1f5f9;
+  --craft-muted: #94a3b8;
+  --craft-faint: #64748b;
+  --craft-accent: #22d3ee;
+  --craft-secondary: #06b6d4;
+  --craft-accent-soft: #0e2a35;
+  --craft-cyan: #67e8f9;
+  --craft-glow: #22d3ee;
+  --craft-navy: #060b16;
+  --craft-navy-soft: #0f172a;
+  --craft-success: #34d399;
+  --craft-warning: #fbbf24;
+  --craft-hero: #060b16;
+  --craft-inverse: #f8fafc;
+  --craft-inverse-muted: #94a3b8;
+  --craft-grid: #1e293b;
+  --craft-ring: rgba(255, 255, 255, 0.04);
+
+  --shadow-soft: 0 2px 4px rgba(0, 0, 0, 0.25), 0 12px 28px rgba(0, 0, 0, 0.35);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35),
+    0 20px 40px rgba(0, 0, 0, 0.25);
+  --shadow-elevated: 0 2px 4px rgba(0, 0, 0, 0.3), 0 14px 32px rgba(0, 0, 0, 0.4),
+    0 28px 56px rgba(0, 0, 0, 0.3);
+  --shadow-float: 0 4px 8px rgba(0, 0, 0, 0.35), 0 20px 44px rgba(0, 0, 0, 0.45),
+    0 40px 72px rgba(0, 0, 0, 0.35);
+  --shadow-btn: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 20px rgba(34, 211, 238, 0.28);
+  --shadow-btn-hover: 0 2px 4px rgba(0, 0, 0, 0.4), 0 12px 28px rgba(34, 211, 238, 0.38);
+  --shadow-navy: 0 4px 12px rgba(0, 0, 0, 0.45), 0 18px 44px rgba(0, 0, 0, 0.5);
+  --shadow-header: 0 1px 0 rgba(255, 255, 255, 0.04), 0 10px 28px rgba(0, 0, 0, 0.45);
 }
 
 body {
   @apply bg-craft-canvas font-sans text-craft-muted antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 .landing {
-  background-color: #f8fafc;
-  color: #64748b;
+  background-color: var(--craft-canvas);
+  color: var(--craft-muted);
 }
 
 .landing .btn-landing-primary {
@@ -30,11 +96,12 @@ body {
 }
 
 .landing .btn-landing-secondary {
-  @apply inline-flex items-center justify-center gap-2 rounded-full border border-slate-200/90 bg-white px-6 py-3 text-sm font-semibold text-slate-800 shadow-soft transition duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50 hover:shadow-card;
+  @apply inline-flex items-center justify-center gap-2 rounded-full border border-craft-border bg-craft-surface px-6 py-3 text-sm font-semibold text-craft-ink shadow-soft transition duration-300 hover:-translate-y-0.5 hover:border-craft-faint hover:bg-craft-soft hover:shadow-card;
 }
 
 .landing .landing-card {
-  @apply rounded-2xl border border-slate-200/80 bg-white shadow-elevated ring-1 ring-black/[0.03] transition duration-300 hover:shadow-float;
+  @apply rounded-2xl border border-craft-border bg-craft-card shadow-elevated transition duration-300 hover:shadow-float;
+  box-shadow: var(--shadow-elevated), 0 0 0 1px var(--craft-ring);
 }
 
 .academy-grid {
@@ -138,12 +205,87 @@ body {
   animation: continue-pulse 1.6s ease-in-out 1.2s infinite;
 }
 
+/* —— Scroll reveals —— */
+.reveal {
+  opacity: 0;
+  transition:
+    opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms),
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms),
+    filter 0.75s cubic-bezier(0.22, 1, 0.36, 1) var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal-up {
+  transform: translate3d(0, 22px, 0);
+}
+.reveal-down {
+  transform: translate3d(0, -18px, 0);
+}
+.reveal-left {
+  transform: translate3d(-28px, 0, 0);
+}
+.reveal-right {
+  transform: translate3d(28px, 0, 0);
+}
+.reveal-scale {
+  transform: scale(0.96) translate3d(0, 12px, 0);
+}
+.reveal-fade {
+  transform: none;
+  filter: blur(4px);
+}
+
+.reveal-in {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+.float-soft {
+  animation: float-soft 5.5s ease-in-out infinite;
+}
+
+@keyframes float-soft {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.card-interactive {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+}
+.card-interactive:hover {
+  transform: translateY(-3px);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hero-ring-progress,
   .hero-bar-fill,
   .hero-progress-item,
-  .hero-continue-arrow {
+  .hero-continue-arrow,
+  .float-soft {
     animation: none;
+  }
+
+  .reveal,
+  .reveal-up,
+  .reveal-down,
+  .reveal-left,
+  .reveal-right,
+  .reveal-scale,
+  .reveal-fade {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+
+  .card-interactive:hover {
+    transform: none;
   }
 
   .hero-ring-progress {
@@ -165,31 +307,37 @@ body {
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-slate-200/90 bg-white px-5 py-2.5 text-sm font-semibold text-slate-800 shadow-soft transition duration-300 hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50 hover:shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500 disabled:translate-y-0 disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-craft-border bg-craft-surface px-5 py-2.5 text-sm font-semibold text-craft-ink shadow-soft transition duration-300 hover:-translate-y-0.5 hover:border-craft-faint hover:bg-craft-soft hover:shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500 disabled:translate-y-0 disabled:opacity-50;
   }
 
   .card {
-    @apply rounded-2xl border border-slate-200/80 bg-white shadow-card ring-1 ring-black/[0.03] transition-[box-shadow,transform] duration-300;
+    @apply rounded-2xl border border-craft-border bg-craft-card shadow-card transition-[box-shadow,transform] duration-300;
+    box-shadow: var(--shadow-card), 0 0 0 1px var(--craft-ring);
   }
 
   .input-field {
-    @apply w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-slate-900 shadow-[inset_0_1px_2px_rgba(15,23,42,0.04)] placeholder:text-slate-400 transition focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20 focus:shadow-[inset_0_1px_2px_rgba(15,23,42,0.02)];
+    @apply w-full rounded-xl border border-craft-border bg-craft-surface px-4 py-2.5 text-craft-ink placeholder:text-craft-faint transition focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20;
+    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+  }
+
+  .dark .input-field {
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
   }
 
   .prose-lesson {
-    @apply text-[15px] leading-7 text-slate-600;
+    @apply text-[15px] leading-7 text-craft-muted;
   }
 
   .prose-lesson h1 {
-    @apply mb-4 text-2xl font-bold tracking-tight text-slate-900;
+    @apply mb-4 text-2xl font-bold tracking-tight text-craft-ink;
   }
 
   .prose-lesson h2 {
-    @apply mb-3 mt-8 text-xl font-bold text-slate-900;
+    @apply mb-3 mt-8 text-xl font-bold text-craft-ink;
   }
 
   .prose-lesson h3 {
-    @apply mb-2 mt-6 text-lg font-semibold text-slate-900;
+    @apply mb-2 mt-6 text-lg font-semibold text-craft-ink;
   }
 
   .prose-lesson p {
@@ -205,11 +353,11 @@ body {
   }
 
   .prose-lesson code {
-    @apply rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[13px] text-cyan-700;
+    @apply rounded-md bg-craft-soft px-1.5 py-0.5 font-mono text-[13px] text-cyan-700 dark:text-cyan-300;
   }
 
   .prose-lesson pre {
-    @apply mb-4 overflow-x-auto rounded-xl bg-slate-900 p-4 text-sm text-slate-100;
+    @apply mb-4 overflow-x-auto rounded-xl bg-craft-navy p-4 text-sm text-slate-100;
   }
 
   .prose-lesson pre code {
@@ -217,6 +365,6 @@ body {
   }
 
   .prose-lesson a {
-    @apply font-medium text-cyan-600 underline-offset-2 hover:underline;
+    @apply font-medium text-cyan-600 underline-offset-2 hover:underline dark:text-cyan-400;
   }
 }

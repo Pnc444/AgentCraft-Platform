@@ -13,11 +13,11 @@ export function AcademyBackdrop({ className, subtle = false }: AcademyBackdropPr
       <div
         className={clsx(
           "absolute inset-[-48px] academy-grid",
-          subtle ? "opacity-[0.35]" : "opacity-[0.45]"
+          subtle ? "opacity-[0.35] dark:opacity-[0.22]" : "opacity-[0.45] dark:opacity-[0.28]"
         )}
         style={{
           backgroundImage:
-            "linear-gradient(to right, #e2e8f0 1px, transparent 1px), linear-gradient(to bottom, #e2e8f0 1px, transparent 1px)",
+            "linear-gradient(to right, var(--craft-grid) 1px, transparent 1px), linear-gradient(to bottom, var(--craft-grid) 1px, transparent 1px)",
           backgroundSize: "48px 48px",
           maskImage: subtle
             ? "radial-gradient(ellipse at 50% 0%, black 10%, transparent 70%)"
@@ -29,7 +29,8 @@ export function AcademyBackdrop({ className, subtle = false }: AcademyBackdropPr
       />
       <div
         className={clsx(
-          "academy-glow absolute rounded-full bg-cyan-200/40 blur-3xl",
+          "academy-glow absolute rounded-full blur-3xl",
+          "bg-cyan-200/40 dark:bg-cyan-400/15",
           subtle
             ? "right-[-4rem] top-0 h-[22rem] w-[22rem]"
             : "right-0 top-24 h-[28rem] w-[28rem]"

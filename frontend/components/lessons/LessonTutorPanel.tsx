@@ -181,7 +181,7 @@ export function LessonTutor({
         <div
           role="dialog"
           aria-label="AI tutor"
-          className="fixed z-[70] flex flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-float ring-1 ring-black/[0.04]"
+          className="fixed z-[70] flex flex-col overflow-hidden rounded-2xl border border-craft-border bg-craft-surface shadow-float ring-1 ring-craft-border/40"
           style={{
             left: panelLeft,
             top: panelTop,
@@ -191,20 +191,20 @@ export function LessonTutor({
             maxHeight: `calc(100dvh - ${MARGIN * 2}px)`,
           }}
         >
-          <div className="flex shrink-0 items-start gap-3 border-b border-slate-200 bg-[#0F172A] px-4 py-3 text-white">
+          <div className="flex shrink-0 items-start gap-3 border-b border-craft-border bg-craft-navy px-4 py-3 text-white">
             <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-cyan-500/20 text-cyan-300">
               <Bot className="h-4 w-4" />
             </span>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold">AI tutor</p>
-              <p className="truncate text-xs text-slate-400">
+              <p className="truncate text-xs text-craft-faint">
                 {courseTitle} · {lessonTitle}
               </p>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="rounded-lg p-1.5 text-slate-400 transition hover:bg-white/10 hover:text-white"
+              className="rounded-lg p-1.5 text-craft-faint transition hover:bg-white/10 hover:text-white"
               aria-label="Close"
             >
               <X className="h-4 w-4" />
@@ -219,7 +219,7 @@ export function LessonTutor({
                   "max-w-[90%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
                   msg.role === "user"
                     ? "ml-auto bg-cyan-500 text-white"
-                    : "bg-slate-100 text-slate-700"
+                    : "bg-craft-soft text-craft-ink"
                 )}
               >
                 {msg.text}
@@ -227,7 +227,7 @@ export function LessonTutor({
             ))}
           </div>
 
-          <form onSubmit={handleSubmit} className="shrink-0 border-t border-slate-200 p-3">
+          <form onSubmit={handleSubmit} className="shrink-0 border-t border-craft-border p-3">
             <div className="flex items-end gap-2">
               <textarea
                 value={draft}
@@ -245,7 +245,7 @@ export function LessonTutor({
                 <Send className="h-4 w-4" />
               </button>
             </div>
-            <p className="mt-2 text-[11px] text-slate-400">
+            <p className="mt-2 text-[11px] text-craft-faint">
               Tutor replies will use this lesson once Anthropic is connected.
             </p>
           </form>
@@ -257,9 +257,14 @@ export function LessonTutor({
         onPointerDown={startDrag}
         onClick={handleFabClick}
         className={clsx(
-          "fixed z-[80] flex h-14 w-14 touch-none items-center justify-center rounded-full bg-[#0F172A] text-cyan-300 shadow-navy transition duration-200",
-          "hover:bg-slate-800 hover:shadow-float focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500",
-          open && "ring-2 ring-cyan-400/50"
+          "fixed z-[80] flex h-14 w-14 touch-none items-center justify-center rounded-full transition duration-200",
+          "bg-craft-navy text-cyan-300 shadow-navy",
+          "ring-2 ring-cyan-400/70 ring-offset-2 ring-offset-craft-canvas",
+          "hover:bg-craft-navy-soft hover:shadow-float hover:ring-cyan-300",
+          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500",
+          "dark:bg-craft-card dark:ring-cyan-400 dark:ring-offset-craft-canvas dark:shadow-[0_0_0_1px_rgba(34,211,238,0.35),0_8px_24px_rgba(0,0,0,0.55)]",
+          "dark:hover:bg-craft-soft dark:hover:ring-cyan-300",
+          open && "ring-cyan-300 dark:ring-cyan-200"
         )}
         style={{
           left: pos.x,

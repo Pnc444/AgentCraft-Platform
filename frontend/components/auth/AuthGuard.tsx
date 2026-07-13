@@ -36,7 +36,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   if (!hasToken) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="animate-pulse text-slate-400">Loading…</p>
+        <p className="animate-pulse text-craft-faint">Loading…</p>
       </div>
     );
   }

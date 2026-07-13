@@ -5,6 +5,7 @@ import { BookOpen, ChevronLeft, ChevronRight, FileText, Wrench } from "lucide-re
 import { LessonContent } from "@/components/lessons/LessonContent";
 import { LessonSection } from "@/components/lessons/LessonSection";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
+import { Reveal } from "@/components/shared/Reveal";
 import { lessonStepHref, stepAfterContent } from "@/lib/lesson-steps";
 
 export default function LessonContentPage() {
@@ -18,13 +19,13 @@ export default function LessonContentPage() {
   return (
     <div className="space-y-4">
       {lesson.content ? (
-        <LessonSection title="Lesson Content" icon={<BookOpen className="h-4 w-4 text-cyan-600" />}>
+        <LessonSection title="Lesson Content" icon={<BookOpen className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />}>
           <LessonContent content={lesson.content} />
         </LessonSection>
       ) : (
         <LessonSection
           title="Lesson Content"
-          icon={<FileText className="h-4 w-4 text-cyan-600" />}
+          icon={<FileText className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />}
           empty
         />
       )}
@@ -32,9 +33,9 @@ export default function LessonContentPage() {
       {lesson.lesson_type === "sandbox" && (
         <LessonSection
           title="Interactive Demo"
-          icon={<Wrench className="h-4 w-4 text-cyan-600" />}
+          icon={<Wrench className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />}
         >
-          <p className="text-sm text-slate-500">Sandbox</p>
+          <p className="text-sm text-craft-muted">Sandbox</p>
           <button
             type="button"
             onClick={() =>
@@ -48,20 +49,22 @@ export default function LessonContentPage() {
         </LessonSection>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-        {prev ? (
-          <Link href={lessonStepHref(slug, prev.slug, "content")} className="btn-secondary">
-            <ChevronLeft className="h-4 w-4" />
-            {prev.title}
+      <Reveal delay={80}>
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+          {prev ? (
+            <Link href={lessonStepHref(slug, prev.slug, "content")} className="btn-secondary">
+              <ChevronLeft className="h-4 w-4" />
+              {prev.title}
+            </Link>
+          ) : (
+            <span />
+          )}
+          <Link href={lessonStepHref(slug, lessonSlug, nextStep)} className="btn-primary">
+            {nextLabel}
+            <ChevronRight className="h-4 w-4" />
           </Link>
-        ) : (
-          <span />
-        )}
-        <Link href={lessonStepHref(slug, lessonSlug, nextStep)} className="btn-primary">
-          {nextLabel}
-          <ChevronRight className="h-4 w-4" />
-        </Link>
-      </div>
+        </div>
+      </Reveal>
     </div>
   );
 }

@@ -14,7 +14,7 @@ export function ProgressBar({ value, className, barClassName }: ProgressBarProps
   return (
     <div
       className={clsx(
-        "h-1.5 overflow-hidden rounded-full border border-slate-300 bg-slate-50 shadow-[inset_0_1px_3px_rgba(15,23,42,0.12),inset_0_0_0_1px_rgba(148,163,184,0.35)]",
+        "h-1.5 overflow-hidden rounded-full border border-craft-border bg-craft-soft shadow-[inset_0_1px_3px_rgba(15,23,42,0.12)] dark:shadow-[inset_0_1px_3px_rgba(0,0,0,0.45)]",
         className
       )}
       role="progressbar"

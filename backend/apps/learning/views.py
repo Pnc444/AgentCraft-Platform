@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 
 from apps.courses.models import Lesson
 
-from .badges import PLACEHOLDER_BADGES
+from .badges import badges_for_user, evaluate_badges_for_user
 from .models import Progress, Recommendation
 from .serializers import ProgressSerializer, ProgressUpdateSerializer, RecommendationSerializer
 
@@ -53,6 +53,9 @@ class LessonProgressView(APIView):
             progress.completed_at = None
         progress.save()
 
+        if progress.status == Progress.Status.COMPLETED:
+            evaluate_badges_for_user(request.user)
+
         return Response(ProgressSerializer(progress).data)
 
 
@@ -83,7 +86,7 @@ class DashboardStatsView(APIView):
         overall_progress_pct = (
             round(lessons_completed / total_lessons * 100) if total_lessons else 0
         )
-        badges = PLACEHOLDER_BADGES
+        badges = badges_for_user(user)
         return Response(
             {
                 "lessons_completed": lessons_completed,
