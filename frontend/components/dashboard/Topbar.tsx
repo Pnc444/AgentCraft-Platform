@@ -16,7 +16,7 @@ export function Topbar({ onOpenSidebar }: TopbarProps) {
   const pathname = usePathname();
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-4 border-b border-slate-200 bg-white px-6">
+    <header className="relative z-20 flex h-16 shrink-0 items-center gap-4 border-b border-slate-200/80 bg-white/95 shadow-soft backdrop-blur-sm px-6">
       <button
         type="button"
         onClick={onOpenSidebar}
@@ -31,10 +31,10 @@ export function Topbar({ onOpenSidebar }: TopbarProps) {
       <Link
         href="/dashboard/profile"
         className={clsx(
-          "flex items-center gap-2 rounded-full border px-2 py-1.5 pr-3 text-sm font-medium transition",
+          "flex items-center gap-2 rounded-full border px-2 py-1.5 pr-3 text-sm font-medium shadow-soft transition duration-300 hover:shadow-card",
           pathname === "/dashboard/profile"
             ? "border-cyan-300 bg-cyan-50 text-cyan-800"
-            : "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-900"
+            : "border-slate-200/90 text-slate-600 hover:border-slate-300 hover:text-slate-900"
         )}
         title="View your profile"
       >

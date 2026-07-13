@@ -147,7 +147,7 @@ export function LessonVideo({
 
   return (
     <div className="space-y-2">
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-black shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-slate-200/80 bg-black shadow-elevated ring-1 ring-black/20">
         <div className="relative aspect-video w-full">
           {watched ? (
             <iframe

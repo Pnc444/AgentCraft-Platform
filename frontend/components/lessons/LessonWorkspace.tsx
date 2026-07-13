@@ -1,0 +1,220 @@
+"use client";
+
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+import { useParams } from "next/navigation";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getCourse, getLesson, updateLessonProgress } from "@/lib/api/courses";
+import {
+  invalidateLearningProgress,
+  patchLessonStatusInCache,
+} from "@/lib/learning-progress";
+import { getCheckpointQuestions } from "@/lib/lesson-steps";
+import type { CourseDetail, LessonDetail, LessonStatus } from "@/types";
+import { LessonTutor } from "@/components/lessons/LessonTutorPanel";
+
+type ProgressPayload = {
+  status?: LessonStatus;
+  score?: number;
+  video_watched?: boolean;
+};
+
+type LessonWorkspaceValue = {
+  slug: string;
+  lessonSlug: string;
+  lesson: LessonDetail | undefined;
+  course: CourseDetail | undefined;
+  isLoading: boolean;
+  notice: string | null;
+  setNotice: (value: string | null) => void;
+  checkpointQuestions: ReturnType<typeof getCheckpointQuestions>;
+  videoUrl: string;
+  needsVideo: boolean;
+  videoDone: boolean;
+  prev: { slug: string; title: string } | null;
+  next: { slug: string; title: string } | null;
+  progressPending: boolean;
+  updateProgress: (data: ProgressPayload) => void;
+  markVideoWatched: () => void;
+  openTutor: () => void;
+};
+
+const LessonWorkspaceContext = createContext<LessonWorkspaceValue | null>(null);
+
+export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
+  const { slug, lessonSlug } = useParams<{ slug: string; lessonSlug: string }>();
+  const queryClient = useQueryClient();
+  const [tutorOpen, setTutorOpen] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+  const autoStartedId = useRef<number | null>(null);
+
+  const { data: lesson, isLoading } = useQuery({
+    queryKey: ["lesson", slug, lessonSlug],
+    queryFn: () => getLesson(slug, lessonSlug),
+    enabled: !!slug && !!lessonSlug,
+  });
+
+  const cachedCourse = slug ? queryClient.getQueryData<CourseDetail>(["course", slug]) : undefined;
+  const { data: course } = useQuery({
+    queryKey: ["course", slug],
+    queryFn: () => getCourse(slug),
+    enabled: !!slug,
+    initialData: cachedCourse,
+    initialDataUpdatedAt: cachedCourse
+      ? queryClient.getQueryState(["course", slug])?.dataUpdatedAt
+      : undefined,
+  });
+
+  const progressMutation = useMutation({
+    mutationFn: (data: ProgressPayload) => updateLessonProgress(lesson!.id, data),
+    onMutate: async (data) => {
+      if (!slug || !lessonSlug || !data.status) return;
+      await queryClient.cancelQueries({ queryKey: ["courses"] });
+      await queryClient.cancelQueries({ queryKey: ["course", slug] });
+      await queryClient.cancelQueries({ queryKey: ["lesson", slug, lessonSlug] });
+      patchLessonStatusInCache(queryClient, slug, lessonSlug, data.status);
+    },
+    onSuccess: (result, variables) => {
+      if (!slug || !lessonSlug) return;
+      queryClient.setQueryData(["lesson", slug, lessonSlug], (old: LessonDetail | undefined) => {
+        if (!old) return old;
+        return {
+          ...old,
+          status: result.status,
+          score: result.score,
+          video_watched: result.video_watched,
+        };
+      });
+      if (variables.status) {
+        patchLessonStatusInCache(queryClient, slug, lessonSlug, result.status);
+      }
+    },
+    onSettled: (_data, _error, variables) => {
+      if (
+        variables?.status === "in_progress" ||
+        (variables?.video_watched === true && !variables?.status)
+      ) {
+        return;
+      }
+      invalidateLearningProgress(queryClient, {
+        courseSlug: slug,
+        lessonSlug,
+        light: true,
+      });
+    },
+  });
+
+  useEffect(() => {
+    if (!lesson || lesson.status !== "not_started") return;
+    if (autoStartedId.current === lesson.id) return;
+    autoStartedId.current = lesson.id;
+    progressMutation.mutate({ status: "in_progress" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lesson?.id, lesson?.status]);
+
+  const markStuck = useCallback(() => {
+    if (!lesson) return;
+    if (lesson.status === "completed" || lesson.status === "stuck") return;
+    progressMutation.mutate({ status: "stuck" });
+  }, [lesson, progressMutation]);
+
+  const openTutor = useCallback(() => {
+    setTutorOpen(true);
+    markStuck();
+  }, [markStuck]);
+
+  const updateProgress = useCallback(
+    (data: ProgressPayload) => {
+      progressMutation.mutate(data);
+    },
+    [progressMutation]
+  );
+
+  const markVideoWatched = useCallback(() => {
+    if (!lesson || lesson.video_watched) return;
+    progressMutation.mutate({ video_watched: true });
+    setNotice(null);
+  }, [lesson, progressMutation]);
+
+  const lessons = course?.lessons ?? [];
+  const idx = lesson ? lessons.findIndex((l) => l.slug === lesson.slug) : -1;
+  const prev = idx > 0 ? lessons[idx - 1] : null;
+  const next = idx >= 0 && idx < lessons.length - 1 ? lessons[idx + 1] : null;
+
+  const videoUrl = (lesson?.video_url || "").trim();
+  // Admin toggle: require_full_watch locks the quiz until the video ends.
+  const needsVideo = !!videoUrl && (lesson?.require_full_watch ?? true);
+  const videoDone = !!lesson && (lesson.video_watched || !needsVideo);
+  const checkpointQuestions = getCheckpointQuestions(lesson?.sandbox_config ?? {});
+
+  const value = useMemo<LessonWorkspaceValue>(
+    () => ({
+      slug,
+      lessonSlug,
+      lesson,
+      course,
+      isLoading,
+      notice,
+      setNotice,
+      checkpointQuestions,
+      videoUrl,
+      needsVideo,
+      videoDone,
+      prev: prev ? { slug: prev.slug, title: prev.title } : null,
+      next: next ? { slug: next.slug, title: next.title } : null,
+      progressPending: progressMutation.isPending,
+      updateProgress,
+      markVideoWatched,
+      openTutor,
+    }),
+    [
+      slug,
+      lessonSlug,
+      lesson,
+      course,
+      isLoading,
+      notice,
+      checkpointQuestions,
+      videoUrl,
+      needsVideo,
+      videoDone,
+      prev,
+      next,
+      progressMutation.isPending,
+      updateProgress,
+      markVideoWatched,
+      openTutor,
+    ]
+  );
+
+  return (
+    <LessonWorkspaceContext.Provider value={value}>
+      {children}
+      {lesson && (
+        <LessonTutor
+          open={tutorOpen}
+          onOpen={openTutor}
+          onClose={() => setTutorOpen(false)}
+          lessonTitle={lesson.title}
+          courseTitle={lesson.course_title}
+        />
+      )}
+    </LessonWorkspaceContext.Provider>
+  );
+}
+
+export function useLessonWorkspace() {
+  const ctx = useContext(LessonWorkspaceContext);
+  if (!ctx) {
+    throw new Error("useLessonWorkspace must be used within LessonWorkspaceProvider");
+  }
+  return ctx;
+}

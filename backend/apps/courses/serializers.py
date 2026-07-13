@@ -40,6 +40,7 @@ class LessonDetailSerializer(LessonListSerializer):
         fields = LessonListSerializer.Meta.fields + [
             "content",
             "video_url",
+            "require_full_watch",
             "video_watched",
             "score",
             "sandbox_config",

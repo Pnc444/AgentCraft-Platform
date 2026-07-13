@@ -2,22 +2,31 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Check, CircleDashed, FileText } from "lucide-react";
 import clsx from "clsx";
 import { getCourse } from "@/lib/api/courses";
+import type { CourseDetail } from "@/types";
 import { DifficultyBadge } from "@/components/dashboard/DifficultyBadge";
 import { ProgressBar } from "@/components/shared/ProgressBar";
 
 export default function CourseDetailPage() {
   const { slug } = useParams<{ slug: string }>();
+  const queryClient = useQueryClient();
+  const cached = slug
+    ? queryClient.getQueryData<CourseDetail>(["course", slug])
+    : undefined;
   const { data: course, isLoading } = useQuery({
     queryKey: ["course", slug],
     queryFn: () => getCourse(slug),
     enabled: !!slug,
+    initialData: cached,
+    initialDataUpdatedAt: cached
+      ? queryClient.getQueryState(["course", slug])?.dataUpdatedAt
+      : undefined,
   });
 
-  if (isLoading) return <p className="animate-pulse text-slate-400">Loading course…</p>;
+  if (isLoading && !course) return <p className="animate-pulse text-slate-400">Loading course…</p>;
   if (!course) return <p className="text-slate-500">Course not found.</p>;
 
   return (
@@ -64,7 +73,7 @@ export default function CourseDetailPage() {
             <div
               key={lesson.id}
               className={clsx(
-                "card flex items-center gap-4 p-4 transition hover:shadow-soft",
+                "card flex items-center gap-4 p-4 transition duration-300 hover:-translate-y-0.5 hover:shadow-elevated",
                 completed && "border-emerald-200 bg-emerald-50/50"
               )}
             >
@@ -93,7 +102,7 @@ export default function CourseDetailPage() {
                 </p>
               </div>
               <Link
-                href={`/dashboard/courses/${course.slug}/lessons/${lesson.slug}`}
+                href={`/dashboard/courses/${course.slug}/lessons/${lesson.slug}/content`}
                 className="btn-secondary shrink-0 px-4 py-2"
               >
                 {cta}

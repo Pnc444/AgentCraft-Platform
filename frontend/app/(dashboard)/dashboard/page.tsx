@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowRight, BookOpen, CheckCircle2, ChevronDown, Clock, Inbox } from "lucide-react";
-import { getCourse, getCourses, getDashboardStats } from "@/lib/api/courses";
+import { getCourses, getDashboardStats } from "@/lib/api/courses";
 import { deriveLearningPath, lessonHref } from "@/lib/learning-path";
 import { useAuthStore } from "@/stores/authStore";
 import { DifficultyBadge } from "@/components/dashboard/DifficultyBadge";
@@ -12,24 +12,22 @@ import { ProgressBar } from "@/components/shared/ProgressBar";
 
 export default function StudentDashboardPage() {
   const user = useAuthStore((s) => s.user);
+  const queryClient = useQueryClient();
   const [pathOpen, setPathOpen] = useState(false);
-  const { data: courses, isLoading } = useQuery({ queryKey: ["courses"], queryFn: getCourses });
+  const { data: courses, isLoading } = useQuery({
+    queryKey: ["courses"],
+    queryFn: async () => {
+      const list = await getCourses();
+      for (const course of list) {
+        queryClient.setQueryData(["course", course.slug], course);
+      }
+      return list;
+    },
+  });
   const { data: stats } = useQuery({ queryKey: ["dashboard-stats"], queryFn: getDashboardStats });
 
-  const detailQueries = useQueries({
-    queries: (courses ?? []).map((course) => ({
-      queryKey: ["course", course.slug],
-      queryFn: () => getCourse(course.slug),
-      enabled: !!courses?.length,
-    })),
-  });
-
-  const details = detailQueries
-    .map((q) => q.data)
-    .filter((d): d is NonNullable<typeof d> => !!d);
-
-  const path = courses ? deriveLearningPath(courses, details) : null;
-  const detailsReady = !!courses && detailQueries.every((q) => q.isSuccess || q.isError);
+  const path = courses ? deriveLearningPath(courses, courses) : null;
+  const detailsReady = !!courses;
 
   return (
     <div className="mx-auto max-w-5xl animate-fade-up">
@@ -68,7 +66,7 @@ export default function StudentDashboardPage() {
           )}
         </div>
 
-        <div className="rounded-2xl bg-[#0F172A] p-6 text-white shadow-card">
+        <div className="rounded-2xl bg-[#0F172A] p-6 text-white shadow-navy ring-1 ring-white/10">
           <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
             Overall progress
           </p>
@@ -200,7 +198,7 @@ export default function StudentDashboardPage() {
               {courses?.map((course) => (
                 <div
                   key={course.slug}
-                  className="card flex flex-col gap-4 p-5 transition hover:shadow-soft sm:flex-row sm:items-center"
+                  className="card flex flex-col gap-4 p-5 transition duration-300 hover:-translate-y-0.5 hover:shadow-elevated sm:flex-row sm:items-center"
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-3">

@@ -62,8 +62,8 @@ export function Hero() {
 
         {/* Product preview card — matches mock composition */}
         <div className="animate-fade-up [animation-delay:100ms]">
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg shadow-slate-200/60">
-            <div className="border-b border-slate-100 px-5 py-4">
+          <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-float ring-1 ring-black/[0.04]">
+            <div className="border-b border-slate-100/90 bg-gradient-to-b from-white to-slate-50/80 px-5 py-4">
               <p className="font-serif text-sm italic text-slate-500">
                 Build. Test. Improve. Ship real agents.
               </p>
@@ -71,7 +71,7 @@ export function Hero() {
             <div className="grid grid-cols-5 gap-2 px-4 py-5 sm:gap-3 sm:px-5">
               {WORKFLOW.map(({ label, icon: Icon, blurb }) => (
                 <div key={label} className="text-center">
-                  <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-50 text-cyan-700">
+                  <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-50 text-cyan-700 shadow-soft ring-1 ring-cyan-100/80">
                     <Icon className="h-4 w-4" />
                   </span>
                   <p className="mt-2 text-[11px] font-semibold text-slate-800 sm:text-xs">{label}</p>
@@ -80,12 +80,12 @@ export function Hero() {
               ))}
             </div>
 
-            <div className="bg-[#0F172A] px-5 py-5 text-white">
+            <div className="bg-[#0F172A] px-5 py-5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                 Your Progress
               </p>
               <div className="mt-4 flex flex-wrap items-center gap-6">
-                <div className="hero-progress-item relative flex h-20 w-20 shrink-0 items-center justify-center">
+                <div className="hero-progress-item relative flex h-20 w-20 shrink-0 items-center justify-center drop-shadow-[0_8px_16px_rgba(34,211,238,0.18)]">
                   <svg className="h-20 w-20 -rotate-90" viewBox="0 0 36 36" aria-hidden>
                     <circle
                       cx="18"

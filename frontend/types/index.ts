@@ -34,6 +34,7 @@ export interface LessonSummary {
 export interface LessonDetail extends LessonSummary {
   content: string;
   video_url: string;
+  require_full_watch: boolean;
   video_watched: boolean;
   score: number | null;
   sandbox_config: Record<string, unknown>;

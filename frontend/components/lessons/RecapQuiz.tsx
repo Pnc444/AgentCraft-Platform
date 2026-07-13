@@ -91,7 +91,7 @@ export function RecapQuiz({
       {bank.map((question, qi) => {
         const selected = answers[question.id];
         return (
-          <div key={question.id} className="space-y-2 rounded-xl border border-slate-100 p-4">
+          <div key={question.id} className="space-y-2 rounded-xl border border-slate-200/80 bg-white p-4 shadow-soft ring-1 ring-black/[0.02]">
             <p className="text-sm font-medium text-slate-900">
               <span className="mr-2 text-slate-400">{qi + 1}.</span>
               {question.prompt}

@@ -2,7 +2,7 @@ import { LogoIcon } from "@/components/shared/Logo";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-slate-200 bg-white py-10">
+    <footer className="border-t border-slate-200/80 bg-white py-10 shadow-[0_-8px_24px_rgba(15,23,42,0.03)]">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 text-sm text-slate-500">
         <p className="flex items-center gap-2">
           <LogoIcon className="h-5 w-5" />

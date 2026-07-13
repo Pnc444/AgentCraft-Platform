@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   BookOpen,
   Check,
@@ -16,12 +16,50 @@ import {
   PanelLeftOpen,
 } from "lucide-react";
 import clsx from "clsx";
-import { getCourse, getCourses, getDashboardStats } from "@/lib/api/courses";
+import { getCourse, getCourses, getLesson } from "@/lib/api/courses";
 import { useAuthStore } from "@/stores/authStore";
 import { Logo, LogoIcon } from "@/components/shared/Logo";
 import { ProgressBar } from "@/components/shared/ProgressBar";
+import type { CourseDetail, Skill } from "@/types";
 
 const COLLAPSED_KEY = "agentcraft-sidebar-collapsed";
+
+interface LearningPath {
+  skill: Skill;
+  courses: CourseDetail[];
+  completed: number;
+  total: number;
+  progressPct: number;
+}
+
+/** Group published courses into skill-based learning paths for the sidebar tree. */
+function groupCoursesBySkill(courses: CourseDetail[]): LearningPath[] {
+  const bySkill = new Map<string, LearningPath>();
+  for (const course of courses) {
+    const key = course.skill.slug;
+    let path = bySkill.get(key);
+    if (!path) {
+      path = {
+        skill: course.skill,
+        courses: [],
+        completed: 0,
+        total: 0,
+        progressPct: 0,
+      };
+      bySkill.set(key, path);
+    }
+    path.courses.push(course);
+    path.completed += course.completed_lessons;
+    path.total += course.total_lessons;
+  }
+  return Array.from(bySkill.values())
+    .map((path) => ({
+      ...path,
+      courses: [...path.courses].sort((a, b) => a.order - b.order || a.title.localeCompare(b.title)),
+      progressPct: path.total ? Math.round((path.completed / path.total) * 100) : 0,
+    }))
+    .sort((a, b) => a.skill.order - b.skill.order || a.skill.name.localeCompare(b.skill.name));
+}
 
 interface SidebarProps {
   mobileOpen: boolean;
@@ -33,20 +71,39 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
   const router = useRouter();
   const logout = useAuthStore((s) => s.logout);
 
+  const queryClient = useQueryClient();
   const [collapsed, setCollapsed] = useState(false);
   const [lessonsOpen, setLessonsOpen] = useState(pathname.includes("/courses/"));
-  const [pathOpen, setPathOpen] = useState(pathname.includes("/courses/"));
+  const [openPaths, setOpenPaths] = useState<Record<string, boolean>>({});
+
+  const { data: courses } = useQuery({
+    queryKey: ["courses"],
+    queryFn: async () => {
+      const list = await getCourses();
+      for (const course of list) {
+        queryClient.setQueryData(["course", course.slug], course);
+      }
+      return list;
+    },
+  });
+  const learningPaths = useMemo(
+    () => (courses?.length ? groupCoursesBySkill(courses) : []),
+    [courses]
+  );
 
   useEffect(() => {
     setCollapsed(localStorage.getItem(COLLAPSED_KEY) === "1");
   }, []);
 
   useEffect(() => {
-    if (pathname.includes("/courses/")) {
-      setLessonsOpen(true);
-      setPathOpen(true);
+    if (!pathname.includes("/courses/") || !learningPaths.length) return;
+    setLessonsOpen(true);
+    const activeSlug = pathname.split("/")[3];
+    const activePath = learningPaths.find((p) => p.courses.some((c) => c.slug === activeSlug));
+    if (activePath) {
+      setOpenPaths((prev) => ({ ...prev, [activePath.skill.slug]: true }));
     }
-  }, [pathname]);
+  }, [pathname, learningPaths]);
 
   function toggleCollapsed() {
     setCollapsed((prev) => {
@@ -55,12 +112,9 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
     });
   }
 
-  const { data: courses } = useQuery({ queryKey: ["courses"], queryFn: getCourses });
-  const { data: stats } = useQuery({ queryKey: ["dashboard-stats"], queryFn: getDashboardStats });
-
-  const pathTitle = "Create an AI Agent";
-  const pathCompleted = courses?.reduce((sum, c) => sum + c.completed_lessons, 0) ?? 0;
-  const pathTotal = courses?.reduce((sum, c) => sum + c.total_lessons, 0) ?? 0;
+  function togglePath(slug: string) {
+    setOpenPaths((prev) => ({ ...prev, [slug]: !prev[slug] }));
+  }
 
   function handleLogout() {
     logout();
@@ -72,14 +126,14 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition",
       collapsed && "justify-center px-0",
       active
-        ? "bg-cyan-50 text-cyan-800"
+        ? "bg-cyan-50 text-cyan-800 shadow-soft ring-1 ring-cyan-100/80"
         : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
     );
 
   return (
     <aside
       className={clsx(
-        "fixed inset-y-0 left-0 z-40 flex flex-col border-r border-slate-200 bg-white transition-all lg:static lg:translate-x-0",
+        "fixed inset-y-0 left-0 z-40 flex flex-col border-r border-slate-200/80 bg-white shadow-soft transition-all lg:static lg:translate-x-0 lg:shadow-[4px_0_24px_rgba(15,23,42,0.04)]",
         collapsed ? "w-16" : "w-72",
         mobileOpen ? "translate-x-0" : "-translate-x-full"
       )}
@@ -143,7 +197,9 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
             if (collapsed) {
               toggleCollapsed();
               setLessonsOpen(true);
-              setPathOpen(true);
+              if (learningPaths[0]) {
+                setOpenPaths((prev) => ({ ...prev, [learningPaths[0].skill.slug]: true }));
+              }
             } else {
               setLessonsOpen((v) => !v);
             }
@@ -167,66 +223,61 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         </button>
 
         {!collapsed && lessonsOpen && (
-          <div className="ml-2 space-y-1 border-l border-slate-200 pl-2">
-            <div>
-              <button
-                type="button"
-                onClick={() => setPathOpen((v) => !v)}
-                className={clsx(
-                  "flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium transition",
-                  pathOpen || pathname.includes("/courses/")
-                    ? "text-slate-900"
-                    : "text-slate-500 hover:text-slate-900"
-                )}
-                aria-expanded={pathOpen}
-              >
-                <ChevronRight
-                  className={clsx(
-                    "h-3.5 w-3.5 shrink-0 transition-transform",
-                    pathOpen && "rotate-90"
-                  )}
-                />
-                <span className="min-w-0 flex-1 truncate text-left">{pathTitle}</span>
-                <span className="text-xs tabular-nums text-slate-400">
-                  {pathCompleted}/{pathTotal}
-                </span>
-              </button>
-
-              {pathOpen && (
-                <div className="ml-3 space-y-1 border-l border-slate-200 pl-2">
-                  {courses?.map((course) => (
-                    <CourseTreeItem
-                      key={course.slug}
-                      course={course}
-                      onNavigate={onMobileClose}
+          <div className="ml-2 space-y-2 border-l border-slate-200 pl-2">
+            {learningPaths.map((path) => {
+              const isOpen = !!openPaths[path.skill.slug];
+              const pathActive = path.courses.some((c) => pathname.includes(`/courses/${c.slug}`));
+              return (
+                <div key={path.skill.slug} className="space-y-1.5">
+                  <button
+                    type="button"
+                    onClick={() => togglePath(path.skill.slug)}
+                    className={clsx(
+                      "flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium transition",
+                      isOpen || pathActive
+                        ? "text-slate-900"
+                        : "text-slate-500 hover:text-slate-900"
+                    )}
+                    aria-expanded={isOpen}
+                  >
+                    <ChevronRight
+                      className={clsx(
+                        "h-3.5 w-3.5 shrink-0 transition-transform",
+                        isOpen && "rotate-90"
+                      )}
                     />
-                  ))}
-                  {courses?.length === 0 && (
-                    <p className="px-2 py-2 text-sm text-slate-400">No modules yet.</p>
+                    <span className="min-w-0 flex-1 truncate text-left">{path.skill.name}</span>
+                  </button>
+
+                  <PathProgressCard
+                    completed={path.completed}
+                    total={path.total}
+                    progressPct={path.progressPct}
+                  />
+
+                  {isOpen && (
+                    <div className="ml-3 space-y-1 border-l border-slate-200 pl-2">
+                      {path.courses.map((course) => (
+                        <CourseTreeItem
+                          key={course.slug}
+                          course={course}
+                          onNavigate={onMobileClose}
+                        />
+                      ))}
+                      {path.courses.length === 0 && (
+                        <p className="px-2 py-2 text-sm text-slate-400">No modules yet.</p>
+                      )}
+                    </div>
                   )}
                 </div>
-              )}
-            </div>
+              );
+            })}
+            {learningPaths.length === 0 && (
+              <p className="px-2 py-2 text-sm text-slate-400">No learning paths yet.</p>
+            )}
           </div>
         )}
       </nav>
-
-      {!collapsed && (
-        <div className="mx-3 mb-3 rounded-2xl bg-[#0F172A] px-4 py-4 text-white">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-            Overall progress
-          </p>
-          <ProgressBar
-            className="mt-3 border-slate-500 bg-slate-800 shadow-none"
-            value={stats?.overall_progress_pct ?? 0}
-          />
-          <p className="mt-2 text-xs text-slate-400">
-            {stats
-              ? `${stats.lessons_completed} of ${stats.total_lessons} lessons complete`
-              : "Keep going — one lesson at a time."}
-          </p>
-        </div>
-      )}
 
       <div className={clsx("border-t border-slate-200 p-3", collapsed && "px-2")}>
         <button type="button" onClick={handleLogout} className={navItemCls(false)} title="Log out">
@@ -238,14 +289,39 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
   );
 }
 
+function PathProgressCard({
+  completed,
+  total,
+  progressPct,
+}: {
+  completed: number;
+  total: number;
+  progressPct: number;
+}) {
+  return (
+    <div className="mx-1 mb-0.5 rounded-lg bg-slate-50 px-2.5 py-2 ring-1 ring-slate-200/70">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-[11px] font-medium text-slate-500">Progress</p>
+        <p className="text-[11px] tabular-nums text-slate-400">
+          {completed}/{total}
+          <span className="ml-1 text-slate-300">·</span>
+          <span className="ml-1 text-cyan-700">{progressPct}%</span>
+        </p>
+      </div>
+      <ProgressBar className="mt-1.5 h-1 border-slate-200" value={progressPct} />
+    </div>
+  );
+}
+
 interface CourseTreeItemProps {
-  course: { slug: string; title: string; total_lessons: number; completed_lessons: number };
+  course: CourseDetail;
   onNavigate: () => void;
 }
 
 function CourseTreeItem({ course, onNavigate }: CourseTreeItemProps) {
   const params = useParams();
   const pathname = usePathname();
+  const queryClient = useQueryClient();
   const isActiveCourse = params.slug === course.slug;
   const [open, setOpen] = useState(isActiveCourse);
 
@@ -253,16 +329,27 @@ function CourseTreeItem({ course, onNavigate }: CourseTreeItemProps) {
     if (isActiveCourse) setOpen(true);
   }, [isActiveCourse]);
 
+  // Prefer lessons already embedded in the curriculum list; only fetch if missing.
+  const needsFetch = open && !(course.lessons && course.lessons.length);
   const { data: detail } = useQuery({
     queryKey: ["course", course.slug],
     queryFn: () => getCourse(course.slug),
-    enabled: open,
+    enabled: needsFetch,
+    initialData: course.lessons?.length ? course : undefined,
+    staleTime: 5 * 60_000,
   });
 
-  const completedCount = detail
-    ? detail.lessons.filter((l) => l.status === "completed").length
-    : course.completed_lessons;
-  const totalCount = detail?.lessons.length ?? course.total_lessons;
+  const lessons = detail?.lessons ?? course.lessons ?? [];
+  const completedCount = lessons.filter((l) => l.status === "completed").length;
+  const totalCount = lessons.length || course.total_lessons;
+
+  function prefetchLesson(lessonSlug: string) {
+    void queryClient.prefetchQuery({
+      queryKey: ["lesson", course.slug, lessonSlug],
+      queryFn: () => getLesson(course.slug, lessonSlug),
+      staleTime: 5 * 60_000,
+    });
+  }
 
   return (
     <div>
@@ -284,6 +371,13 @@ function CourseTreeItem({ course, onNavigate }: CourseTreeItemProps) {
         <Link
           href={`/dashboard/courses/${course.slug}`}
           onClick={onNavigate}
+          onMouseEnter={() => {
+            void queryClient.prefetchQuery({
+              queryKey: ["course", course.slug],
+              queryFn: () => getCourse(course.slug),
+              staleTime: 5 * 60_000,
+            });
+          }}
           className="min-w-0 flex-1 truncate py-1.5 pr-2 text-sm font-medium hover:underline"
         >
           {course.title}
@@ -295,9 +389,11 @@ function CourseTreeItem({ course, onNavigate }: CourseTreeItemProps) {
 
       {open && (
         <div className="ml-4 space-y-0.5 border-l border-slate-200 pl-2">
-          {detail?.lessons.map((lesson) => {
-            const href = `/dashboard/courses/${course.slug}/lessons/${lesson.slug}`;
-            const active = pathname === href;
+          {lessons.map((lesson) => {
+            const href = `/dashboard/courses/${course.slug}/lessons/${lesson.slug}/content`;
+            const active =
+              pathname === href ||
+              pathname.startsWith(`/dashboard/courses/${course.slug}/lessons/${lesson.slug}/`);
             const completed = lesson.status === "completed";
             const inProgress = lesson.status === "in_progress";
             return (
@@ -305,6 +401,8 @@ function CourseTreeItem({ course, onNavigate }: CourseTreeItemProps) {
                 key={lesson.id}
                 href={href}
                 onClick={onNavigate}
+                onMouseEnter={() => prefetchLesson(lesson.slug)}
+                onFocus={() => prefetchLesson(lesson.slug)}
                 className={clsx(
                   "flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition",
                   active
@@ -323,7 +421,9 @@ function CourseTreeItem({ course, onNavigate }: CourseTreeItemProps) {
               </Link>
             );
           })}
-          {!detail && <p className="px-2 py-1.5 text-xs text-slate-400">Loading…</p>}
+          {needsFetch && !detail && (
+            <p className="px-2 py-1.5 text-xs text-slate-400">Loading…</p>
+          )}
         </div>
       )}
     </div>
