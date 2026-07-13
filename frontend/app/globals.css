@@ -368,3 +368,9 @@ body {
     @apply font-medium text-cyan-600 underline-offset-2 hover:underline dark:text-cyan-400;
   }
 }
+
+/* react-easy-crop needs a positioned parent; reinforce layout if CSS import lags */
+.avatar-crop-container {
+  position: absolute;
+  inset: 0;
+}

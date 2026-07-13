@@ -1,8 +1,9 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
+import { ChevronDown } from "lucide-react";
 import { changePassword, updateProfile } from "@/lib/api/auth";
 import { AvatarForm } from "@/components/dashboard/AvatarForm";
 import { BadgeIcon } from "@/components/dashboard/BadgeIcon";
@@ -10,6 +11,7 @@ import { UserAvatar } from "@/components/shared/UserAvatar";
 import { Reveal } from "@/components/shared/Reveal";
 import { getDashboardStats } from "@/lib/api/courses";
 import { useAuthStore } from "@/stores/authStore";
+import type { Badge } from "@/types";
 
 type Tab = "profile" | "settings";
 
@@ -88,34 +90,7 @@ export default function ProfilePage() {
               </p>
             </div>
           </Reveal>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {stats?.badges.map((badge, i) => (
-              <Reveal key={badge.id} delay={Math.min(i * 60, 240)} variant="scale">
-                <div
-                  className={clsx(
-                    "card card-interactive p-4 text-center",
-                    badge.unlocked ? "border-cyan-400/30" : "opacity-50"
-                  )}
-                  title={badge.description}
-                >
-                  <BadgeIcon
-                    name={badge.icon}
-                    className={
-                      "mx-auto h-8 w-8 " +
-                      (badge.unlocked ? "text-cyan-600 dark:text-cyan-400" : "text-craft-muted")
-                    }
-                  />
-                  <p className="mt-2 text-sm font-medium text-craft-ink">{badge.name}</p>
-                  <p className="mt-1 text-xs text-craft-muted">{badge.description}</p>
-                  {badge.equipped && (
-                    <p className="mt-2 text-xs font-semibold text-cyan-600 dark:text-cyan-400">
-                      Equipped
-                    </p>
-                  )}
-                </div>
-              </Reveal>
-            ))}
-          </div>
+          <BadgesGrid badges={stats?.badges ?? []} />
         </div>
       )}
 
@@ -141,6 +116,84 @@ function StatChip({ label, value }: { label: string; value: number | string }) {
     <div className="min-w-0 flex-1 rounded-xl border border-craft-border bg-craft-soft px-3 py-2 text-center sm:flex-none sm:min-w-[4.5rem]">
       <p className="text-base font-bold tabular-nums text-craft-ink">{value}</p>
       <p className="text-[10px] font-medium uppercase tracking-wide text-craft-muted">{label}</p>
+    </div>
+  );
+}
+
+/** First row size matches grid: 1 / sm:2 / lg:4 */
+function useBadgeRowSize() {
+  const [rowSize, setRowSize] = useState(4);
+
+  useEffect(() => {
+    const mqLg = window.matchMedia("(min-width: 1024px)");
+    const mqSm = window.matchMedia("(min-width: 640px)");
+    function update() {
+      if (mqLg.matches) setRowSize(4);
+      else if (mqSm.matches) setRowSize(2);
+      else setRowSize(1);
+    }
+    update();
+    mqLg.addEventListener("change", update);
+    mqSm.addEventListener("change", update);
+    return () => {
+      mqLg.removeEventListener("change", update);
+      mqSm.removeEventListener("change", update);
+    };
+  }, []);
+
+  return rowSize;
+}
+
+function BadgesGrid({ badges }: { badges: Badge[] }) {
+  const rowSize = useBadgeRowSize();
+  const [expanded, setExpanded] = useState(false);
+  const hasMore = badges.length > rowSize;
+  const visible = expanded || !hasMore ? badges : badges.slice(0, rowSize);
+
+  return (
+    <div className="mt-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {visible.map((badge, i) => (
+          <Reveal key={badge.id} delay={Math.min(i * 50, 200)} variant="scale">
+            <div
+              className={clsx(
+                "card card-interactive p-4 text-center",
+                badge.unlocked ? "border-cyan-400/30" : "opacity-50"
+              )}
+              title={badge.description}
+            >
+              <BadgeIcon
+                name={badge.icon}
+                className={
+                  "mx-auto h-8 w-8 " +
+                  (badge.unlocked ? "text-cyan-600 dark:text-cyan-400" : "text-craft-muted")
+                }
+              />
+              <p className="mt-2 text-sm font-medium text-craft-ink">{badge.name}</p>
+              <p className="mt-1 text-xs text-craft-muted">{badge.description}</p>
+              {badge.equipped && (
+                <p className="mt-2 text-xs font-semibold text-cyan-600 dark:text-cyan-400">
+                  Equipped
+                </p>
+              )}
+            </div>
+          </Reveal>
+        ))}
+      </div>
+
+      {hasMore && (
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-medium text-craft-muted transition hover:bg-craft-soft hover:text-craft-ink"
+        >
+          {expanded ? "See less" : "See more badges"}
+          <ChevronDown
+            className={clsx("h-4 w-4 transition-transform", expanded && "rotate-180")}
+          />
+        </button>
+      )}
     </div>
   );
 }
