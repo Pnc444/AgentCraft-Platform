@@ -1,3 +1,4 @@
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
@@ -17,6 +18,28 @@ def test_mission_packs_are_structurally_valid():
     assert packs
     for pack in packs:
         assert validate_course_definition(pack) == []
+
+
+def test_mission_packs_reference_artifact_files_without_inline_bodies():
+    for pack in load_selected_packs():
+        for lesson in pack["lessons"]:
+            for artifact in lesson.get("artifacts", []):
+                assert "body" not in artifact
+
+
+def test_module4_validation_requires_guided_blocks_checkpoint_questions_and_artifacts():
+    module4_pack = next(pack for pack in load_selected_packs() if pack["slug"] == "module-4-ai-agents")
+    broken_pack = deepcopy(module4_pack)
+    broken_lesson = broken_pack["lessons"][0]
+    broken_lesson["guided_blocks"] = []
+    broken_lesson["checkpoint_questions"] = []
+    broken_lesson["artifacts"] = []
+
+    errors = validate_course_definition(broken_pack)
+
+    assert "what-an-ai-agent-is must provide at least three guided lesson blocks" in errors
+    assert "what-an-ai-agent-is must provide at least three checkpoint questions" in errors
+    assert "what-an-ai-agent-is must provide at least one learning artifact" in errors
 
 
 def test_default_output_root_targets_backend_project_root():
@@ -116,6 +139,30 @@ def test_validate_mode_fails_when_required_artifact_is_missing(tmp_path: Path):
 
     artifact = tmp_path / "lesson_artifacts/openclaw/config/openclaw.json.template.json5"
     artifact.unlink()
+
+    with pytest.raises(CommandError):
+        call_command(
+            "run_module_sync",
+            "--mode",
+            "validate",
+            "--apply",
+            "--output-root",
+            str(tmp_path),
+        )
+
+
+def test_validate_mode_fails_when_generated_artifact_drifts_from_source(tmp_path: Path):
+    call_command(
+        "run_module_sync",
+        "--mode",
+        "run-all",
+        "--apply",
+        "--output-root",
+        str(tmp_path),
+    )
+
+    artifact = tmp_path / "lesson_artifacts/agents/agent-map.md"
+    artifact.write_text("# Drifted copy\n", encoding="utf-8")
 
     with pytest.raises(CommandError):
         call_command(

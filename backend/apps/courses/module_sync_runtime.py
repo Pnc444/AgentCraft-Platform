@@ -39,10 +39,36 @@ def default_output_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
 
-def build_sandbox_config(lesson_pack: dict) -> dict:
+def _artifact_source_path(artifact: dict, source_root: Path | None = None) -> Path:
+    root = default_output_root() if source_root is None else source_root
+    return (root / artifact["path"]).resolve()
+
+
+def _read_authored_artifact_text(artifact: dict, source_root: Path | None = None) -> str:
+    return _artifact_source_path(artifact, source_root).read_text(encoding="utf-8")
+
+
+def _load_authored_artifact_body(artifact: dict, source_root: Path | None = None):
+    artifact_text = _read_authored_artifact_text(artifact, source_root)
+    if artifact.get("format") == "json":
+        return json.loads(artifact_text)
+    return artifact_text
+
+
+def _hydrate_artifact(artifact: dict, source_root: Path | None = None) -> dict:
+    hydrated = deepcopy(artifact)
+    hydrated["body"] = _load_authored_artifact_body(artifact, source_root)
+    return hydrated
+
+
+def _hydrate_artifacts(artifacts: list[dict], source_root: Path | None = None) -> list[dict]:
+    return [_hydrate_artifact(artifact, source_root) for artifact in artifacts]
+
+
+def build_sandbox_config(lesson_pack: dict, source_root: Path | None = None) -> dict:
     sandbox_config = {key: deepcopy(lesson_pack.get(key, [])) for key in STRUCTURED_KEYS}
     sandbox_config["questions"] = deepcopy(lesson_pack.get("questions", []))
-    sandbox_config["artifact_bundle"] = deepcopy(lesson_pack.get("artifacts", []))
+    sandbox_config["artifact_bundle"] = _hydrate_artifacts(lesson_pack.get("artifacts", []), source_root)
     return sandbox_config
 
 
@@ -73,12 +99,13 @@ def _validate_question(question: dict, lesson_slug: str, index: int) -> list[str
     return errors
 
 
-def _validate_artifact(artifact: dict, lesson_slug: str, index: int) -> list[str]:
+def _validate_artifact(
+    artifact: dict, lesson_slug: str, index: int, source_root: Path | None = None
+) -> list[str]:
     errors: list[str] = []
     path = artifact.get("path")
     summary = artifact.get("summary")
     artifact_format = artifact.get("format")
-    body = artifact.get("body")
     prefix = f"{lesson_slug} artifact {index + 1}"
 
     if not isinstance(path, str) or not path.strip():
@@ -89,10 +116,22 @@ def _validate_artifact(artifact: dict, lesson_slug: str, index: int) -> list[str
         errors.append(f"{prefix} is missing a summary")
     if artifact_format not in {"text", "json"}:
         errors.append(f"{prefix} format must be 'text' or 'json'")
+    if errors:
+        return errors
+
+    try:
+        body = _load_authored_artifact_body(artifact, source_root)
+    except FileNotFoundError:
+        errors.append(f"{prefix} source file does not exist")
+        return errors
+    except json.JSONDecodeError as exc:
+        errors.append(f"{prefix} json artifact file is invalid JSON: {exc.msg}")
+        return errors
+
     if artifact_format == "text" and not isinstance(body, str):
-        errors.append(f"{prefix} text artifacts must use a string body")
+        errors.append(f"{prefix} text artifact source must resolve to a string body")
     if artifact_format == "json" and not isinstance(body, (dict, list)):
-        errors.append(f"{prefix} json artifacts must use an object or array body")
+        errors.append(f"{prefix} json artifact source must resolve to an object or array body")
     return errors
 
 
@@ -135,6 +174,7 @@ def _validate_guided_block(block: dict, lesson_slug: str, index: int) -> list[st
 
 def validate_course_definition(course_pack: dict) -> list[str]:
     errors: list[str] = []
+    source_root = default_output_root()
     required_course_keys = {"title", "slug", "description", "difficulty", "order", "lessons"}
     missing = sorted(required_course_keys - course_pack.keys())
     if missing:
@@ -172,7 +212,7 @@ def validate_course_definition(course_pack: dict) -> list[str]:
             errors.extend(_validate_question(question, f"{lesson_slug} checkpoint", index))
 
         for index, artifact in enumerate(lesson.get("artifacts", [])):
-            errors.extend(_validate_artifact(artifact, lesson_slug, index))
+            errors.extend(_validate_artifact(artifact, lesson_slug, index, source_root))
 
     if course_pack["slug"] == MODULE_6_SLUG:
         if not any(lesson.get("skill_templates") for lesson in lessons):
@@ -188,15 +228,15 @@ def validate_course_definition(course_pack: dict) -> list[str]:
             if len(lesson.get("checkpoint_questions", [])) < 3:
                 errors.append(f"{lesson_slug} must provide at least three checkpoint questions")
 
-        if course_pack["slug"] == MODULE_4_SLUG:
-            for lesson in lessons:
-                lesson_slug = lesson.get("slug", "unknown-lesson")
-                if len(lesson.get("guided_blocks", [])) < 3:
-                    errors.append(f"{lesson_slug} must provide at least three guided lesson blocks")
-                if len(lesson.get("checkpoint_questions", [])) < 3:
-                    errors.append(f"{lesson_slug} must provide at least three checkpoint questions")
-                if not lesson.get("artifacts"):
-                    errors.append(f"{lesson_slug} must provide at least one learning artifact")
+    if course_pack["slug"] == MODULE_4_SLUG:
+        for lesson in lessons:
+            lesson_slug = lesson.get("slug", "unknown-lesson")
+            if len(lesson.get("guided_blocks", [])) < 3:
+                errors.append(f"{lesson_slug} must provide at least three guided lesson blocks")
+            if len(lesson.get("checkpoint_questions", [])) < 3:
+                errors.append(f"{lesson_slug} must provide at least three checkpoint questions")
+            if not lesson.get("artifacts"):
+                errors.append(f"{lesson_slug} must provide at least one learning artifact")
 
     if course_pack["slug"] == MODULE_8_SLUG:
         if not any(lesson.get("permission_matrix") for lesson in lessons):
@@ -229,7 +269,9 @@ def ensure_skill(apply: bool) -> Skill | None:
     return skill
 
 
-def write_artifacts(lesson_pack: dict, output_root: Path, apply: bool) -> list[dict]:
+def write_artifacts(
+    lesson_pack: dict, output_root: Path, apply: bool, source_root: Path | None = None
+) -> list[dict]:
     writes: list[dict] = []
     for artifact in lesson_pack.get("artifacts", []):
         target_path = output_root / artifact["path"]
@@ -237,10 +279,7 @@ def write_artifacts(lesson_pack: dict, output_root: Path, apply: bool) -> list[d
         if not apply:
             continue
         target_path.parent.mkdir(parents=True, exist_ok=True)
-        if artifact["format"] == "json":
-            target_path.write_text(json.dumps(artifact["body"], indent=2) + "\n", encoding="utf-8")
-        else:
-            target_path.write_text(artifact["body"], encoding="utf-8")
+        target_path.write_text(_read_authored_artifact_text(artifact, source_root), encoding="utf-8")
     return writes
 
 
@@ -283,6 +322,7 @@ def sync_course_pack(course_pack: dict, output_root: Path, apply: bool) -> dict:
     warnings: list[str] = []
     removed_lessons: list[str] = []
     removed_artifacts = cleanup_extra_artifacts(course_pack, output_root, apply)
+    source_root = default_output_root()
     skill = ensure_skill(apply)
     existing_course = Course.objects.filter(slug=course_pack["slug"]).first()
     created = existing_course is None
@@ -326,8 +366,8 @@ def sync_course_pack(course_pack: dict, output_root: Path, apply: bool) -> dict:
             )
 
     for order, lesson_pack in enumerate(course_pack["lessons"], start=1):
-        sandbox_config = build_sandbox_config(lesson_pack)
-        artifact_writes = write_artifacts(lesson_pack, output_root, apply)
+        sandbox_config = build_sandbox_config(lesson_pack, source_root)
+        artifact_writes = write_artifacts(lesson_pack, output_root, apply, source_root)
         lesson_report = {
             "slug": lesson_pack["slug"],
             "title": lesson_pack["title"],
@@ -410,6 +450,10 @@ def validate_synced_course(course_pack: dict, output_root: Path) -> list[str]:
             artifact_path = output_root / artifact["path"]
             if not artifact_path.exists():
                 errors.append(f"{lesson_pack['slug']} is missing artifact {artifact['path']}")
+                continue
+            expected_text = _read_authored_artifact_text(artifact)
+            if artifact_path.read_text(encoding="utf-8") != expected_text:
+                errors.append(f"{lesson_pack['slug']} artifact {artifact['path']} drifted from the mission pack source")
 
     return errors
 

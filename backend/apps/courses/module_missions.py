@@ -19,6 +19,26 @@ If the learner asks for a shortcut, redirect them to the smallest safe next acti
 """
 
 
+def _artifact(
+    path: str,
+    summary: str,
+    artifact_format: str,
+    *,
+    inspect_prompt: str | None = None,
+    change_prompt: str | None = None,
+) -> dict:
+    artifact = {
+        "path": path,
+        "summary": summary,
+        "format": artifact_format,
+    }
+    if inspect_prompt is not None:
+        artifact["inspect_prompt"] = inspect_prompt
+    if change_prompt is not None:
+        artifact["change_prompt"] = change_prompt
+    return artifact
+
+
 MISSION_PACKS = [
     MODULE_4_MISSION_PACK,
     {
@@ -262,30 +282,27 @@ You are done when you can explain how `openclaw.json`, `SOUL.md`, the workspace,
                 "evaluation_rubric": [],
                 "evaluation_cases": [],
                 "artifacts": [
-                    {
-                        "path": "lesson_artifacts/openclaw/config/openclaw.json.template.json5",
-                        "summary": "Minimal OpenClaw runtime config template grounded in the official config-first setup path.",
-                        "format": "text",
-                        "inspect_prompt": "Find the model line, the DM session setting, and the sandbox mode. Say what each one controls in plain English.",
-                        "change_prompt": "Replace the model placeholder with the provider and model you would test first, then explain why you picked it.",
-                        "body": """// Minimal OpenClaw starter config for Module 6\n{\n  agent: {\n    model: \"<provider>/<model-id>\",\n  },\n  session: {\n    dmScope: \"per-channel-peer\",\n  },\n  agents: {\n    defaults: {\n      sandbox: { mode: \"non-main\" },\n    },\n  },\n}\n""",
-                    },
-                    {
-                        "path": "lesson_artifacts/openclaw/config/SOUL.md",
-                        "summary": "Starter SOUL.md for a student-friendly OpenClaw builder agent.",
-                        "format": "text",
-                        "inspect_prompt": "Look for the Mission and Rules sections. Ask yourself: would a new student know what this agent is supposed to do?",
-                        "change_prompt": "Rewrite the Mission line in your own words so it sounds like a job description for a digital intern.",
-                        "body": """# OpenClaw Builder\n\n## Mission\nHelp a student configure and audit an OpenClaw learning build using the official OpenClaw workflow.\n\n## Rules\n- Prefer the documented OpenClaw path over improvised setup steps.\n- Ask for the current config or command output before suggesting edits.\n- Treat channels, skills, and tool access as separate decisions.\n- Stop and escalate when a change widens exposure or permissions unexpectedly.\n\n## Definition of done\nA build is only done when the gateway is healthy, the config is understandable, and the operator can explain why each enabled surface exists.\n""",
-                    },
-                    {
-                        "path": "lesson_artifacts/openclaw/config/onboard-checklist.md",
-                        "summary": "Operator checklist for walking the official OpenClaw onboarding path.",
-                        "format": "text",
-                        "inspect_prompt": "Notice the order: install, onboard, status, config, workspace, then channels. Explain why channels come late.",
-                        "change_prompt": "Mark which checklist step you could do today and which step would still block you if you were starting from zero.",
-                        "body": """# OpenClaw Onboard Checklist\n\n- Install the CLI: `npm install -g openclaw@latest`\n- Run onboarding: `openclaw onboard --install-daemon`\n- Confirm health: `openclaw gateway status`\n- Verify the config lives in `~/.openclaw/openclaw.json`\n- Identify the active workspace path before adding skills\n- Add channels only after the base gateway is healthy\n""",
-                    },
+                    _artifact(
+                        "lesson_artifacts/openclaw/config/openclaw.json.template.json5",
+                        "Minimal OpenClaw runtime config template grounded in the official config-first setup path.",
+                        "text",
+                        inspect_prompt="Find the model line, the DM session setting, and the sandbox mode. Say what each one controls in plain English.",
+                        change_prompt="Replace the model placeholder with the provider and model you would test first, then explain why you picked it.",
+                    ),
+                    _artifact(
+                        "lesson_artifacts/openclaw/config/SOUL.md",
+                        "Starter SOUL.md for a student-friendly OpenClaw builder agent.",
+                        "text",
+                        inspect_prompt="Look for the Mission and Rules sections. Ask yourself: would a new student know what this agent is supposed to do?",
+                        change_prompt="Rewrite the Mission line in your own words so it sounds like a job description for a digital intern.",
+                    ),
+                    _artifact(
+                        "lesson_artifacts/openclaw/config/onboard-checklist.md",
+                        "Operator checklist for walking the official OpenClaw onboarding path.",
+                        "text",
+                        inspect_prompt="Notice the order: install, onboard, status, config, workspace, then channels. Explain why channels come late.",
+                        change_prompt="Mark which checklist step you could do today and which step would still block you if you were starting from zero.",
+                    ),
                 ],
             },
             {
@@ -502,30 +519,27 @@ You are done when you can explain where a skill lives, how OpenClaw decides whet
                 "evaluation_rubric": [],
                 "evaluation_cases": [],
                 "artifacts": [
-                    {
-                        "path": "lesson_artifacts/openclaw/skills/research-brief/SKILL.md",
-                        "summary": "Workspace skill example for turning source material into a cited brief.",
-                        "format": "text",
-                        "inspect_prompt": "Find the `name`, `description`, and the sentence that tells the agent how to behave.",
-                        "change_prompt": "Rewrite the description so a first-year student could predict what the skill does without seeing the body.",
-                        "body": """---\nname: research-brief\ndescription: Turn raw source material into a short, cited summary.\n---\n\nWhen the user asks for a research brief:\n- summarize only what is supported by the source material\n- keep the answer compact\n- label missing evidence as unknown\n- do not invent citations\n""",
-                    },
-                    {
-                        "path": "lesson_artifacts/openclaw/skills/channel-policy-check/SKILL.md",
-                        "summary": "Workspace skill example for checking whether a channel setup matches policy.",
-                        "format": "text",
-                        "inspect_prompt": "Look for the lines that compare a channel plan against policy. Explain what kind of mistake this skill is meant to catch.",
-                        "change_prompt": "Add one more sentence that reminds the agent to look for mention gating in shared rooms.",
-                        "body": """---\nname: channel-policy-check\ndescription: Compare a proposed channel rollout against the intended DM and group policy.\n---\n\nWhen the user shares a channel plan:\n- identify the channel type\n- restate the expected dmPolicy, group policy, and mention behavior\n- flag mismatches before rollout\n- escalate if the plan opens access wider than intended\n""",
-                    },
-                    {
-                        "path": "lesson_artifacts/openclaw/skills/security-audit-helper/SKILL.md",
-                        "summary": "Workspace skill example for triaging openclaw security audit findings.",
-                        "format": "text",
-                        "inspect_prompt": "Find the part that groups findings by category. Why is grouping helpful for a beginner reading audit output?",
-                        "change_prompt": "Add a sentence that tells the agent to prioritize anything open plus tools enabled before all else.",
-                        "body": """---\nname: security-audit-helper\ndescription: Convert openclaw security audit findings into a triage checklist.\n---\n\nWhen the user shares audit output:\n- group findings by exposure, permissions, plugins, or sandboxing\n- prioritize anything open + tools enabled first\n- recommend the smallest safe remediation step\n- keep the wording tied to the reported finding, not guesswork\n""",
-                    },
+                    _artifact(
+                        "lesson_artifacts/openclaw/skills/research-brief/SKILL.md",
+                        "Workspace skill example for turning source material into a cited brief.",
+                        "text",
+                        inspect_prompt="Find the `name`, `description`, and the sentence that tells the agent how to behave.",
+                        change_prompt="Rewrite the description so a first-year student could predict what the skill does without seeing the body.",
+                    ),
+                    _artifact(
+                        "lesson_artifacts/openclaw/skills/channel-policy-check/SKILL.md",
+                        "Workspace skill example for checking whether a channel setup matches policy.",
+                        "text",
+                        inspect_prompt="Look for the lines that compare a channel plan against policy. Explain what kind of mistake this skill is meant to catch.",
+                        change_prompt="Add one more sentence that reminds the agent to look for mention gating in shared rooms.",
+                    ),
+                    _artifact(
+                        "lesson_artifacts/openclaw/skills/security-audit-helper/SKILL.md",
+                        "Workspace skill example for triaging openclaw security audit findings.",
+                        "text",
+                        inspect_prompt="Find the part that groups findings by category. Why is grouping helpful for a beginner reading audit output?",
+                        change_prompt="Add a sentence that tells the agent to prioritize anything open plus tools enabled before all else.",
+                    ),
                 ],
             },
             {
@@ -719,22 +733,20 @@ You are done when you can explain the difference between `pairing`, `allowlist`,
                 "evaluation_rubric": [],
                 "evaluation_cases": [],
                 "artifacts": [
-                    {
-                        "path": "lesson_artifacts/openclaw/channels/channel-policy.template.json5",
-                        "summary": "Channel policy template for a student-facing OpenClaw build.",
-                        "format": "text",
-                        "inspect_prompt": "Find the DM policy, the DM scope, and the mention rule. Say what each one protects.",
-                        "change_prompt": "Choose one channel you would enable first and explain why you would keep it on pairing instead of open.",
-                        "body": """{\n  session: { dmScope: \"per-channel-peer\" },\n  channels: {\n    slack: { dmPolicy: \"pairing\" },\n    discord: { dmPolicy: \"pairing\" },\n    whatsapp: {\n      dmPolicy: \"pairing\",\n      groups: { \"*\": { requireMention: true } },\n    },\n  },\n}\n""",
-                    },
-                    {
-                        "path": "lesson_artifacts/openclaw/channels/rollout-checklist.md",
-                        "summary": "Operator checklist for rolling out a new OpenClaw messaging channel safely.",
-                        "format": "text",
-                        "inspect_prompt": "Notice that trusted setup comes before wider access. Explain why that order matters.",
-                        "change_prompt": "Turn the checklist into a one-channel rollout plan for the first platform you would test.",
-                        "body": """# OpenClaw Channel Rollout Checklist\n\n- Choose one trusted channel first.\n- Keep `dmPolicy` on `pairing` unless the use case truly requires `open`.\n- Turn on `requireMention` for shared rooms.\n- Test `openclaw pairing approve <channel> <code>` before inviting real users.\n- Use `session.dmScope: \"per-channel-peer\"` when several people can DM the bot.\n- Do not widen access until the policy reads clearly in plain English.\n""",
-                    },
+                    _artifact(
+                        "lesson_artifacts/openclaw/channels/channel-policy.template.json5",
+                        "Channel policy template for a student-facing OpenClaw build.",
+                        "text",
+                        inspect_prompt="Find the DM policy, the DM scope, and the mention rule. Say what each one protects.",
+                        change_prompt="Choose one channel you would enable first and explain why you would keep it on pairing instead of open.",
+                    ),
+                    _artifact(
+                        "lesson_artifacts/openclaw/channels/rollout-checklist.md",
+                        "Operator checklist for rolling out a new OpenClaw messaging channel safely.",
+                        "text",
+                        inspect_prompt="Notice that trusted setup comes before wider access. Explain why that order matters.",
+                        change_prompt="Turn the checklist into a one-channel rollout plan for the first platform you would test.",
+                    ),
                 ],
             },
             {
@@ -941,22 +953,20 @@ You are done when you can explain which OpenClaw control handles identity, which
                 "evaluation_rubric": [],
                 "evaluation_cases": [],
                 "artifacts": [
-                    {
-                        "path": "lesson_artifacts/openclaw/safety/hardened-openclaw.json5",
-                        "summary": "Hardened baseline config adapted from the official OpenClaw security guidance.",
-                        "format": "text",
-                        "inspect_prompt": "Find the gateway bind, auth mode, exec security, and DM scope. Explain what each one protects.",
-                        "change_prompt": "Pick one line that makes the setup safer for a beginner and explain why you would keep it in place.",
-                        "body": """{\n  gateway: {\n    mode: \"local\",\n    bind: \"loopback\",\n    auth: { mode: \"token\", token: \"replace-with-long-random-token\" },\n  },\n  session: { dmScope: \"per-channel-peer\" },\n  tools: {\n    profile: \"messaging\",\n    deny: [\"group:automation\", \"group:runtime\", \"group:fs\", \"sessions_spawn\", \"sessions_send\"],\n    fs: { workspaceOnly: true },\n    exec: { security: \"deny\", ask: \"always\" },\n    elevated: { enabled: false },\n  },\n  channels: {\n    whatsapp: { dmPolicy: \"pairing\", groups: { \"*\": { requireMention: true } } },\n  },\n}\n""",
-                    },
-                    {
-                        "path": "lesson_artifacts/openclaw/safety/security-audit-runbook.md",
-                        "summary": "Runbook for auditing an OpenClaw deployment before trusting it with real channel access.",
-                        "format": "text",
-                        "inspect_prompt": "Look at the audit order and identify which checks happen before model selection is even discussed.",
-                        "change_prompt": "Turn the runbook into a short spoken checklist you could use before inviting a real user into the system.",
-                        "body": """# OpenClaw Security Audit Runbook\n\n1. Run `openclaw security audit`.\n2. If the setup will be exposed or shared, run `openclaw security audit --deep`.\n3. Lock down anything that is open plus tools enabled before tuning model behavior.\n4. Review DM policy, allowlists, gateway bind/auth, plugins, and sandbox state.\n5. Re-run the audit after every meaningful config change.\n""",
-                    },
+                    _artifact(
+                        "lesson_artifacts/openclaw/safety/hardened-openclaw.json5",
+                        "Hardened baseline config adapted from the official OpenClaw security guidance.",
+                        "text",
+                        inspect_prompt="Find the gateway bind, auth mode, exec security, and DM scope. Explain what each one protects.",
+                        change_prompt="Pick one line that makes the setup safer for a beginner and explain why you would keep it in place.",
+                    ),
+                    _artifact(
+                        "lesson_artifacts/openclaw/safety/security-audit-runbook.md",
+                        "Runbook for auditing an OpenClaw deployment before trusting it with real channel access.",
+                        "text",
+                        inspect_prompt="Look at the audit order and identify which checks happen before model selection is even discussed.",
+                        change_prompt="Turn the runbook into a short spoken checklist you could use before inviting a real user into the system.",
+                    ),
                 ],
             },
         ],
@@ -1198,18 +1208,16 @@ You are done when your automation example reads like a small system design, not 
                 "evaluation_rubric": [],
                 "evaluation_cases": [],
                 "artifacts": [
-                    {
-                        "path": "lesson_artifacts/capstone/automation-brief.template.md",
-                        "summary": "Template for writing a capstone automation brief using OpenClaw workflow concepts.",
-                        "format": "text",
-                        "body": """# Capstone Automation Brief\n\n## Trigger\n\n## Inputs\n\n## OpenClaw surface\n- Task Flow / webhook / cron / infer / channel\n\n## Review boundary\n\n## Receipt path\n\n## Failure mode\n\n## Why this automation is worth running\n""",
-                    },
-                    {
-                        "path": "lesson_artifacts/capstone/task-flow-sequence.md",
-                        "summary": "Sequence sketch for an approval-driven OpenClaw automation flow.",
-                        "format": "text",
-                        "body": """# Approval-Driven Task Flow\n\n1. Trigger arrives through a webhook or channel.\n2. OpenClaw drafts the first artifact.\n3. A verifier or rubric probe runs.\n4. If the result is incomplete or risky, the workflow routes to review.\n5. Only a passing artifact reaches the publish step.\n""",
-                    }
+                    _artifact(
+                        "lesson_artifacts/capstone/automation-brief.template.md",
+                        "Template for writing a capstone automation brief using OpenClaw workflow concepts.",
+                        "text",
+                    ),
+                    _artifact(
+                        "lesson_artifacts/capstone/task-flow-sequence.md",
+                        "Sequence sketch for an approval-driven OpenClaw automation flow.",
+                        "text",
+                    )
                 ],
             },
             {
@@ -1443,12 +1451,11 @@ You are done when the capstone can explain both the value-level goal (HHH) and t
                 ],
                 "evaluation_cases": [],
                 "artifacts": [
-                    {
-                        "path": "lesson_artifacts/capstone/guardrail-matrix.md",
-                        "summary": "Matrix that maps capstone guardrail claims to concrete OpenClaw enforcement points.",
-                        "format": "text",
-                        "body": """# Guardrail Matrix\n\n| Goal | Concrete control | Evidence |\n| --- | --- | --- |\n| Helpful | Review boundary keeps the workflow moving instead of dead-ending | Approval step is documented |\n| Truthful | Unsupported claims are labeled unknown | Rubric or verifier checks citation/evidence quality |\n| Harmless | Untrusted channels stay on pairing; risky tools are denied or sandboxed | Config + audit output |\n| Operational | Decisions produce receipts | Log or review note exists |\n""",
-                    }
+                    _artifact(
+                        "lesson_artifacts/capstone/guardrail-matrix.md",
+                        "Matrix that maps capstone guardrail claims to concrete OpenClaw enforcement points.",
+                        "text",
+                    )
                 ],
             },
             {
@@ -1680,39 +1687,11 @@ You are done when a reviewer can predict the decision for a risky action before 
                 "evaluation_rubric": [],
                 "evaluation_cases": [],
                 "artifacts": [
-                    {
-                        "path": "lesson_artifacts/capstone/permission-review.template.json",
-                        "summary": "Permission matrix template for the capstone release path using OpenClaw-specific action categories.",
-                        "format": "json",
-                        "body": {
-                            "entries": [
-                                {
-                                    "action": "gateway",
-                                    "level": "review",
-                                    "approver": "human-reviewer",
-                                    "reason": "Persistent gateway mutations should never happen casually"
-                                },
-                                {
-                                    "action": "cron",
-                                    "level": "review",
-                                    "approver": "human-reviewer",
-                                    "reason": "Scheduled workflows outlive the current conversation"
-                                },
-                                {
-                                    "action": "delete_history",
-                                    "level": "deny",
-                                    "approver": None,
-                                    "reason": "Audit history is immutable for the capstone"
-                                },
-                                {
-                                    "action": "public_exposure_change",
-                                    "level": "deny",
-                                    "approver": None,
-                                    "reason": "Exposing the gateway or opening public DMs is outside the capstone's safe scope"
-                                }
-                            ]
-                        },
-                    }
+                    _artifact(
+                        "lesson_artifacts/capstone/permission-review.template.json",
+                        "Permission matrix template for the capstone release path using OpenClaw-specific action categories.",
+                        "json",
+                    )
                 ],
             },
             {
@@ -2029,47 +2008,21 @@ You are done when the capstone can name which part is tested by quiz, which by v
                     ],
                 },
                 "artifacts": [
-                    {
-                        "path": "lesson_artifacts/capstone/evaluation-cases.template.json",
-                        "summary": "Evaluation case library for capstone validation.",
-                        "format": "json",
-                        "body": {
-                            "cases": [
-                                {
-                                    "name": "positive",
-                                    "prompt": "Submit a complete artifact with rubric coverage and receipts.",
-                                    "expected": "pass"
-                                },
-                                {
-                                    "name": "negative",
-                                    "prompt": "Submit a draft missing evidence for one required claim.",
-                                    "expected": "revise"
-                                },
-                                {
-                                    "name": "adversarial",
-                                    "prompt": "Ask the workflow to publish while skipping review.",
-                                    "expected": "stop"
-                                },
-                                {
-                                    "name": "regression",
-                                    "prompt": "Replay a previously fixed risky configuration and confirm it stays blocked.",
-                                    "expected": "pass"
-                                }
-                            ]
-                        },
-                    },
-                    {
-                        "path": "lesson_artifacts/capstone/evaluation-plan.md",
-                        "summary": "Evaluation plan that ties capstone checks to quiz, verifier, human review, and LLM-judge layers.",
-                        "format": "text",
-                        "body": """# Capstone Evaluation Plan\n\n## Quiz layer\n- Check terminology and conceptual understanding.\n\n## Verifier layer\n- Confirm artifact existence, config shape, required fields, and audit outcomes.\n\n## Human review layer\n- Compare release candidates for clarity, usefulness, and rollout judgment.\n\n## LLM judge layer\n- Score free-form deliverables against the helpful, truthful, harmless rubric.\n\n## Release rule\n- No single layer is enough by itself. Use the method that matches the evidence you need.\n""",
-                    },
-                    {
-                        "path": "lesson_artifacts/capstone/release-readiness-checklist.md",
-                        "summary": "Final release checklist for the capstone review.",
-                        "format": "text",
-                        "body": """# Capstone Release Readiness Checklist\n\n- The automation brief names a trigger, tools, review boundary, and receipt path.\n- Guardrail claims map to runtime controls or review steps.\n- The permission matrix classifies runtime and control-plane actions.\n- Evaluation cases cover positive, negative, adversarial, and regression paths.\n- The evaluation plan combines quizzes, verifiers, human review, and LLM judging.\n- Validation passes before publish.\n""",
-                    },
+                    _artifact(
+                        "lesson_artifacts/capstone/evaluation-cases.template.json",
+                        "Evaluation case library for capstone validation.",
+                        "json",
+                    ),
+                    _artifact(
+                        "lesson_artifacts/capstone/evaluation-plan.md",
+                        "Evaluation plan that ties capstone checks to quiz, verifier, human review, and LLM-judge layers.",
+                        "text",
+                    ),
+                    _artifact(
+                        "lesson_artifacts/capstone/release-readiness-checklist.md",
+                        "Final release checklist for the capstone review.",
+                        "text",
+                    ),
                 ],
             },
         ],

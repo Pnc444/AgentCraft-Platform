@@ -1,3 +1,23 @@
+def _artifact(
+    path: str,
+    summary: str,
+    artifact_format: str,
+    *,
+    inspect_prompt: str | None = None,
+    change_prompt: str | None = None,
+) -> dict:
+    artifact = {
+        "path": path,
+        "summary": summary,
+        "format": artifact_format,
+    }
+    if inspect_prompt is not None:
+        artifact["inspect_prompt"] = inspect_prompt
+    if change_prompt is not None:
+        artifact["change_prompt"] = change_prompt
+    return artifact
+
+
 MODULE_4_MISSION_PACK = {
     "title": "Module 4: AI Agents",
     "slug": "module-4-ai-agents",
@@ -175,22 +195,13 @@ If the learner asks for a shortcut, redirect them to the smallest explanation or
             "evaluation_rubric": [],
             "evaluation_cases": [],
             "artifacts": [
-                {
-                    "path": "lesson_artifacts/agents/agent-map.md",
-                    "summary": "One-screen mental model for what an AI agent is.",
-                    "format": "text",
-                    "inspect_prompt": "Find the six parts of the map and explain what each one does in plain English.",
-                    "change_prompt": "Rewrite one label so it would make more sense to a student who has never used AI tools before.",
-                    "body": """# Agent Mental Model
-
-- Goal: what the human wants done
-- Plan: the next step the system thinks it should try
-- Tools: how it acts on the world
-- Memory: what it remembers during the task
-- Check: how it looks at results instead of guessing
-- Stop rule: when it should stop, ask for help, or hand work back to a human
-""",
-                }
+                _artifact(
+                    "lesson_artifacts/agents/agent-map.md",
+                    "One-screen mental model for what an AI agent is.",
+                    "text",
+                    inspect_prompt="Find the six parts of the map and explain what each one does in plain English.",
+                    change_prompt="Rewrite one label so it would make more sense to a student who has never used AI tools before.",
+                )
             ],
         },
         {
@@ -239,21 +250,13 @@ Operate in attempt-first mode.
             ],
             "skill_templates": [], "channel_templates": [], "safety_checks": [], "permission_matrix": [], "evaluation_rubric": [], "evaluation_cases": [],
             "artifacts": [
-                {
-                    "path": "lesson_artifacts/agents/chatbot-workflow-agent-table.md",
-                    "summary": "Comparison table for chatbot, workflow, and agent thinking.",
-                    "format": "text",
-                    "inspect_prompt": "Find the row that explains how each system handles the next step.",
-                    "change_prompt": "Add one beginner example of your own to the table.",
-                    "body": """# Chatbot vs Workflow vs Agent
-
-| Category | Best for | Limitation |
-| --- | --- | --- |
-| Chatbot | Question and answer, simple guidance, conversation | Usually weak at multi-step action and verification |
-| Workflow | Well-defined, repeatable tasks with fixed steps | Less flexible when the task changes midstream |
-| Agent | Open-ended tasks that need tools, checking, and adaptation | Higher cost, more room for error, needs stronger guardrails |
-""",
-                }
+                _artifact(
+                    "lesson_artifacts/agents/chatbot-workflow-agent-table.md",
+                    "Comparison table for chatbot, workflow, and agent thinking.",
+                    "text",
+                    inspect_prompt="Find the row that explains how each system handles the next step.",
+                    change_prompt="Add one beginner example of your own to the table.",
+                )
             ],
         },
         {
@@ -301,21 +304,13 @@ Operate in attempt-first mode.
             ],
             "skill_templates": [], "channel_templates": [], "safety_checks": [], "permission_matrix": [], "evaluation_rubric": [], "evaluation_cases": [],
             "artifacts": [
-                {
-                    "path": "lesson_artifacts/agents/basic-agent-loop.md",
-                    "summary": "Workflow card for a simple agent loop with a human checkpoint.",
-                    "format": "text",
-                    "inspect_prompt": "Find where the loop can stop and where a human should review progress.",
-                    "change_prompt": "Move the human checkpoint earlier or later and explain what risk changes.",
-                    "body": """# Basic Agent Loop
-
-1. Understand the goal
-2. Plan the next step
-3. Use a tool or reasoning step
-4. Observe what happened
-5. Decide: continue, revise, ask a human, or stop
-""",
-                }
+                _artifact(
+                    "lesson_artifacts/agents/basic-agent-loop.md",
+                    "Workflow card for a simple agent loop with a human checkpoint.",
+                    "text",
+                    inspect_prompt="Find where the loop can stop and where a human should review progress.",
+                    change_prompt="Move the human checkpoint earlier or later and explain what risk changes.",
+                )
             ],
         },
         {
@@ -361,27 +356,13 @@ Operate in attempt-first mode.
             ],
             "skill_templates": [], "channel_templates": [], "safety_checks": [], "permission_matrix": [], "evaluation_rubric": [], "evaluation_cases": [],
             "artifacts": [
-                {
-                    "path": "lesson_artifacts/agents/memory-tools-reasoning-cheatsheet.md",
-                    "summary": "Cheat sheet for the three high-level parts of an agent.",
-                    "format": "text",
-                    "inspect_prompt": "Look for the question each building block answers.",
-                    "change_prompt": "Add one beginner example under each section.",
-                    "body": """# Memory, Tools, and Reasoning
-
-## Memory
-- Keeps useful information from earlier work
-- Prevents the system from starting from zero every time
-
-## Tools
-- Let the system act on the world
-- Can read, write, search, execute, or message depending on policy
-
-## Reasoning
-- Chooses the next step
-- Uses feedback from tools and context to revise the plan
-""",
-                }
+                _artifact(
+                    "lesson_artifacts/agents/memory-tools-reasoning-cheatsheet.md",
+                    "Cheat sheet for the three high-level parts of an agent.",
+                    "text",
+                    inspect_prompt="Look for the question each building block answers.",
+                    change_prompt="Add one beginner example under each section.",
+                )
             ],
         },
         {
@@ -429,20 +410,13 @@ Operate in attempt-first mode.
             ],
             "skill_templates": [], "channel_templates": [], "safety_checks": [], "permission_matrix": [], "evaluation_rubric": [], "evaluation_cases": [],
             "artifacts": [
-                {
-                    "path": "lesson_artifacts/agents/real-agent-scenarios.md",
-                    "summary": "Scenario deck for sorting real tasks into agent-friendly roles.",
-                    "format": "text",
-                    "inspect_prompt": "Read each scenario and decide what the agent is doing beyond just answering text.",
-                    "change_prompt": "Add one local example of your own from school, work, or daily life.",
-                    "body": """# Real Agent Scenarios
-
-1. Research helper: search sources, summarize, cite, flag unknowns.
-2. Coding helper: inspect files, propose edits, run checks, revise from test output.
-3. Support helper: read a ticket, consult a knowledge base, draft a safe response.
-4. Scheduling helper: compare calendars, suggest options, request confirmation.
-""",
-                }
+                _artifact(
+                    "lesson_artifacts/agents/real-agent-scenarios.md",
+                    "Scenario deck for sorting real tasks into agent-friendly roles.",
+                    "text",
+                    inspect_prompt="Read each scenario and decide what the agent is doing beyond just answering text.",
+                    change_prompt="Add one local example of your own from school, work, or daily life.",
+                )
             ],
         },
         {
@@ -489,22 +463,13 @@ Operate in attempt-first mode.
             ],
             "skill_templates": [], "channel_templates": [], "safety_checks": [], "permission_matrix": [], "evaluation_rubric": [], "evaluation_cases": [],
             "artifacts": [
-                {
-                    "path": "lesson_artifacts/agents/agent-track-comparison.md",
-                    "summary": "Course track comparison card for Hermes, OpenClaw, and later build paths.",
-                    "format": "text",
-                    "inspect_prompt": "Find what each track helps students learn first.",
-                    "change_prompt": "Rewrite one row in simpler words for a complete beginner.",
-                    "body": """# Agent Track Comparison
-
-| Track | What students learn first | Why it matters |
-| --- | --- | --- |
-| Hermes | A simpler first build and connection story | Lowers fear and gives a quick first success |
-| OpenClaw | Gateway, sessions, skills, channels, safety | Shows a richer real-world assistant platform |
-| Claude-style workflows | Structured reasoning or coding flow | Shows model-specific workflow design |
-| Gemini-style workflows | Cross-model comparison and tool habits | Helps students compare ecosystems rather than memorize names |
-""",
-                }
+                _artifact(
+                    "lesson_artifacts/agents/agent-track-comparison.md",
+                    "Course track comparison card for Hermes, OpenClaw, and later build paths.",
+                    "text",
+                    inspect_prompt="Find what each track helps students learn first.",
+                    change_prompt="Rewrite one row in simpler words for a complete beginner.",
+                )
             ],
         },
         {
@@ -553,25 +518,13 @@ Operate in attempt-first mode.
             ],
             "skill_templates": [], "channel_templates": [], "safety_checks": [], "permission_matrix": [], "evaluation_rubric": [], "evaluation_cases": [],
             "artifacts": [
-                {
-                    "path": "lesson_artifacts/agents/first-agent-blueprint.md",
-                    "summary": "Worksheet for designing a first beginner-safe AI agent.",
-                    "format": "text",
-                    "inspect_prompt": "Read the worksheet and decide which section feels easiest and which feels hardest.",
-                    "change_prompt": "Fill in one safe beginner example under each heading.",
-                    "body": """# First Agent Blueprint
-
-## Goal
-
-## Tools
-
-## Memory
-
-## Check or stop rule
-
-## Why this agent should exist
-""",
-                }
+                _artifact(
+                    "lesson_artifacts/agents/first-agent-blueprint.md",
+                    "Worksheet for designing a first beginner-safe AI agent.",
+                    "text",
+                    inspect_prompt="Read the worksheet and decide which section feels easiest and which feels hardest.",
+                    change_prompt="Fill in one safe beginner example under each heading.",
+                )
             ],
         },
     ],
