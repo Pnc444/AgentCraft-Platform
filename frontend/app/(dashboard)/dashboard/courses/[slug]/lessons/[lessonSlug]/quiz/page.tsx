@@ -14,7 +14,7 @@ export default function LessonQuizPage() {
     slug,
     lessonSlug,
     lesson,
-    checkpointQuestions,
+    recapQuestions,
     needsVideo,
     videoDone,
     setNotice,
@@ -30,7 +30,7 @@ export default function LessonQuizPage() {
         icon={<ClipboardCheck className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />}
       >
         <RecapQuiz
-          questions={checkpointQuestions}
+          questions={recapQuestions}
           locked={needsVideo && !videoDone}
           lockedReason="Watch the lesson video to the end before taking the Recap Quiz."
           onLockedAction={() => {

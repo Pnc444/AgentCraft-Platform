@@ -1,0 +1,14 @@
+// Minimal OpenClaw starter config for Module 6
+{
+  agent: {
+    model: "<provider>/<model-id>",
+  },
+  session: {
+    dmScope: "per-channel-peer",
+  },
+  agents: {
+    defaults: {
+      sandbox: { mode: "non-main" },
+    },
+  },
+}

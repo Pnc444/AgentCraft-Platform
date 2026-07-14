@@ -35,6 +35,7 @@ class LessonDetailSerializer(LessonListSerializer):
     course_title = serializers.CharField(source="course.title", read_only=True)
     video_watched = serializers.SerializerMethodField()
     score = serializers.SerializerMethodField()
+    interaction_log = serializers.SerializerMethodField()
 
     class Meta(LessonListSerializer.Meta):
         fields = LessonListSerializer.Meta.fields + [
@@ -43,6 +44,7 @@ class LessonDetailSerializer(LessonListSerializer):
             "require_full_watch",
             "video_watched",
             "score",
+            "interaction_log",
             "sandbox_config",
             "course_slug",
             "course_title",
@@ -57,6 +59,10 @@ class LessonDetailSerializer(LessonListSerializer):
     def get_score(self, obj):
         progress = self._progress(obj)
         return progress.score if progress else None
+
+    def get_interaction_log(self, obj):
+        progress = self._progress(obj)
+        return progress.interaction_log if progress else []
 
 
 class CourseListSerializer(serializers.ModelSerializer):

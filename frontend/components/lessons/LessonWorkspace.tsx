@@ -17,14 +17,31 @@ import {
   invalidateLearningProgress,
   patchLessonStatusInCache,
 } from "@/lib/learning-progress";
-import { getCheckpointQuestions } from "@/lib/lesson-steps";
-import type { CourseDetail, LessonDetail, LessonStatus } from "@/types";
+import {
+  getCheckpointQuestions,
+  getGuidedLessonBlocks,
+  getLessonArtifacts,
+  getRecapQuestions,
+} from "@/lib/lesson-steps";
+import type {
+  CourseDetail,
+  GuidedLessonBlock,
+  LessonArtifact,
+  LessonDetail,
+  LessonStatus,
+} from "@/types";
 import { LessonTutor } from "@/components/lessons/LessonTutorPanel";
 
 type ProgressPayload = {
   status?: LessonStatus;
   score?: number;
   video_watched?: boolean;
+  interaction_event?: {
+    type: string;
+    key: string;
+    status?: string;
+    details?: Record<string, unknown>;
+  };
 };
 
 type LessonWorkspaceValue = {
@@ -35,7 +52,10 @@ type LessonWorkspaceValue = {
   isLoading: boolean;
   notice: string | null;
   setNotice: (value: string | null) => void;
+  recapQuestions: ReturnType<typeof getRecapQuestions>;
   checkpointQuestions: ReturnType<typeof getCheckpointQuestions>;
+  guidedBlocks: GuidedLessonBlock[];
+  artifactBundle: LessonArtifact[];
   videoUrl: string;
   needsVideo: boolean;
   videoDone: boolean;
@@ -107,6 +127,7 @@ export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
           status: result.status,
           score: result.score,
           video_watched: result.video_watched,
+          interaction_log: result.interaction_log,
         };
       });
       if (variables.status) {
@@ -169,7 +190,10 @@ export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
   // Admin toggle: require_full_watch locks the quiz until the video ends.
   const needsVideo = !!videoUrl && (lesson?.require_full_watch ?? true);
   const videoDone = !!lesson && (lesson.video_watched || !needsVideo);
+  const recapQuestions = getRecapQuestions(lesson?.sandbox_config ?? {});
   const checkpointQuestions = getCheckpointQuestions(lesson?.sandbox_config ?? {});
+  const guidedBlocks = getGuidedLessonBlocks(lesson?.sandbox_config ?? {});
+  const artifactBundle = getLessonArtifacts(lesson?.sandbox_config ?? {});
 
   const value = useMemo<LessonWorkspaceValue>(
     () => ({
@@ -180,7 +204,10 @@ export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
       isLoading,
       notice,
       setNotice,
+      recapQuestions,
       checkpointQuestions,
+      guidedBlocks,
+      artifactBundle,
       videoUrl,
       needsVideo,
       videoDone,
@@ -198,7 +225,10 @@ export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
       course,
       isLoading,
       notice,
+      recapQuestions,
       checkpointQuestions,
+      guidedBlocks,
+      artifactBundle,
       videoUrl,
       needsVideo,
       videoDone,

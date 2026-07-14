@@ -1,0 +1,28 @@
+{
+  "entries": [
+    {
+      "action": "gateway",
+      "level": "review",
+      "approver": "human-reviewer",
+      "reason": "Persistent gateway mutations should never happen casually"
+    },
+    {
+      "action": "cron",
+      "level": "review",
+      "approver": "human-reviewer",
+      "reason": "Scheduled workflows outlive the current conversation"
+    },
+    {
+      "action": "delete_history",
+      "level": "deny",
+      "approver": null,
+      "reason": "Audit history is immutable for the capstone"
+    },
+    {
+      "action": "public_exposure_change",
+      "level": "deny",
+      "approver": null,
+      "reason": "Exposing the gateway or opening public DMs is outside the capstone's safe scope"
+    }
+  ]
+}

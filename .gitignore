@@ -18,3 +18,8 @@ node_modules/
 .vscode/
 .idea/
 .DS_Store
+
+# Local planning / working notes (not for commit)
+AgentCraft.md
+Untitled Document 7
+.env

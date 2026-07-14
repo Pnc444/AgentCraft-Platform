@@ -11,6 +11,27 @@ from .models import Progress, Recommendation
 from .serializers import ProgressSerializer, ProgressUpdateSerializer, RecommendationSerializer
 
 
+def upsert_interaction_event(log: list[dict], event: dict) -> list[dict]:
+    next_log = [entry for entry in log if isinstance(entry, dict)]
+    normalized = {
+        "type": event["type"].strip(),
+        "key": event["key"].strip(),
+        "status": event.get("status", "done"),
+        "timestamp": timezone.now().isoformat(),
+        "details": event.get("details", {}),
+    }
+
+    for index, existing in enumerate(next_log):
+        if existing.get("key") != normalized["key"]:
+            continue
+        next_log[index] = normalized
+        break
+    else:
+        next_log.append(normalized)
+
+    return next_log
+
+
 class LessonProgressView(APIView):
     """POST /lessons/{id}/progress/ — create or update the user's progress on a lesson."""
 
@@ -20,8 +41,11 @@ class LessonProgressView(APIView):
         serializer.is_valid(raise_exception=True)
 
         progress, _ = Progress.objects.get_or_create(user=request.user, lesson=lesson)
+        interaction_event = serializer.validated_data.pop("interaction_event", None)
         for field, value in serializer.validated_data.items():
             setattr(progress, field, value)
+        if interaction_event:
+            progress.interaction_log = upsert_interaction_event(progress.interaction_log, interaction_event)
         progress.last_attempt_at = timezone.now()
         # Completing a lesson may require finishing the video first (admin toggle).
         if (

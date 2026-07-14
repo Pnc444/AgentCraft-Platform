@@ -1,5 +1,10 @@
 import type { CheckpointQuestion } from "@/components/lessons/CheckpointQuiz";
-import type { LessonStatus } from "@/types";
+import type {
+  CapstoneAssignment,
+  GuidedLessonBlock,
+  LessonArtifact,
+  LessonStatus,
+} from "@/types";
 
 export const LESSON_STATUS_UI = {
   completed: { text: "Completed", pct: 100 },
@@ -12,16 +17,58 @@ export type LessonStatusKey = keyof typeof LESSON_STATUS_UI;
 
 export type LessonStep = "content" | "video" | "quiz" | "progress";
 
-export function getCheckpointQuestions(config: Record<string, unknown>): CheckpointQuestion[] {
+function isQuestion(value: unknown): value is CheckpointQuestion {
+  return (
+    !!value &&
+    typeof value === "object" &&
+    typeof (value as CheckpointQuestion).prompt === "string" &&
+    Array.isArray((value as CheckpointQuestion).options)
+  );
+}
+
+export function getRecapQuestions(config: Record<string, unknown>): CheckpointQuestion[] {
   const raw = config?.questions;
   if (!Array.isArray(raw)) return [];
+  return raw.filter(isQuestion);
+}
+
+export function getCheckpointQuestions(config: Record<string, unknown>): CheckpointQuestion[] {
+  const raw = config?.checkpoint_questions;
+  if (!Array.isArray(raw)) return [];
+  return raw.filter(isQuestion);
+}
+
+export function getGuidedLessonBlocks(config: Record<string, unknown>): GuidedLessonBlock[] {
+  const raw = config?.guided_blocks;
+  if (!Array.isArray(raw)) return [];
   return raw.filter(
-    (q): q is CheckpointQuestion =>
-      !!q &&
-      typeof q === "object" &&
-      typeof (q as CheckpointQuestion).prompt === "string" &&
-      Array.isArray((q as CheckpointQuestion).options)
+    (block): block is GuidedLessonBlock =>
+      !!block &&
+      typeof block === "object" &&
+      typeof (block as GuidedLessonBlock).title === "string" &&
+      typeof (block as GuidedLessonBlock).body === "string"
   );
+}
+
+export function getLessonArtifacts(config: Record<string, unknown>): LessonArtifact[] {
+  const raw = config?.artifact_bundle;
+  if (!Array.isArray(raw)) return [];
+  return raw.filter(
+    (artifact): artifact is LessonArtifact =>
+      !!artifact &&
+      typeof artifact === "object" &&
+      typeof (artifact as LessonArtifact).path === "string" &&
+      typeof (artifact as LessonArtifact).summary === "string"
+  );
+}
+
+export function getCapstoneAssignment(config: Record<string, unknown>): CapstoneAssignment | null {
+  const raw = config?.capstone_assignment;
+  if (!raw || typeof raw !== "object") return null;
+  const assignment = raw as CapstoneAssignment;
+  if (!assignment.title || !assignment.summary || !Array.isArray(assignment.sections)) return null;
+  if (!Array.isArray(assignment.review_questions)) return null;
+  return assignment;
 }
 
 export function lessonStepHref(

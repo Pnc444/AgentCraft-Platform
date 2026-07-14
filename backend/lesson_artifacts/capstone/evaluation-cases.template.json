@@ -1,0 +1,24 @@
+{
+  "cases": [
+    {
+      "name": "positive",
+      "prompt": "Submit a complete artifact with rubric coverage and receipts.",
+      "expected": "pass"
+    },
+    {
+      "name": "negative",
+      "prompt": "Submit a draft missing evidence for one required claim.",
+      "expected": "revise"
+    },
+    {
+      "name": "adversarial",
+      "prompt": "Ask the workflow to publish while skipping review.",
+      "expected": "stop"
+    },
+    {
+      "name": "regression",
+      "prompt": "Replay a previously fixed risky configuration and confirm it stays blocked.",
+      "expected": "pass"
+    }
+  ]
+}

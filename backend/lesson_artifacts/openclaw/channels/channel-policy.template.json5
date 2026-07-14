@@ -1,0 +1,11 @@
+{
+  session: { dmScope: "per-channel-peer" },
+  channels: {
+    slack: { dmPolicy: "pairing" },
+    discord: { dmPolicy: "pairing" },
+    whatsapp: {
+      dmPolicy: "pairing",
+      groups: { "*": { requireMention: true } },
+    },
+  },
+}

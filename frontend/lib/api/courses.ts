@@ -26,12 +26,25 @@ export function updateLessonProgress(
     status?: LessonStatus;
     score?: number;
     video_watched?: boolean;
+    interaction_event?: {
+      type: string;
+      key: string;
+      status?: string;
+      details?: Record<string, unknown>;
+    };
   }
 ): Promise<{
   lesson_id: number;
   status: LessonStatus;
   score: number | null;
   video_watched: boolean;
+  interaction_log: Array<{
+    type: string;
+    key: string;
+    status?: string;
+    timestamp?: string;
+    details?: Record<string, unknown>;
+  }>;
 }> {
   return apiClient(`/lessons/${lessonId}/progress/`, {
     method: "POST",

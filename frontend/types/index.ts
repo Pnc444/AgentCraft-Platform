@@ -1,3 +1,5 @@
+import type { CheckpointQuestion } from "@/components/lessons/CheckpointQuiz";
+
 export interface User {
   id: number;
   username: string;
@@ -12,6 +14,55 @@ export interface User {
 export type LessonStatus = "not_started" | "in_progress" | "completed" | "stuck";
 
 export type LessonType = "theory" | "interactive" | "sandbox" | "quiz" | "agent_lab";
+
+export interface GuidedLessonBlock {
+  title: string;
+  body: string;
+  analogy?: string;
+  try_this?: string[];
+  remember?: string;
+  checkpoint_after?: boolean;
+  checkpoint_questions?: CheckpointQuestion[];
+  kind?: "common_mistake" | "teach_it_back";
+  artifact_paths?: string[];
+  interactive_widget?: "capstone_studio";
+  /** Brilliant-style: question shown BEFORE the explanation to prompt thinking first. */
+  predict_first?: { question: string; hint?: string };
+}
+
+export interface LessonInteraction {
+  type: string;
+  key: string;
+  status?: string;
+  timestamp?: string;
+  details?: Record<string, unknown>;
+}
+
+export interface CapstoneAssignmentSection {
+  key: string;
+  label: string;
+  prompt: string;
+  placeholder?: string;
+  min_length?: number;
+  required_keywords?: string[];
+}
+
+export interface CapstoneAssignment {
+  title: string;
+  summary: string;
+  sections: CapstoneAssignmentSection[];
+  review_questions: string[];
+  risky_phrases?: string[];
+}
+
+export interface LessonArtifact {
+  path: string;
+  summary: string;
+  format?: "text" | "json";
+  inspect_prompt?: string;
+  change_prompt?: string;
+  body?: string | Record<string, unknown> | unknown[];
+}
 
 export interface Skill {
   id: number;
@@ -37,6 +88,7 @@ export interface LessonDetail extends LessonSummary {
   require_full_watch: boolean;
   video_watched: boolean;
   score: number | null;
+  interaction_log: LessonInteraction[];
   sandbox_config: Record<string, unknown>;
   course_slug: string;
   course_title: string;

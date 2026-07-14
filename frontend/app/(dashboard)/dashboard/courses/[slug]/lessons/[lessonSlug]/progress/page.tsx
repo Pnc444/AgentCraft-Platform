@@ -1,11 +1,14 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, ChevronLeft, ChevronRight, ClipboardCheck } from "lucide-react";
+import { CheckCircle2, ChevronLeft, ChevronRight, ClipboardCheck, Sparkles } from "lucide-react";
 import clsx from "clsx";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
+import { ProgressBar } from "@/components/shared/ProgressBar";
 import { Reveal } from "@/components/shared/Reveal";
+import { completedCheckpointIds, completedInteractionKeys } from "@/lib/lesson-interactions";
 import { lessonStepHref } from "@/lib/lesson-steps";
 
 export default function LessonProgressPage() {
@@ -21,9 +24,45 @@ export default function LessonProgressPage() {
     progressPending,
     prev,
     next,
+    guidedBlocks,
   } = useLessonWorkspace();
 
   if (!lesson) return null;
+
+  const checkpointBlocks = useMemo(
+    () =>
+      guidedBlocks
+        .map((block, index) => ({
+          id: `${lesson.id}:${index}:${block.title}`,
+          title: block.title,
+          checkpoint_after: !!block.checkpoint_after,
+        }))
+        .filter((block) => block.checkpoint_after),
+    [guidedBlocks, lesson.id]
+  );
+  const completedIds = useMemo(
+    () => completedCheckpointIds(lesson.interaction_log),
+    [lesson.interaction_log]
+  );
+  const tryTasks = useMemo(
+    () =>
+      guidedBlocks.flatMap((block, blockIndex) =>
+        (block.try_this || []).map((task, taskIndex) => ({
+          id: `task:${lesson.id}:${blockIndex}:${taskIndex}`,
+          label: task,
+          blockTitle: block.title,
+        }))
+      ),
+    [guidedBlocks, lesson.id]
+  );
+  const completedTaskIds = useMemo(
+    () => completedInteractionKeys(lesson.interaction_log, "guided_task"),
+    [lesson.interaction_log]
+  );
+
+  const checkpointPct = checkpointBlocks.length
+    ? Math.round((completedIds.size / checkpointBlocks.length) * 100)
+    : 0;
 
   function goToQuiz() {
     if (needsVideo && !videoDone) {
@@ -87,6 +126,80 @@ export default function LessonProgressPage() {
               </dd>
             </div>
           </dl>
+
+          {checkpointBlocks.length ? (
+            <div className="mt-5 rounded-xl bg-craft-soft px-4 py-4 ring-1 ring-craft-border">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+                <p className="text-sm font-semibold text-craft-ink">Learning Momentum</p>
+              </div>
+              <p className="mt-2 text-sm text-craft-muted">
+                Mini checkpoints from the content page are saved on this device so students can feel progress before the final recap quiz.
+              </p>
+              <div className="mt-3 flex items-center gap-3">
+                <ProgressBar value={checkpointPct} className="flex-1" />
+                <span className="text-sm font-medium text-craft-ink">
+                  {completedIds.size} / {checkpointBlocks.length}
+                </span>
+              </div>
+              <ul className="mt-3 space-y-2 text-sm text-craft-muted">
+                {checkpointBlocks.map((block) => {
+                  const done = completedIds.has(block.id);
+                  return (
+                    <li key={block.id} className="flex items-center gap-2">
+                      <span
+                        className={clsx(
+                          "inline-flex h-2.5 w-2.5 rounded-full",
+                          done ? "bg-emerald-500" : "bg-craft-faint"
+                        )}
+                      />
+                      <span className={done ? "text-craft-ink" : undefined}>{block.title}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ) : null}
+
+          {tryTasks.length ? (
+            <div className="mt-5 rounded-xl bg-craft-soft px-4 py-4 ring-1 ring-craft-border">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+                <p className="text-sm font-semibold text-craft-ink">Hands-on Tasks</p>
+              </div>
+              <p className="mt-2 text-sm text-craft-muted">
+                These are the action steps you completed from the content page. They now travel with lesson progress instead of living only in browser storage.
+              </p>
+              <div className="mt-3 flex items-center gap-3">
+                <ProgressBar
+                  value={tryTasks.length ? Math.round((completedTaskIds.size / tryTasks.length) * 100) : 0}
+                  className="flex-1"
+                />
+                <span className="text-sm font-medium text-craft-ink">
+                  {completedTaskIds.size} / {tryTasks.length}
+                </span>
+              </div>
+              <ul className="mt-3 space-y-2 text-sm text-craft-muted">
+                {tryTasks.map((task) => {
+                  const done = completedTaskIds.has(task.id);
+                  return (
+                    <li key={task.id} className="flex items-start gap-2">
+                      <span
+                        className={clsx(
+                          "mt-1 inline-flex h-2.5 w-2.5 rounded-full",
+                          done ? "bg-emerald-500" : "bg-craft-faint"
+                        )}
+                      />
+                      <span>
+                        <span className={done ? "text-craft-ink" : undefined}>{task.label}</span>
+                        <span className="block text-xs text-craft-faint">{task.blockTitle}</span>
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ) : null}
 
           <div className="mt-5 flex flex-wrap gap-3">
             {lesson.status !== "completed" && (
