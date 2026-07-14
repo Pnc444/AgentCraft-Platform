@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, ClipboardCheck, MonitorPlay, Wrench } from "lucide-react";
+import { ChevronLeft, ChevronRight, ClipboardCheck, MonitorPlay } from "lucide-react";
 import { LessonContent } from "@/components/lessons/LessonContent";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 import { Reveal } from "@/components/shared/Reveal";
@@ -21,25 +21,6 @@ export default function LessonContentPage() {
         <LessonContent content={lesson.content} />
       ) : (
         <p className="text-sm text-craft-faint">No content yet.</p>
-      )}
-
-      {lesson.lesson_type === "sandbox" && (
-        <div className="rounded-2xl border border-craft-border bg-craft-soft/50 p-6">
-          <h2 className="flex items-center gap-2 text-base font-bold text-craft-ink">
-            <Wrench className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
-            Interactive Demo
-          </h2>
-          <button
-            type="button"
-            onClick={() =>
-              alert("Sandbox integration coming soon — Diego & Douglas wiring it up.")
-            }
-            className="btn-primary mt-4"
-          >
-            <Wrench className="h-4 w-4" />
-            Launch Sandbox
-          </button>
-        </div>
       )}
 
       {/* End-of-lesson: quiz prompt + navigation */}

@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { LayoutDashboard } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 import { Logo } from "@/components/shared/Logo";
-import { UserAvatar } from "@/components/shared/UserAvatar";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 
 export function SiteHeader() {
@@ -19,8 +19,9 @@ export function SiteHeader() {
         <div className="flex items-center gap-3">
           <ThemeToggle compact inverted />
           {isAuthed ? (
-            <Link href="/dashboard/profile" className="rounded-full shadow-navy" title="Profile">
-              <UserAvatar size="md" className="ring-1 ring-cyan-400/40" />
+            <Link href="/dashboard" className="btn-glow" title="Dashboard">
+              <LayoutDashboard className="h-4 w-4" />
+              Dashboard
             </Link>
           ) : (
             <>
