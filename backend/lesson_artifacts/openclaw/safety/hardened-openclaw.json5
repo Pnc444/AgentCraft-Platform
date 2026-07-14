@@ -1,18 +1,33 @@
+// The hardened baseline — every lock from Module 6 in one file.
+// Each of these is a setting, not a promise: it holds whether or not anyone is watching.
 {
   gateway: {
     mode: "local",
+    // The front desk only answers inside your own machine.
     bind: "loopback",
+    // And even then, only with the right token.
     auth: { mode: "token", token: "replace-with-long-random-token" },
   },
-  session: { dmScope: "per-channel-peer" },
+  session: {
+    // Private notebook per person.
+    dmScope: "per-channel-peer",
+  },
   tools: {
     profile: "messaging",
+    // Powerful tools stay off until deliberately granted — deny by default.
     deny: ["group:automation", "group:runtime", "group:fs", "sessions_spawn", "sessions_send"],
+    // File access stays inside the workspace.
     fs: { workspaceOnly: true },
+    // Running commands requires an explicit human yes, every time.
     exec: { security: "deny", ask: "always" },
     elevated: { enabled: false },
   },
   channels: {
-    whatsapp: { dmPolicy: "pairing", groups: { "*": { requireMention: true } } },
+    whatsapp: {
+      // Doorbell with a code.
+      dmPolicy: "pairing",
+      // Polite guest in shared rooms.
+      groups: { "*": { requireMention: true } },
+    },
   },
 }

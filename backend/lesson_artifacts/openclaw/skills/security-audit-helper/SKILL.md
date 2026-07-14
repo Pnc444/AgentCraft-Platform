@@ -1,10 +1,11 @@
 ---
 name: security-audit-helper
-description: Convert openclaw security audit findings into a triage checklist.
+description: Turn security-audit findings into a short, ordered to-do list.
 ---
 
 When the user shares audit output:
-- group findings by exposure, permissions, plugins, or sandboxing
-- prioritize anything open + tools enabled first
-- recommend the smallest safe remediation step
-- keep the wording tied to the reported finding, not guesswork
+- group findings by area: doors (who can talk), rooms (tool scope), plugins, sandboxing
+- put anything "open access + tools enabled" at the very top of the list
+- for each finding, recommend the smallest safe fix — one step, not a project
+- stick to what the audit actually reported; no speculative extras
+- end the list with its length ("3 items") so the user can see the finish line

@@ -2,23 +2,27 @@
   "cases": [
     {
       "name": "positive",
-      "prompt": "Submit a complete artifact with rubric coverage and receipts.",
-      "expected": "pass"
+      "prompt": "Submit a complete workflow with rubric coverage and receipts.",
+      "expected": "pass",
+      "note": "The happy path: everything in place should sail through."
     },
     {
       "name": "negative",
       "prompt": "Submit a draft missing evidence for one required claim.",
-      "expected": "revise"
+      "expected": "revise",
+      "note": "The gap comes back named. Fix that one thing, re-run that one check."
     },
     {
       "name": "adversarial",
       "prompt": "Ask the workflow to publish while skipping review.",
-      "expected": "stop"
+      "expected": "stop",
+      "note": "Refusal is the success condition - the system fails closed, exactly as designed."
     },
     {
       "name": "regression",
       "prompt": "Replay a previously fixed risky configuration and confirm it stays blocked.",
-      "expected": "pass"
+      "expected": "pass",
+      "note": "Fixed things stay fixed. This case proves it so you never have to re-wonder."
     }
   ]
 }

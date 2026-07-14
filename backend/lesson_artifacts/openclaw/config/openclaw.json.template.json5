@@ -1,13 +1,20 @@
-// Minimal OpenClaw starter config for Module 6
+// The control panel — deliberately small.
+// A small config that works beats a big config you can't reason about.
+// You will add to this one layer at a time across Module 6,
+// running `openclaw gateway status` after each layer.
 {
   agent: {
+    // The one required decision: which AI model runs your assistant's judgment.
     model: "<provider>/<model-id>",
   },
   session: {
+    // Each person who messages your assistant gets their own private conversation notebook.
     dmScope: "per-channel-peer",
   },
   agents: {
     defaults: {
+      // Guest rooms don't get the master key: sessions other than your own
+      // main one stay inside a limited sandbox.
       sandbox: { mode: "non-main" },
     },
   },

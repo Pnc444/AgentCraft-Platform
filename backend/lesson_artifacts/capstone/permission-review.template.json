@@ -1,28 +1,40 @@
 {
   "entries": [
     {
+      "action": "draft_content",
+      "level": "allow",
+      "approver": null,
+      "reason": "Routine and undone in a keystroke - a green door"
+    },
+    {
+      "action": "score_against_rubric",
+      "level": "allow",
+      "approver": null,
+      "reason": "Read-only evaluation work - nothing to undo"
+    },
+    {
       "action": "gateway",
       "level": "review",
       "approver": "human-reviewer",
-      "reason": "Persistent gateway mutations should never happen casually"
+      "reason": "Settings changes persist beyond the conversation that made them - a person opens this door"
     },
     {
       "action": "cron",
       "level": "review",
       "approver": "human-reviewer",
-      "reason": "Scheduled workflows outlive the current conversation"
+      "reason": "Scheduled jobs outlive the chat that created them - persistence earns the yellow door"
     },
     {
       "action": "delete_history",
       "level": "deny",
       "approver": null,
-      "reason": "Audit history is immutable for the capstone"
+      "reason": "Burns the receipts - checking must stay possible, so this stays locked no matter who asks"
     },
     {
       "action": "public_exposure_change",
       "level": "deny",
       "approver": null,
-      "reason": "Exposing the gateway or opening public DMs is outside the capstone's safe scope"
+      "reason": "Widens every door at once - locked, and the permanence is the feature"
     }
   ]
 }

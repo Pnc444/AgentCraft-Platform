@@ -1,11 +1,25 @@
+// Door policy — every door starts locked, and this file keeps it that way.
 {
-  session: { dmScope: "per-channel-peer" },
+  session: {
+    // Each person gets a private conversation notebook. Threads never blur.
+    dmScope: "per-channel-peer",
+  },
   channels: {
-    slack: { dmPolicy: "pairing" },
-    discord: { dmPolicy: "pairing" },
+    slack: {
+      // Doorbell with a code: strangers get a pairing code and silence
+      // until you approve them with `openclaw pairing approve slack <code>`.
+      dmPolicy: "pairing",
+    },
+    discord: {
+      dmPolicy: "pairing",
+    },
     whatsapp: {
       dmPolicy: "pairing",
-      groups: { "*": { requireMention: true } },
+      groups: {
+        // In shared rooms, the assistant is a polite guest:
+        // it only answers when called by name.
+        "*": { requireMention: true },
+      },
     },
   },
 }
