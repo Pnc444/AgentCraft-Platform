@@ -35,8 +35,17 @@ function inferBlockKind(title: string) {
   return null;
 }
 
-function PredictFirstCard({ question, hint }: { question: string; hint?: string }) {
-  const [revealed, setRevealed] = useState(false);
+function PredictFirstCard({
+  question,
+  hint,
+  revealed,
+  onReveal,
+}: {
+  question: string;
+  hint?: string;
+  revealed: boolean;
+  onReveal: () => void;
+}) {
   return (
     <div className="rounded-xl border-2 border-cyan-500/30 bg-cyan-50/60 px-4 py-4 dark:bg-cyan-500/10">
       <p className="flex items-center gap-2 text-sm font-semibold text-cyan-800 dark:text-cyan-200">
@@ -50,7 +59,7 @@ function PredictFirstCard({ question, hint }: { question: string; hint?: string 
       {!revealed ? (
         <button
           type="button"
-          onClick={() => setRevealed(true)}
+          onClick={onReveal}
           className="btn-secondary mt-3 px-3 py-2 text-xs"
         >
           I&apos;ve thought about it — show the explanation
@@ -154,6 +163,7 @@ export default function LessonContentPage() {
   );
   const [optimisticCheckpointIds, setOptimisticCheckpointIds] = useState<string[]>([]);
   const [optimisticTaskIds, setOptimisticTaskIds] = useState<string[]>([]);
+  const [revealedPredictFirstIds, setRevealedPredictFirstIds] = useState<string[]>([]);
 
   useEffect(() => {
     setOptimisticCheckpointIds(Array.from(completedCheckpointIds(lesson.interaction_log)));
@@ -165,9 +175,20 @@ export default function LessonContentPage() {
 
   const completedCheckpointSet = useMemo(() => new Set(optimisticCheckpointIds), [optimisticCheckpointIds]);
   const completedTaskSet = useMemo(() => new Set(optimisticTaskIds), [optimisticTaskIds]);
+  const revealedPredictFirstSet = useMemo(
+    () => new Set(revealedPredictFirstIds),
+    [revealedPredictFirstIds]
+  );
   const checkpointPct = checkpointBlocks.length
     ? Math.round((optimisticCheckpointIds.length / checkpointBlocks.length) * 100)
     : 0;
+
+  function revealPredictFirst(revealId: string) {
+    setRevealedPredictFirstIds((prev) => {
+      if (prev.includes(revealId)) return prev;
+      return [...prev, revealId];
+    });
+  }
 
   function markCheckpointComplete(checkpointId: string) {
     setOptimisticCheckpointIds((prev) => {
@@ -245,6 +266,9 @@ export default function LessonContentPage() {
         blockLayouts.map((block, index) => {
           const checkpointId = `${lesson.id}:${index}:${block.title}`;
           const checkpointPassed = completedCheckpointSet.has(checkpointId);
+          const revealId = `predict-first:${lesson.id}:${index}:${block.title}`;
+          const predictFirstRevealed =
+            !block.predict_first || revealedPredictFirstSet.has(revealId);
           const blockCheckpointQuestions =
             block.checkpoint_questions?.length
               ? block.checkpoint_questions
@@ -277,11 +301,14 @@ export default function LessonContentPage() {
                   <PredictFirstCard
                     question={block.predict_first.question}
                     hint={block.predict_first.hint}
+                    revealed={predictFirstRevealed}
+                    onReveal={() => revealPredictFirst(revealId)}
                   />
                 ) : null}
-                <LessonContent content={block.body} />
 
-                {block.analogy ? (
+                {predictFirstRevealed ? <LessonContent content={block.body} /> : null}
+
+                {predictFirstRevealed && block.analogy ? (
                   <div className="rounded-xl border border-cyan-500/20 bg-craft-accent-soft/40 px-4 py-3">
                     <p className="flex items-center gap-2 text-sm font-semibold text-craft-ink">
                       <Lightbulb className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
@@ -293,7 +320,7 @@ export default function LessonContentPage() {
                   </div>
                 ) : null}
 
-                {block.try_this?.length ? (
+                {predictFirstRevealed && block.try_this?.length ? (
                   <div className="rounded-xl border border-craft-border bg-craft-soft/70 px-4 py-3">
                     <p className="flex items-center gap-2 text-sm font-semibold text-craft-ink">
                       <Sparkles className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
@@ -329,14 +356,14 @@ export default function LessonContentPage() {
                   </div>
                 ) : null}
 
-                {block.remember ? (
+                {predictFirstRevealed && block.remember ? (
                   <div className="rounded-xl border border-amber-500/20 bg-amber-50/80 px-4 py-3 dark:bg-amber-500/10">
                     <p className="text-sm font-semibold text-craft-ink">Remember this</p>
                     <p className="mt-2 text-sm text-craft-muted">{block.remember}</p>
                   </div>
                 ) : null}
 
-                {block.inlineArtifacts.length ? (
+                {predictFirstRevealed && block.inlineArtifacts.length ? (
                   <div className="rounded-xl border border-craft-border bg-craft-soft/70 px-4 py-4">
                     <p className="flex items-center gap-2 text-sm font-semibold text-craft-ink">
                       <Wrench className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
@@ -356,7 +383,7 @@ export default function LessonContentPage() {
                   </div>
                 ) : null}
 
-                {block.inlineCapstoneStudio && capstoneAssignment ? (
+                {predictFirstRevealed && block.inlineCapstoneStudio && capstoneAssignment ? (
                   <div className="rounded-xl border border-craft-border bg-craft-soft/70 px-4 py-4">
                     <p className="flex items-center gap-2 text-sm font-semibold text-craft-ink">
                       <ClipboardCheck className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
@@ -379,7 +406,7 @@ export default function LessonContentPage() {
               </div>
             </LessonSection>
 
-            {block.checkpoint_after && blockCheckpointQuestions.length ? (
+            {predictFirstRevealed && block.checkpoint_after && blockCheckpointQuestions.length ? (
               <LessonSection
                 title="Mini Checkpoint"
                 icon={<Sparkles className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />}
