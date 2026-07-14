@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu } from "lucide-react";
+import { LayoutDashboard, Menu } from "lucide-react";
 import clsx from "clsx";
 import { useAuthStore } from "@/stores/authStore";
 import { UserAvatar } from "@/components/shared/UserAvatar";
@@ -26,6 +26,20 @@ export function Topbar({ onOpenSidebar }: TopbarProps) {
       >
         <Menu className="h-5 w-5" />
       </button>
+
+      <Link
+        href="/dashboard"
+        className={clsx(
+          "flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition",
+          pathname === "/dashboard"
+            ? "bg-craft-accent-soft text-cyan-800 ring-1 ring-cyan-500/20 dark:text-cyan-200"
+            : "text-craft-muted hover:bg-craft-soft hover:text-craft-ink"
+        )}
+        title="Dashboard"
+      >
+        <LayoutDashboard className="h-4 w-4 shrink-0" />
+        <span className="hidden sm:inline">Dashboard</span>
+      </Link>
 
       <div className="min-w-0 flex-1" />
 

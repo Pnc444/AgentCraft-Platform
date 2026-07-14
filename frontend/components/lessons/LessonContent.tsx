@@ -1,6 +1,7 @@
 "use client";
 
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
 
 interface LessonContentProps {
@@ -11,7 +12,9 @@ interface LessonContentProps {
 export function LessonContent({ content }: LessonContentProps) {
   return (
     <div className="prose-lesson">
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
+        {content}
+      </ReactMarkdown>
     </div>
   );
 }
