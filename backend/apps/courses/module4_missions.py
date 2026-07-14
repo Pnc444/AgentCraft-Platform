@@ -18,10 +18,31 @@ def _artifact(
     return artifact
 
 
+def _tutor_prompt(lesson_title: str, focus: str) -> str:
+    return f"""You are the AgentCraft course tutor for the lesson "{lesson_title}".
+
+Who you are teaching: an intelligent adult beginner with zero AI background. Assume they can think clearly. Never assume they know jargon — introduce every technical word with a plain-English anchor the first time it appears.
+
+How to behave:
+- Attempt-first: before explaining, ask what they currently think, then build on their own words.
+- One idea per reply. End every reply with the single next step — never a menu of possible next steps.
+- Use the course's running example (Juno, the research helper) before inventing new examples.
+- If the learner answers correctly and then asks whether they are really sure, confirm once, in one plain sentence, and move forward. Do not reopen a settled point — re-explaining a correct answer teaches doubt.
+- If they are wrong, treat it as useful information, never as being behind: name what was right first, then give the one adjustment.
+- Never dramatize risk or failure. If something can go wrong, say exactly what would happen and how it is undone.
+- When the learner can do what the lesson's "Done means done" list asks, say so explicitly and tell them it is safe to stop.
+
+Focus for this lesson: {focus}
+"""
+
+
 MODULE_4_MISSION_PACK = {
-    "title": "Module 4: AI Agents",
+    "title": "Module 4: How Agents Think",
     "slug": "module-4-ai-agents",
-    "description": "Explain what AI agents are, how they differ from chatbots, how basic agent loops work, and how those ideas lead into the later Hermes, OpenClaw, and capstone modules.",
+    "description": (
+        "Meet one small AI helper, learn the six questions that describe any agent, "
+        "and design your own on paper. No installs, no jargon, one idea at a time."
+    ),
     "difficulty": 2,
     "order": 5,
     "publish_rules": [
@@ -34,158 +55,179 @@ MODULE_4_MISSION_PACK = {
     ],
     "lessons": [
         {
-            "title": "What an AI Agent Is",
+            "title": "What an Agent Actually Is",
             "slug": "what-an-ai-agent-is",
             "lesson_type": "theory",
             "estimated_minutes": 10,
-            "content": """# What an AI Agent Is
+            "content": """# What an Agent Actually Is
 
-An AI agent is not just a chatbot with a different label. A good beginner definition is: **an agent is a system that can receive a goal, decide what to do next, use tools or memory when needed, and stop when it has a result or hits a limit**.
+*Lesson 1 of 7 · about 10 minutes · nothing to install, nothing to memorize.*
 
-The simplest way to understand the difference is this:
+Here is the plan for this whole module: you will meet one small, imaginary helper, watch how it thinks, and by the last lesson design your own version on paper. No code. No setup. One idea at a time.
 
-- a basic chatbot mostly answers within one conversation turn
-- a workflow follows a fixed sequence of steps
-- an agent can choose its next step based on what it learns while working
+## Meet Juno
 
-That flexibility is why agents are exciting, but it is also why they need clear tools, good boundaries, and human review.
+Juno is a research helper. You say:
 
-## Beginner mental model
-- **Goal**: what the human wants
-- **Plan**: what the system thinks it should try
-- **Tools**: how it acts on the world
-- **Memory**: what it should keep track of
-- **Check**: how it knows whether progress is real
-- **Stop rule**: when it should stop instead of wandering forever
+> "Find me three good articles about how sleep affects memory, and summarize each one."
 
-## Why this module matters
-If students do not understand this map, later modules can feel like random setup commands. Module 4 turns future build steps into something coherent.
+Juno searches, skims what it finds, throws away the junk, writes three short summaries, shows them to you — and then stops.
+
+That little story contains everything an AI agent is.
+
+**An agent is a system that takes a goal, works toward it in steps, uses tools when it needs them, checks its own work, and stops when the job is done.**
+
+A chatbot *answers* you. An agent *does something* for you, then reports back. That is the whole difference, and it is enough to carry you through the rest of this course.
+
+## The six questions
+
+Any agent — Juno, or anything you build later — can be described by six plain questions:
+
+1. **Goal** — what does the human actually want?
+2. **Plan** — what should it try next?
+3. **Tools** — what is it allowed to do? (search, read, write)
+4. **Memory** — what should it keep track of while working?
+5. **Check** — how does it know its work is any good?
+6. **Stop** — how does it know it is finished?
+
+For Juno: the goal is "three good summaries." The plan starts with "search." Its tools are search-and-read. Its memory is the list of articles found so far. Its check is "is this article actually about sleep and memory?" Its stop rule is "three good summaries delivered."
+
+You do **not** need to memorize the six questions. Lessons 2 through 6 each pick one or two of them up and turn them over slowly. They will stick from use, not from rehearsal.
+
+## Done means done
+
+You are done with this lesson when you can:
+
+- say what Juno does in one sentence
+- name roughly what the six questions cover — peeking at the Agent Map below while you do it is completely fine
+
+One pass through this page is enough. If the six questions do not feel solid yet, that is expected and normal: the rest of the module exists precisely to make them solid.
 """,
-            "ai_tutor_prompt": """You are ACADEMIC TUTOR AI HEADMASTER guiding a zero-knowledge student through What an AI Agent Is.
-
-Operate in attempt-first mode.
-- Start by asking what the learner already thinks an AI agent is.
-- Use the lesson content as the primary source of truth.
-- Keep the explanation centered on goal, plan, tools, memory, checks, and stop rules.
-- Redirect vague hype into one clear practical example.
-
-If the learner asks for a shortcut, redirect them to the smallest explanation or example that makes the idea concrete.
-""",
+            "ai_tutor_prompt": _tutor_prompt(
+                "What an Agent Actually Is",
+                "the one-sentence definition of an agent, told through Juno the research helper, and a first gentle pass over the six questions (goal, plan, tools, memory, check, stop).",
+            ),
             "questions": [
                 {
                     "id": "module4-agent-q1",
-                    "prompt": "A student says: 'My app auto-responds to every support email using a fixed template. It is an AI agent.' What is the key thing missing from this description?",
+                    "prompt": "You ask Juno for three article summaries. It delivers them and stops. Which part of the six questions did the stopping come from?",
                     "options": [
-                        "The system cannot choose different steps based on what it finds — it runs the same template every time, making it an auto-responder, not an agent",
-                        "It does not use Python, so it cannot be an agent",
-                        "Handling emails automatically is enough to qualify as an agent",
+                        "The plan — it planned to stop",
+                        "The stop rule — the finish line was defined before the work started",
+                        "The memory — it forgot what else to do",
                     ],
-                    "answer_index": 0,
+                    "answer_index": 1,
                 },
                 {
                     "id": "module4-agent-q2",
-                    "prompt": "Your flight-search system finds a great deal at $280 but keeps running for 20 more minutes. What design problem does this reveal?",
+                    "prompt": "An app replies to every support email with the same fixed template. A friend calls it an AI agent. What is the kindest accurate correction?",
                     "options": [
-                        "There is no stop rule — once the goal is met the agent should stop, not keep searching indefinitely",
-                        "The agent needs a larger AI model to know when to stop",
-                        "The search ran too fast and needs to slow down",
+                        "It never chooses a next step based on what it finds, so it is an auto-responder, not an agent",
+                        "It is an agent, just a very small one",
+                        "It would be an agent if it were written in a different language",
                     ],
                     "answer_index": 0,
                 },
                 {
                     "id": "module4-agent-q3",
-                    "prompt": "An agent summarizes 3 articles, then checks whether each summary is accurate before delivering the results. Which part of the agent model explains that final check?",
+                    "prompt": "Juno reads an article and asks itself 'is this actually about sleep and memory?' before keeping it. Which question is Juno answering?",
                     "options": [
-                        "The Check step — the agent verifies its own output before reporting instead of assuming the first result is good enough",
-                        "The Memory step — it remembered the 3 articles so it could recheck them",
-                        "The Stop rule — it stopped at exactly 3 articles",
+                        "Goal — it is re-reading the instructions",
+                        "Tools — it is choosing what it is allowed to do",
+                        "Check — it is judging its own work before trusting it",
                     ],
-                    "answer_index": 0,
+                    "answer_index": 2,
                 },
                 {
                     "id": "module4-agent-q4",
-                    "prompt": "A classmate says: 'Just use the biggest AI model and everything will work.' What key idea about agents are they overlooking?",
+                    "prompt": "What separates an agent from a chatbot in this course's definition?",
                     "options": [
-                        "Clear goals, bounded tools, observation steps, and stop rules shape outcomes more than raw model size alone",
-                        "Bigger models are always cheaper to run",
-                        "Tools are unnecessary when the model is large enough",
+                        "An agent acts toward a goal and checks its work; a chatbot mainly answers",
+                        "An agent uses a bigger AI model than a chatbot does",
+                        "An agent always talks to more than one person at a time",
                     ],
                     "answer_index": 0,
                 },
                 {
                     "id": "module4-agent-q5",
-                    "prompt": "An agent successfully books a restaurant that meets all the given criteria. What should it do next?",
+                    "prompt": "Juno finds its three good articles in two minutes but keeps searching for twenty more. What is missing from its design?",
                     "options": [
-                        "Stop — the goal is complete; continuing wastes resources and risks making unwanted additional bookings",
-                        "Keep searching for an even better restaurant in case a perfect option exists",
-                        "Clear its memory and restart the goal from scratch",
+                        "More memory to hold extra articles",
+                        "A better plan for the first search",
+                        "A working stop rule — the goal was met, so the work should end",
                     ],
-                    "answer_index": 0,
+                    "answer_index": 2,
                 },
             ],
             "guided_blocks": [
                 {
-                    "title": "The one-sentence definition",
+                    "title": "One helper, one errand",
                     "predict_first": {
-                        "question": "Before reading: think of a task you do repeatedly that sometimes requires changing course when the first attempt fails. Would a fixed script handle it, or does it need something more flexible? Why?",
-                        "hint": "Consider what happens when the initial plan does not work — does the system need to observe and decide again?",
+                        "question": "Before reading further: imagine you asked a capable friend to 'find three good articles about sleep and memory and summarize them.' What would your friend actually do, step by step?",
+                        "hint": "Your friend would probably search, skim, reject some results, keep others, and know when to stop. Hold that picture — it is the whole lesson.",
                     },
-                    "body": "An AI agent is a system that works toward a goal, uses available tools or memory when needed, checks what happened, and decides what to do next.",
-                    "analogy": "Think of an agent like a careful intern: it gets an assignment, looks at the evidence, uses the approved tools, and reports back instead of guessing blindly.",
-                    "try_this": [
-                        "Say the one-sentence definition out loud in your own words.",
-                        "Point to the part of the definition that sounds most important to you: goal, tools, memory, checking, or stopping.",
-                    ],
+                    "body": "Whatever steps you just imagined your friend taking — search, skim, judge, keep, stop — that is exactly what an agent does. You already understand the idea; this module just gives its parts names.",
+                    "analogy": "An agent is a careful helper running an errand: it gets the assignment, uses the tools it is allowed to use, judges what it finds, and reports back instead of guessing.",
                 },
                 {
-                    "title": "Why the word agent matters",
-                    "body": "The word matters because it implies action and feedback. The system is not only talking. It is choosing what to do next based on what it learns while working.",
-                    "remember": "If the system cannot do or check anything, it is probably closer to a chatbot than an agent.",
-                },
-                {
-                    "title": "Your first mental map",
-                    "body": "Keep six pieces in your head: goal, plan, tools, memory, check, stop rule. Later modules will keep returning to those same six pieces in more concrete form.",
+                    "title": "The six questions, one pass",
+                    "body": "Goal, plan, tools, memory, check, stop. Six questions, each one plain. Read the Agent Map below once, matching each question to what Juno does. One pass is genuinely enough — every later lesson reuses these six, so they will settle in on their own.",
                     "try_this": [
-                        "Open the agent map below and match each label to one role in the system.",
-                        "Explain which label seems easiest to forget and why.",
+                        "Open the Agent Map artifact and read it once, top to bottom.",
+                        "Say out loud which single question Juno's 'three good summaries delivered' belongs to.",
                     ],
                     "checkpoint_after": True,
                 },
                 {
-                    "title": "Common mistake",
-                    "body": "Beginners often think an agent is just a smarter chatbot. The real difference is not just smarter words. The difference is that an agent can act, check, and adapt.",
-                    "remember": "Talking alone does not make a system agentic.",
+                    "title": "What makes it an agent and not a chatbot",
+                    "body": "The word 'agent' earns its keep in two places: the helper *acts* (it does things, not just says things) and it *checks* (it looks at results instead of assuming). If a system can neither act nor check, it is a chatbot wearing a costume.",
+                    "remember": "Acts and checks. Everything else is detail.",
+                },
+                {
+                    "title": "If you're tempted to call everything an agent",
+                    "body": "You will soon notice the word 'agent' stamped on all kinds of products, including plain question-answering tools. Nothing is wrong with you if the labels out in the world feel inconsistent — they are. This course uses one steady definition so you always have solid ground.",
+                    "remember": "When in doubt, come back to: does it act, and does it check?",
                     "kind": "common_mistake",
                 },
                 {
-                    "title": "Teach it back",
-                    "body": "Teach the definition back to a classmate using the words goal, tools, memory, and check. If you can do that without looking, the lesson has started to stick.",
-                    "try_this": ["Explain the agent map without looking at the text for 20 seconds."],
+                    "title": "Say it back, once",
+                    "body": "Explain Juno to an imaginary friend in two sentences: what it does, and how it knows when it is finished. If you can do that — even clumsily — this lesson has done its job and you are free to move on.",
+                    "try_this": [
+                        "Two sentences, out loud or in your head. Once is enough.",
+                    ],
                     "kind": "teach_it_back",
                 },
             ],
             "checkpoint_questions": [
                 {
                     "id": "module4-agent-cp1",
-                    "prompt": "Which phrase best fits an agent?",
-                    "options": ["Goal plus tools plus checking", "Decorative text plus logo", "Quiz score only"],
-                    "answer_index": 0,
-                },
-                {
-                    "id": "module4-agent-cp2",
-                    "prompt": "What makes the system adapt while working?",
+                    "prompt": "In one phrase, what does an agent do that a chatbot does not?",
                     "options": [
-                        "It uses feedback from the environment to decide the next step",
-                        "It always follows one script with no variation",
-                        "It changes the background color",
+                        "It acts toward a goal and checks its work",
+                        "It talks in longer paragraphs",
+                        "It runs on a special kind of computer",
                     ],
                     "answer_index": 0,
                 },
                 {
+                    "id": "module4-agent-cp2",
+                    "prompt": "Which of these is one of the six questions?",
+                    "options": [
+                        "What color is the interface?",
+                        "How does it know it is finished?",
+                        "How many users does it have?",
+                    ],
+                    "answer_index": 1,
+                },
+                {
                     "id": "module4-agent-cp3",
-                    "prompt": "Which item belongs in the first mental map?",
-                    "options": ["Stop rule", "Animation speed", "Profile badge"],
-                    "answer_index": 0,
+                    "prompt": "Do you need to memorize the six questions before the next lesson?",
+                    "options": [
+                        "Yes — the next lesson assumes perfect recall",
+                        "Yes — there is a closed-book test first",
+                        "No — later lessons reuse them, so they stick from use",
+                    ],
+                    "answer_index": 2,
                 },
             ],
             "skill_templates": [],
@@ -197,333 +239,1119 @@ If the learner asks for a shortcut, redirect them to the smallest explanation or
             "artifacts": [
                 _artifact(
                     "lesson_artifacts/agents/agent-map.md",
-                    "One-screen mental model for what an AI agent is.",
+                    "The six questions that describe any agent, with Juno's answers filled in.",
                     "text",
-                    inspect_prompt="Find the six parts of the map and explain what each one does in plain English.",
-                    change_prompt="Rewrite one label so it would make more sense to a student who has never used AI tools before.",
+                    inspect_prompt="Read the map once. For each of the six questions, notice Juno's answer sitting right next to it.",
+                    change_prompt="Cover Juno's column and fill in the six answers for a helper that reminds you when library books are due. Rough answers count.",
                 )
             ],
         },
         {
-            "title": "Agents vs Chatbots",
+            "title": "Answerer, Checklist, or Agent?",
             "slug": "agents-vs-chatbots",
             "lesson_type": "theory",
             "estimated_minutes": 8,
-            "content": """# Agents vs Chatbots
+            "content": """# Answerer, Checklist, or Agent?
 
-Students often hear these words used as if they mean the same thing. They do not.
+*Lesson 2 of 7 · about 8 minutes · builds on Juno from Lesson 1.*
 
-## A useful beginner comparison
-- **Chatbot**: mostly answers questions in conversation
-- **Workflow**: follows a planned sequence of steps
-- **Agent**: can choose the next step based on what is happening
+You now know what an agent is. This lesson gives you the two things an agent is *not* — because being able to tell them apart is what stops the word from turning into fog.
 
-This does not mean every agent is better. Simpler systems are often cheaper, safer, and easier to debug. A strong lesson should teach students when not to add agent complexity.
+## Three shapes of helper
 
-That is why this module teaches three categories instead of only one buzzword.
+- **An answerer** (a chatbot) replies to what you ask. Question in, answer out. It does not act on the world.
+- **A checklist** (a workflow) runs the same fixed steps every time. Step 1, step 2, step 3, done. Reliable, but it cannot change course.
+- **An agent** chooses its next step based on what it just found. It can change course mid-errand.
+
+Same topic, three shapes. A sleep-and-memory *answerer* would quote a saved paragraph when asked. A sleep-and-memory *checklist* would always fetch the same three websites and paste their intros. Juno, the *agent*, searches, judges what it finds, and searches again if the first results are junk.
+
+## The honest part: simpler is usually better
+
+Here is something the hype never says: **most jobs do not need an agent.**
+
+If a fixed answer solves it, use an answerer. If the steps never change, use a checklist. Agents cost more, can wander, and take more care to trust. Choosing the boring shape when the boring shape works is not timid — it is what good engineers do.
+
+The one question that sorts almost every case:
+
+> **Can I write down all the steps in advance?**
+
+If yes, you want a checklist. If the next step depends on what the last step found — the way Juno's second search depends on how the first one went — that is when an agent earns its cost.
+
+## Done means done
+
+You are done with this lesson when you can:
+
+- name the three shapes and give a one-line difference between them
+- answer the sorting question ("can I write the steps in advance?") for one example of your own
+
+That is the whole lesson. There is no hidden nuance you missed — the three-shape picture really is this simple, on purpose.
 """,
-            "ai_tutor_prompt": """You are ACADEMIC TUTOR AI HEADMASTER guiding a zero-knowledge student through Agents vs Chatbots.
-
-Operate in attempt-first mode.
-- Ask which systems the learner has already used: chatbot, workflow, or something more agentic.
-- Keep the answer centered on the difference between fixed response, fixed path, and adaptive next-step choice.
-- Push the learner to explain when simple is better.
-""",
+            "ai_tutor_prompt": _tutor_prompt(
+                "Answerer, Checklist, or Agent?",
+                "telling chatbots (answerers), workflows (checklists), and agents apart, and practicing the sorting question: can I write down all the steps in advance? Reinforce that choosing the simpler shape is good judgment, not a failure of ambition.",
+            ),
             "questions": [
-                {"id": "module4-compare-q1", "prompt": "Your university wants to auto-answer 20 common student questions from a fixed FAQ. Which system is most appropriate and why?", "options": ["A chatbot — the responses are predetermined and no adaptive decision-making is needed", "An agent — anything AI should use an agent", "A full ML pipeline — FAQ requires machine learning"], "answer_index": 0},
-                {"id": "module4-compare-q2", "prompt": "A grading system works like this: 90+ → A, 80+ → B, 70+ → C, else → F. Is this an agent, workflow, or chatbot?", "options": ["A workflow — all decisions are defined in advance with no learning from results", "An agent — it makes decisions based on numbers", "A chatbot — it produces a single text output"], "answer_index": 0},
-                {"id": "module4-compare-q3", "prompt": "Your team argues: 'We should use an agent for everything because agents are smarter.' What is the honest response?", "options": ["Agents add cost and complexity — use the simplest system that solves the problem reliably", "Agree — agents always outperform simpler alternatives", "Agents cannot handle real tasks in production"], "answer_index": 0},
-                {"id": "module4-compare-q4", "prompt": "Which task clearly REQUIRES an agent rather than a simpler system?", "options": ["Diagnosing a server outage: checking logs, trying fixes, verifying results, and escalating if still broken", "Sending a weekly summary email to all subscribers on Monday at 9am", "Showing the current weather temperature on a screen"], "answer_index": 0},
-                {"id": "module4-compare-q5", "prompt": "You spend a week building an agent that sends one fixed message to users when they sign up. A colleague says you overbuilt it. Are they right?", "options": ["Yes — a simple trigger and template handles this; an agent added complexity with no benefit", "No — agents are always worth the investment for user-facing interactions", "It depends on how many users sign up per day"], "answer_index": 0},
+                {
+                    "id": "module4-compare-q1",
+                    "prompt": "A university wants to auto-answer twenty fixed FAQ questions. Which shape fits, and why?",
+                    "options": [
+                        "An agent — anything involving AI should use one",
+                        "An answerer — the responses are fixed, so nothing needs to decide a next step",
+                        "A checklist — twenty questions means twenty steps",
+                    ],
+                    "answer_index": 1,
+                },
+                {
+                    "id": "module4-compare-q2",
+                    "prompt": "A grading script maps 90+ to A, 80+ to B, 70+ to C, else F. Which shape is it?",
+                    "options": [
+                        "A checklist — every step and rule is written in advance",
+                        "An agent — it makes decisions about numbers",
+                        "An answerer — it produces one output per input",
+                    ],
+                    "answer_index": 0,
+                },
+                {
+                    "id": "module4-compare-q3",
+                    "prompt": "A teammate says: 'Let's use agents for everything, they're smarter.' What is the fair reply?",
+                    "options": [
+                        "Agree — agents outperform simpler shapes on every task",
+                        "Disagree — agents cannot handle real production work",
+                        "Agents cost more and need more care; use the simplest shape that solves the job reliably",
+                    ],
+                    "answer_index": 2,
+                },
+                {
+                    "id": "module4-compare-q4",
+                    "prompt": "Which task genuinely needs an agent rather than a simpler shape?",
+                    "options": [
+                        "Sending a fixed weekly summary email every Monday at 9am",
+                        "Diagnosing a server outage: check logs, try a fix, verify, escalate if still broken",
+                        "Showing today's temperature on a dashboard",
+                    ],
+                    "answer_index": 1,
+                },
+                {
+                    "id": "module4-compare-q5",
+                    "prompt": "You spent a week building an agent that sends one fixed welcome message on signup. A colleague says a simple trigger would have done it. Are they right?",
+                    "options": [
+                        "Yes — the steps never change, so a checklist-style trigger was the right size",
+                        "No — user-facing messages always justify an agent",
+                        "Only if the number of signups is small",
+                    ],
+                    "answer_index": 0,
+                },
             ],
             "guided_blocks": [
-                {"title": "Three categories, not one", "body": "This course separates chatbots, workflows, and agents because students need to know what kind of system they are actually looking at before they can build it or judge it.", "analogy": "Think of a chatbot as a receptionist, a workflow as a checklist, and an agent as a teammate who can choose which checklist to follow next."},
-                {"title": "When simple is better", "body": "A strong engineering habit is to start with the simplest thing that can work. If a single response or a fixed workflow solves the task, adding an agent can create more confusion than value.", "remember": "More autonomy is not automatically more intelligent design."},
-                {"title": "Decision practice", "body": "Ask one question for each scenario: does the system need to decide what to do next, or can you write the steps ahead of time? That question often tells you whether you need an agent at all.", "try_this": ["Open the comparison table below and find one task that fits a chatbot, one that fits a workflow, and one that fits an agent."], "checkpoint_after": True},
-                {"title": "Common mistake", "body": "A common beginner mistake is calling every AI product an agent. That word loses meaning if it includes simple Q&A tools, fixed scripts, and real decision-making loops all at once.", "remember": "Use the smallest accurate label.", "kind": "common_mistake"},
-                {"title": "Teach it back", "body": "Teach the three-category comparison back to someone else using one sentence per category.", "try_this": ["Use the words receptionist, checklist, and teammate in your explanation if that analogy helps you."], "kind": "teach_it_back"},
+                {
+                    "title": "Three helpers, one errand",
+                    "predict_first": {
+                        "question": "Three helpers are asked about sleep and memory. One recites a saved paragraph. One always fetches the same three websites. One searches, judges, and re-searches if results are junk. Which one is Juno?",
+                        "hint": "Which helper's next step depends on what the previous step found?",
+                    },
+                    "body": "The third helper is Juno. The first is an answerer, the second a checklist. All three are legitimate designs — the skill you are building is naming which one you are looking at.",
+                    "analogy": "An answerer is a receptionist, a checklist is a recipe, and an agent is a teammate who can decide the recipe needs changing halfway through.",
+                },
+                {
+                    "title": "The sorting question",
+                    "body": "One question does almost all the work: can I write down all the steps in advance? If yes, a checklist will be cheaper, steadier, and easier to trust. If the next step depends on what the last step found, you are in agent territory.",
+                    "remember": "Steps knowable in advance → checklist. Steps that depend on findings → agent.",
+                    "try_this": [
+                        "Open the comparison table below and read the 'How to spot one' row. Once through is plenty.",
+                    ],
+                    "checkpoint_after": True,
+                },
+                {
+                    "title": "Permission to choose the boring option",
+                    "body": "If you catch yourself thinking 'a plain checklist would work here, but an agent sounds more impressive' — the checklist is the right answer, and choosing it is a sign of skill. Systems you can fully predict are systems you can fully trust.",
+                    "remember": "Boring and predictable is a compliment in engineering.",
+                },
+                {
+                    "title": "The label trap",
+                    "body": "Out in the world, marketing calls all three shapes 'agents.' If a product's label and its behavior disagree, trust the behavior. Does it act? Does it check? Does its next step depend on findings? The label cannot change the answers.",
+                    "remember": "Judge the behavior, not the label.",
+                    "kind": "common_mistake",
+                },
+                {
+                    "title": "Say it back, once",
+                    "body": "One sentence per shape: what an answerer does, what a checklist does, what an agent does. Then one more sentence: the sorting question. Four sentences total, once, and you are done here.",
+                    "try_this": [
+                        "Four sentences, using the words receptionist, recipe, and teammate if the analogy helps.",
+                    ],
+                    "kind": "teach_it_back",
+                },
             ],
             "checkpoint_questions": [
-                {"id": "module4-compare-cp1", "prompt": "Which category is closest to a fixed step-by-step path?", "options": ["Workflow", "Agent", "Random output"], "answer_index": 0},
-                {"id": "module4-compare-cp2", "prompt": "What is the main reason to avoid unnecessary agent complexity?", "options": ["Simpler systems are often easier to trust, test, and debug", "Agents cannot ever be useful", "Workflows never use tools"], "answer_index": 0},
-                {"id": "module4-compare-cp3", "prompt": "Which category best matches a system that chooses its next step from feedback?", "options": ["Agent", "Chatbot", "Static document"], "answer_index": 0},
+                {
+                    "id": "module4-compare-cp1",
+                    "prompt": "Which shape follows the same fixed steps every time?",
+                    "options": [
+                        "The agent",
+                        "The answerer",
+                        "The checklist",
+                    ],
+                    "answer_index": 2,
+                },
+                {
+                    "id": "module4-compare-cp2",
+                    "prompt": "What is the sorting question from this lesson?",
+                    "options": [
+                        "Can I write down all the steps in advance?",
+                        "Which shape uses the newest AI model?",
+                        "How many users will the system have?",
+                    ],
+                    "answer_index": 0,
+                },
+                {
+                    "id": "module4-compare-cp3",
+                    "prompt": "Why prefer a simpler shape when it solves the job?",
+                    "options": [
+                        "Simpler shapes are always faster to build",
+                        "Predictable systems are easier to test and trust",
+                        "Agents are not allowed in production",
+                    ],
+                    "answer_index": 1,
+                },
             ],
-            "skill_templates": [], "channel_templates": [], "safety_checks": [], "permission_matrix": [], "evaluation_rubric": [], "evaluation_cases": [],
+            "skill_templates": [],
+            "channel_templates": [],
+            "safety_checks": [],
+            "permission_matrix": [],
+            "evaluation_rubric": [],
+            "evaluation_cases": [],
             "artifacts": [
                 _artifact(
                     "lesson_artifacts/agents/chatbot-workflow-agent-table.md",
-                    "Comparison table for chatbot, workflow, and agent thinking.",
+                    "One-screen table: answerer vs checklist vs agent, with a 'how to spot one' row.",
                     "text",
-                    inspect_prompt="Find the row that explains how each system handles the next step.",
-                    change_prompt="Add one beginner example of your own to the table.",
+                    inspect_prompt="Find the 'How to spot one' row and read it against the three shapes.",
+                    change_prompt="Add one example of your own from daily life to any column — school, work, or home all count.",
                 )
             ],
         },
         {
-            "title": "Basic Agent Workflow",
+            "title": "The Loop: Watch Juno Work",
             "slug": "basic-agent-workflow",
             "lesson_type": "theory",
             "estimated_minutes": 10,
-            "content": """# Basic Agent Workflow
+            "content": """# The Loop: Watch Juno Work
 
-Beginner-friendly agent loops are easier to understand when they are drawn as simple steps:
+*Lesson 3 of 7 · about 10 minutes · you will watch one complete errand from the inside.*
 
-1. Understand the goal.
-2. Plan a next action.
-3. Use a tool or a reasoning step.
-4. Observe what happened.
-5. Decide whether to continue, revise, or stop.
+You know what an agent is and when one is worth building. Now watch one actually run. Agents work in a **loop** — a small cycle of five steps that repeats until the job is done:
 
-This is why agents are often described as loops instead of one-shot replies. The system keeps checking the world instead of pretending it already knows everything.
+1. **Understand** the goal.
+2. **Plan** the next step.
+3. **Act** — use a tool.
+4. **Look** at what happened.
+5. **Decide** — continue, adjust, or stop.
+
+That reads abstract, so here is the same thing as a story.
+
+## Juno's errand, from the inside
+
+**Your request:** "Find three good articles about sleep and memory. Summarize each."
+
+> **Understand.** Three articles. Must be good. Must be summarized.
+>
+> **Plan.** Start with a search for "sleep memory research."
+>
+> **Act.** Search runs. Ten results come back.
+>
+> **Look.** Result 1 is a mattress advertisement. Result 2 is a solid university study. Result 3 is paywalled — can't read it.
+>
+> **Decide.** Keep result 2. Skip the ad and the paywall. Two more good articles still needed — continue.
+>
+> **Plan.** Try a narrower search: "sleep deprivation memory study."
+>
+> **Act → Look → Decide.** Two more solid articles found. That makes three. Summarize each, deliver, **stop.**
+
+Notice two things about that trace.
+
+**The paywall was not a crisis.** Something went wrong mid-errand — a tool came back with a result Juno couldn't use — and the loop simply absorbed it: look, decide, adjust the plan. In a loop, a failed step is just information for the next step. Nothing broke, nothing needed rescuing.
+
+**The first plan was not the final plan.** Juno's opening search wasn't good enough, and that was fine. Agents are built on the assumption that plans get revised. The first plan is a starting point, not a promise.
+
+## Done means done
+
+You are done with this lesson when you can:
+
+- recite the five steps in order (understand, plan, act, look, decide — the artifact card has them if you ever want them again)
+- point at the moment in Juno's trace where the loop absorbed a failure
+
+Next lesson takes the two quietest words in the loop — *look* and *stop* — and shows why they are the most important ones.
 """,
-            "ai_tutor_prompt": """You are ACADEMIC TUTOR AI HEADMASTER guiding a zero-knowledge student through Basic Agent Workflow.
-
-Operate in attempt-first mode.
-- Keep the workflow small and concrete.
-- Push the learner to name where observation and stop rules happen.
-- Convert vague answers into clear step sequences.
-""",
+            "ai_tutor_prompt": _tutor_prompt(
+                "The Loop: Watch Juno Work",
+                "the five-step loop (understand, plan, act, look, decide), taught by walking through Juno's errand trace. Emphasize that failed steps are absorbed calmly by the loop and that first plans are meant to be revised.",
+            ),
             "questions": [
-                {"id": "module4-workflow-q1", "prompt": "An agent finds a useful article in step 3 but immediately delivers it without reading the content. Which step did it skip?", "options": ["Observe — it should have checked the quality of what it found before delivering", "Plan — it should have planned more intermediate steps", "Goal — the goal was too vague"], "answer_index": 0},
-                {"id": "module4-workflow-q2", "prompt": "Your agent finds a hotel for $89, within the $100 budget goal. Should it stop or keep searching?", "options": ["Stop — the goal is met; continuing wastes time and risks making unwanted changes", "Keep searching — there might be something cheaper", "Ask the user to revise the budget goal"], "answer_index": 0},
-                {"id": "module4-workflow-q3", "prompt": "An agent has sent 200 job applications in 30 minutes and nothing has stopped it. What design element is missing?", "options": ["A stop rule or limit — without one the agent can run indefinitely and take unintended actions", "More memory to track all applications", "A larger AI model to know when enough is enough"], "answer_index": 0},
-                {"id": "module4-workflow-q4", "prompt": "You are the 'observe' step. The tool you just called returned an error. What should happen next in the loop?", "options": ["Pass the error to the decide step so the agent can revise the plan or escalate", "Immediately stop and delete all progress made so far", "Ignore the error and continue with the original plan unchanged"], "answer_index": 0},
-                {"id": "module4-workflow-q5", "prompt": "Which loop step gives the agent the ability to learn from a mistake in the previous attempt?", "options": ["Observe then Decide — seeing the failed result lets the agent revise the plan for the next try", "Goal — a clear goal prevents mistakes entirely", "Memory — it stores the mistake and tries the exact same approach again"], "answer_index": 0},
+                {
+                    "id": "module4-workflow-q1",
+                    "prompt": "In Juno's trace, the paywalled article gets skipped and the plan adjusts. Which loop steps did that?",
+                    "options": [
+                        "Understand and plan — the goal was re-read",
+                        "Look and decide — the result was examined, then the plan changed",
+                        "Act alone — the tool fixed it automatically",
+                    ],
+                    "answer_index": 1,
+                },
+                {
+                    "id": "module4-workflow-q2",
+                    "prompt": "An agent finds an article and delivers it immediately without reading what it found. Which step did it skip?",
+                    "options": [
+                        "Look — it never examined the result before trusting it",
+                        "Plan — it should have planned a longer search",
+                        "Understand — the goal was too vague",
+                    ],
+                    "answer_index": 0,
+                },
+                {
+                    "id": "module4-workflow-q3",
+                    "prompt": "A hotel-booking agent finds a room for $89 against a $100 budget. What should the decide step conclude?",
+                    "options": [
+                        "Keep searching — something cheaper might exist",
+                        "Ask the user to raise the budget",
+                        "Stop — the goal is met; continuing adds time and risk for no gain",
+                    ],
+                    "answer_index": 2,
+                },
+                {
+                    "id": "module4-workflow-q4",
+                    "prompt": "A tool call returns an error mid-loop. What happens next in a well-built agent?",
+                    "options": [
+                        "The error flows into look-and-decide, and the plan adjusts",
+                        "The agent halts and erases all progress so far",
+                        "The agent repeats the identical call until it succeeds",
+                    ],
+                    "answer_index": 0,
+                },
+                {
+                    "id": "module4-workflow-q5",
+                    "prompt": "Why is 'the first plan is a starting point, not a promise' good agent design rather than sloppiness?",
+                    "options": [
+                        "Because plans are expensive to write carefully",
+                        "Because the world answers back — results arrive that no plan could fully predict",
+                        "Because agents cannot store plans in memory",
+                    ],
+                    "answer_index": 1,
+                },
             ],
             "guided_blocks": [
-                {"title": "The loop in plain English", "body": "A basic agent loop is simple: understand the task, choose the next step, act, look at the result, then decide whether to continue.", "analogy": "It works like a student doing a lab: read the instructions, try something, look at the result, then decide what to do next."},
-                {"title": "Why feedback matters", "body": "Agents are useful when the result of one step changes what the next step should be. That is the heart of the loop.", "remember": "If nothing in the environment can change the next step, you may only need a workflow."},
-                {"title": "Checkpoint thinking", "body": "Every good loop needs checkpoints. Without them, the system can waste time, repeat mistakes, or act with too much confidence.", "try_this": ["Open the workflow card below and identify the best place for a human checkpoint."], "checkpoint_after": True},
-                {"title": "Common mistake", "body": "Students often imagine an agent planning perfectly before it begins. Real agents usually need to revise their plan after they see tool results or blockers.", "remember": "The first plan is a start, not a prophecy.", "kind": "common_mistake"},
-                {"title": "Teach it back", "body": "Explain the loop back to someone else in five verbs: understand, plan, act, observe, decide.", "try_this": ["Use those five verbs in order without reading them back."], "kind": "teach_it_back"},
+                {
+                    "title": "Five steps, one cycle",
+                    "predict_first": {
+                        "question": "You try a new recipe and the sauce comes out too thin. What do you do next — and what does that say about how you handle steps that misfire?",
+                        "hint": "You look at the sauce, judge it, and adjust: more simmering, a bit of flour. You do not throw out the meal.",
+                    },
+                    "body": "Understand, plan, act, look, decide. You already run this loop whenever you cook, debug, or pack for a trip. The agent version is the same cycle made explicit — which is exactly what lets a machine run it.",
+                    "analogy": "The loop is a lab session: read the instructions, try something, look at the result, decide what to try next.",
+                },
+                {
+                    "title": "The failure that wasn't",
+                    "body": "Re-read the paywall moment in Juno's trace. A step failed, and the loop treated it as ordinary input: look, decide, adjust. This is the deep reassurance of agent design — a bad step is not a broken errand. The loop exists precisely so that no single step has to go perfectly.",
+                    "remember": "In a loop, a failed step is information, not an emergency.",
+                    "checkpoint_after": True,
+                },
+                {
+                    "title": "Where a human fits",
+                    "body": "The decide step has one more option this lesson hasn't stressed yet: *ask a human*. Real agents pause and hand control back when a step is risky or ambiguous. You will meet this again in Modules 6 and 8, where it becomes a setting you can actually configure — no need to hold onto it now.",
+                    "try_this": [
+                        "Open the loop card below and find where 'ask a human' sits in the decide step.",
+                    ],
+                },
+                {
+                    "title": "The perfect-plan trap",
+                    "body": "It is tempting to think a well-built agent plans everything perfectly up front, and that revising a plan means the agent is failing. The opposite is true: revision is the loop working exactly as designed. The same grace applies to you as you learn this material.",
+                    "remember": "Revising the plan is the loop succeeding, not failing.",
+                    "kind": "common_mistake",
+                },
+                {
+                    "title": "Say it back, once",
+                    "body": "Tell Juno's errand as a story in five beats — understand, plan, act, look, decide — including the paywall moment. Once through, out loud or silently, and this lesson is complete.",
+                    "try_this": [
+                        "Five beats, one pass. If you forget a beat, glance at the card and finish — that still counts.",
+                    ],
+                    "kind": "teach_it_back",
+                },
             ],
             "checkpoint_questions": [
-                {"id": "module4-workflow-cp1", "prompt": "What happens after the agent acts?", "options": ["It observes the result", "It forgets the goal", "It publishes automatically"], "answer_index": 0},
-                {"id": "module4-workflow-cp2", "prompt": "Why are checkpoints useful?", "options": ["They help control mistakes and decide whether to continue", "They remove the need for evidence", "They replace all tools"], "answer_index": 0},
-                {"id": "module4-workflow-cp3", "prompt": "What makes the workflow a loop?", "options": ["The system can repeat steps based on results", "The title uses the word loop", "It always runs forever"], "answer_index": 0},
+                {
+                    "id": "module4-workflow-cp1",
+                    "prompt": "What does the agent do immediately after it acts?",
+                    "options": [
+                        "It looks at what happened",
+                        "It forgets the goal",
+                        "It delivers whatever it has",
+                    ],
+                    "answer_index": 0,
+                },
+                {
+                    "id": "module4-workflow-cp2",
+                    "prompt": "What makes the workflow a loop rather than a straight line?",
+                    "options": [
+                        "It always runs forever",
+                        "The decide step can send work back to planning",
+                        "The word loop appears in the title",
+                    ],
+                    "answer_index": 1,
+                },
+                {
+                    "id": "module4-workflow-cp3",
+                    "prompt": "How does a well-built loop treat a failed step?",
+                    "options": [
+                        "As proof the whole errand must restart",
+                        "As something to hide from the user",
+                        "As information for the next decide step",
+                    ],
+                    "answer_index": 2,
+                },
             ],
-            "skill_templates": [], "channel_templates": [], "safety_checks": [], "permission_matrix": [], "evaluation_rubric": [], "evaluation_cases": [],
+            "skill_templates": [],
+            "channel_templates": [],
+            "safety_checks": [],
+            "permission_matrix": [],
+            "evaluation_rubric": [],
+            "evaluation_cases": [],
             "artifacts": [
                 _artifact(
                     "lesson_artifacts/agents/basic-agent-loop.md",
-                    "Workflow card for a simple agent loop with a human checkpoint.",
+                    "The five-step loop card, plus Juno's errand trace condensed to one screen.",
                     "text",
-                    inspect_prompt="Find where the loop can stop and where a human should review progress.",
-                    change_prompt="Move the human checkpoint earlier or later and explain what risk changes.",
+                    inspect_prompt="Find where 'ask a human' lives in the decide step, and find the moment the trace absorbs a failure.",
+                    change_prompt="Rewrite the trace for a different errand — finding a free study room, say — keeping the same five beats.",
                 )
             ],
         },
         {
-            "title": "Memory, Tools, and Reasoning",
-            "slug": "memory-tools-reasoning",
+            "title": "Checks and Stop Rules",
+            "slug": "knowing-when-to-stop",
             "lesson_type": "theory",
-            "estimated_minutes": 12,
-            "content": """# Memory, Tools, and Reasoning
+            "estimated_minutes": 8,
+            "content": """# Checks and Stop Rules
 
-Students do not need deep technical detail yet. They do need a clean high-level picture.
+*Lesson 4 of 7 · about 8 minutes · the two quietest words in the loop, and why they matter most.*
 
-- **Memory** is what the system keeps from earlier work.
-- **Tools** are the actions it is allowed to take.
-- **Reasoning** is how it decides what to do next.
+Last lesson, two small words did heavy lifting: *look* and *stop*. This lesson gives them their full names — **checks** and **stop rules** — because they are the difference between an agent you can trust and one you can't.
 
-These three ideas show up again in every build module. OpenClaw, for example, turns them into very concrete surfaces: sessions, workspace files, tools, channels, and safety controls.
+## Checks: the agent doubts itself so you don't have to
+
+A **check** is a moment where the agent examines its own work before believing it. Juno checking "is this article actually about sleep and memory?" is a check. A coding agent running the tests after an edit is a check.
+
+Checks matter because AI systems can produce confident-sounding work that is wrong. A good agent is built to assume this about itself — it verifies instead of trusting its first draft. The burden of doubting the work belongs to the system, by design, so it does not have to live with you.
+
+## Stop rules: the finish line is drawn before the race
+
+A **stop rule** is written *before* the work starts, and it comes in three kinds:
+
+1. **Goal met** — "three good summaries delivered" → stop.
+2. **Limit hit** — "no more than ten searches" or "no more than five minutes" → stop and report what you have.
+3. **Ask a human** — "anything ambiguous or risky" → stop and hand it back.
+
+The second kind deserves a highlight. A limit means the agent stops *even if the goal isn't met* — it comes back and says "here's how far I got." An agent that can say that is enormously more trustworthy than one that promises to succeed, because it can never silently run away with a task.
+
+There is a quiet lesson in this that goes beyond agents: **well-designed work has its finish line drawn in advance.** It is why every lesson in this course ends with a "done means done" list. When the finish line is written down, you get to actually finish.
+
+## Done means done
+
+You are done with this lesson when you can:
+
+- give one example of a check (Juno's article test counts)
+- name the three kinds of stop rules, roughly (goal met, limit hit, ask a human)
+
+That's it. Short lesson on purpose — the idea is small, sharp, and worth keeping undiluted.
 """,
-            "ai_tutor_prompt": """You are ACADEMIC TUTOR AI HEADMASTER guiding a zero-knowledge student through Memory, Tools, and Reasoning.
-
-Operate in attempt-first mode.
-- Keep the explanation high-level and concrete.
-- Use notebook, hands, and decision as anchors when helpful.
-- Push the learner to separate memory, action, and next-step choice.
-""",
+            "ai_tutor_prompt": _tutor_prompt(
+                "Checks and Stop Rules",
+                "checks (the agent verifies its own work so the human doesn't carry the doubt) and the three kinds of stop rules (goal met, limit hit, ask a human). Emphasize that limits make agents more trustworthy, not less capable, and that finish lines drawn in advance are what allow real completion.",
+            ),
             "questions": [
-                {"id": "module4-mtr-q1", "prompt": "A support agent gives very different answers to the same question two days apart. Which building block is most likely weak?", "options": ["Memory — the agent is not retaining or using context from earlier interactions", "Tools — it needs different search capabilities", "Reasoning — the AI model changed between the two days"], "answer_index": 0},
-                {"id": "module4-mtr-q2", "prompt": "Your agent can search the web but cannot save any files. It can clearly decide what to do next. Which building block is restricted by policy?", "options": ["Tools — the agent's allowed actions are limited; it cannot write, only read", "Memory — it cannot retain anything without file access", "Reasoning — planning is impossible without file access"], "answer_index": 0},
-                {"id": "module4-mtr-q3", "prompt": "An agent has all the right information and working tools, but keeps choosing the wrong next action. Which building block needs improvement?", "options": ["Reasoning — the decision logic is not using the available information correctly", "Memory — it needs to remember more details", "Tools — it needs additional capabilities to decide correctly"], "answer_index": 0},
-                {"id": "module4-mtr-q4", "prompt": "An agent asks the same question it already asked two steps ago because it forgot your earlier answer. Which building block is clearly failing?", "options": ["Memory — the agent is not storing or retrieving earlier context within this task", "Tools — the wrong tool was called", "Reasoning — the model is too small to retain context"], "answer_index": 0},
-                {"id": "module4-mtr-q5", "prompt": "The agent knows exactly what it should do but physically cannot do it — it lacks the capability. Which building block is the bottleneck?", "options": ["Tools — improving access to actions is the bottleneck when the agent knows the plan but cannot execute it", "Memory — more storage will fix the capability gap", "Reasoning — better thinking will unlock the missing capability"], "answer_index": 0},
+                {
+                    "id": "module4-stop-q1",
+                    "prompt": "An agent has sent 200 job applications in 30 minutes and is still going. What is missing?",
+                    "options": [
+                        "A bigger model that knows when enough is enough",
+                        "A limit-type stop rule — a cap on actions or time",
+                        "More memory to track the applications sent",
+                    ],
+                    "answer_index": 1,
+                },
+                {
+                    "id": "module4-stop-q2",
+                    "prompt": "Juno summarizes three articles, then verifies each summary against its source before delivering. What is that final pass?",
+                    "options": [
+                        "A check — the agent examines its own work before trusting it",
+                        "A stop rule — it stopped at exactly three",
+                        "A plan revision — it changed course mid-errand",
+                    ],
+                    "answer_index": 0,
+                },
+                {
+                    "id": "module4-stop-q3",
+                    "prompt": "Why does 'no more than ten searches, then report what you have' make an agent MORE trustworthy?",
+                    "options": [
+                        "It guarantees the goal is always achieved",
+                        "It makes the agent run faster overall",
+                        "It means the agent can never silently run away with a task",
+                    ],
+                    "answer_index": 2,
+                },
+                {
+                    "id": "module4-stop-q4",
+                    "prompt": "An agent hits something ambiguous: the user asked for 'good' articles but two candidates seem borderline. Which stop rule fits best?",
+                    "options": [
+                        "Goal met — deliver the borderline ones and end",
+                        "Ask a human — hand the judgment call back",
+                        "Limit hit — the errand has taken too long",
+                    ],
+                    "answer_index": 1,
+                },
+                {
+                    "id": "module4-stop-q5",
+                    "prompt": "When should an agent's finish line be defined?",
+                    "options": [
+                        "Before the work starts",
+                        "Whenever the agent feels the work is complete",
+                        "After a human reviews the first draft",
+                    ],
+                    "answer_index": 0,
+                },
             ],
             "guided_blocks": [
-                {"title": "Three building blocks", "body": "Memory, tools, and reasoning are the three easiest words to remember when you first learn agents. They are not the whole system, but they are enough to begin.", "analogy": "Memory is the notebook, tools are the hands, and reasoning is the decision about what to do next."},
-                {"title": "Where these ideas show up later", "body": "Later build modules will make these ideas concrete. OpenClaw sessions and workspaces relate to memory. Skills and tool access relate to tools. Safety checks and review points shape how reasoning is allowed to turn into action.", "remember": "Abstract now, concrete later."},
-                {"title": "Concept matching", "body": "A quick way to learn this is to match each idea to a simple question: memory answers what should be kept, tools answer what can be done, reasoning answers what should happen next.", "try_this": ["Open the cheat sheet below and match each question to memory, tools, or reasoning."], "checkpoint_after": True},
-                {"title": "Common mistake", "body": "A common mistake is treating reasoning like magic. Reasoning helps decide next steps, but it still depends on good tools, useful memory, and real feedback from the environment.", "remember": "Reasoning without evidence is guessing.", "kind": "common_mistake"},
-                {"title": "Teach it back", "body": "Teach the three building blocks back using notebook, hands, and decision as your anchors.", "try_this": ["Explain one real example of each block from an AI helper you can imagine."], "kind": "teach_it_back"},
+                {
+                    "title": "Who carries the doubt?",
+                    "predict_first": {
+                        "question": "Two assistants summarize an article. One hands you its first draft. One re-reads the article, verifies its own summary, then hands it over. Which do you re-check more — and who is doing the doubting in each case?",
+                        "hint": "With the first assistant, the doubting is your job. With the second, the system carries it.",
+                    },
+                    "body": "A check moves the burden of doubt from the human into the system. That is its entire purpose. When an agent verifies its own work, you are not being asked to trust blindly — you are being handed work that has already been examined.",
+                    "analogy": "A check is the carpenter's 'measure twice, cut once' — built into the tool itself.",
+                },
+                {
+                    "title": "Three ways to stop",
+                    "body": "Goal met. Limit hit. Ask a human. Every trustworthy agent has at least the first two, and the second is the unsung hero: an agent with a limit always comes back, even when the errand goes sideways. It reports how far it got instead of disappearing into the task.",
+                    "remember": "Goal met, limit hit, ask a human — and 'limit hit' is the one that makes agents safe to leave alone.",
+                    "try_this": [
+                        "Open the card below and read the three stop rules once.",
+                    ],
+                    "checkpoint_after": True,
+                },
+                {
+                    "title": "Finish lines drawn in advance",
+                    "body": "Notice the pattern: the stop rule is written before the loop starts, which is what lets the agent genuinely finish. This course is built the same way — each lesson's 'done means done' list is a stop rule for you. When you meet it, you are done, and done means you may close the page without a second pass.",
+                    "remember": "A finish line drawn in advance is what makes finishing real.",
+                },
+                {
+                    "title": "The 'one more search' trap",
+                    "body": "The tempting design mistake is letting an agent keep going 'in case something better exists.' A perfect answer might always be one more search away — which is exactly why the search must end by rule, not by feeling. Good enough, verified, and delivered beats perfect and never finished.",
+                    "remember": "End by rule, not by feeling.",
+                    "kind": "common_mistake",
+                },
+                {
+                    "title": "Say it back, once",
+                    "body": "One sentence for checks, one for each stop rule. Four sentences, one pass, done.",
+                    "try_this": [
+                        "Bonus (optional, 30 seconds): name a stop rule you could borrow for your own studying.",
+                    ],
+                    "kind": "teach_it_back",
+                },
             ],
             "checkpoint_questions": [
-                {"id": "module4-mtr-cp1", "prompt": "Which building block answers 'what should be kept from earlier work'?", "options": ["Memory", "Theme", "Pairing code"], "answer_index": 0},
-                {"id": "module4-mtr-cp2", "prompt": "Which building block answers 'what can the system do'?", "options": ["Tools", "Branding", "Badges"], "answer_index": 0},
-                {"id": "module4-mtr-cp3", "prompt": "Which building block answers 'what should happen next'?", "options": ["Reasoning", "Logo placement", "Window size"], "answer_index": 0},
+                {
+                    "id": "module4-stop-cp1",
+                    "prompt": "What is a check?",
+                    "options": [
+                        "The agent examining its own work before trusting it",
+                        "A human approving the agent's budget",
+                        "The agent pausing between loop steps",
+                    ],
+                    "answer_index": 0,
+                },
+                {
+                    "id": "module4-stop-cp2",
+                    "prompt": "Which stop rule means the agent stops even if the goal is not met?",
+                    "options": [
+                        "Goal met",
+                        "Ask a human",
+                        "Limit hit",
+                    ],
+                    "answer_index": 2,
+                },
+                {
+                    "id": "module4-stop-cp3",
+                    "prompt": "When is an agent's finish line written?",
+                    "options": [
+                        "Before the work starts",
+                        "While the loop is running",
+                        "After the results are delivered",
+                    ],
+                    "answer_index": 0,
+                },
             ],
-            "skill_templates": [], "channel_templates": [], "safety_checks": [], "permission_matrix": [], "evaluation_rubric": [], "evaluation_cases": [],
+            "skill_templates": [],
+            "channel_templates": [],
+            "safety_checks": [],
+            "permission_matrix": [],
+            "evaluation_rubric": [],
+            "evaluation_cases": [],
+            "artifacts": [
+                _artifact(
+                    "lesson_artifacts/agents/stop-rules-and-checks.md",
+                    "One-screen card: two kinds of checks and three kinds of stop rules, with Juno examples.",
+                    "text",
+                    inspect_prompt="Find which stop rule lets an agent come back without finishing, and why that builds trust.",
+                    change_prompt="Write one stop rule for a helper of your own invention. One honest sentence is a complete answer.",
+                )
+            ],
+        },
+        {
+            "title": "Notebook, Hands, Judgment",
+            "slug": "memory-tools-reasoning",
+            "lesson_type": "theory",
+            "estimated_minutes": 9,
+            "content": """# Notebook, Hands, Judgment
+
+*Lesson 5 of 7 · about 9 minutes · no new behavior — just names for parts you have already watched.*
+
+A quick promise before anything else: **this lesson contains nothing you haven't already seen.** You watched Juno work in Lesson 3. This lesson simply takes the machine apart and labels three components. If parts feel familiar, that is the design working, not you re-reading by accident.
+
+An agent is built from three parts:
+
+## Memory — the notebook
+
+What the agent keeps track of while it works. Juno's notebook held "articles found so far: one solid study, need two more." Without it, every loop cycle would start from zero and Juno would re-find the same article forever.
+
+*Memory answers: what should be kept?*
+
+## Tools — the hands
+
+What the agent is allowed to *do*. Juno had two: search and read. A coding agent might have: read files, edit files, run tests. Tools are granted, not assumed — an agent without a "write" tool cannot write anything, no matter how clever it is. That granting is a decision a human makes, and you will make it yourself in Module 6.
+
+*Tools answer: what can be done?*
+
+## Judgment — the deciding
+
+The part that chooses the next step: keep this article, skip that one, search again, stop now. In real agents this is the AI model's job. Judgment is only as good as what feeds it — with a thin notebook or the wrong hands, even brilliant judgment fails, which is why agent-builders spend most of their effort on memory and tools rather than chasing cleverness.
+
+*Judgment answers: what should happen next?*
+
+## Where you will touch these for real
+
+In Module 6 you will build an assistant with a tool called OpenClaw, and these three become things you can literally open on your computer: memory lives in folders and files, tools are granted in a settings file, judgment comes from the AI model you pick. One line each — that is all the preview you need, and Module 6 re-teaches all of it from scratch.
+
+## Done means done
+
+You are done with this lesson when you can:
+
+- match notebook, hands, and judgment to memory, tools, and reasoning
+- say which question each part answers (kept? done? next?) — the cheat sheet below holds these permanently, so your head doesn't have to
+""",
+            "ai_tutor_prompt": _tutor_prompt(
+                "Notebook, Hands, Judgment",
+                "the three components of an agent — memory (notebook: what is kept?), tools (hands: what can be done?), and reasoning/judgment (what happens next?). Reassure the learner that familiarity is deliberate: this lesson names parts they already watched in Juno's trace.",
+            ),
+            "questions": [
+                {
+                    "id": "module4-mtr-q1",
+                    "prompt": "A support agent gives contradictory answers to the same question two days apart because it retains nothing between conversations. Which part is weak?",
+                    "options": [
+                        "Judgment — the model reasons poorly",
+                        "Memory — nothing from earlier work is being kept or used",
+                        "Tools — it lacks a search capability",
+                    ],
+                    "answer_index": 1,
+                },
+                {
+                    "id": "module4-mtr-q2",
+                    "prompt": "An agent can search the web but cannot save files, by policy. It plans well and remembers context. Which part has been deliberately restricted?",
+                    "options": [
+                        "Tools — its allowed actions stop at reading",
+                        "Memory — it cannot retain anything",
+                        "Judgment — it cannot plan without file access",
+                    ],
+                    "answer_index": 0,
+                },
+                {
+                    "id": "module4-mtr-q3",
+                    "prompt": "An agent has accurate information and working tools but keeps choosing unhelpful next steps. Which part needs work?",
+                    "options": [
+                        "Memory — it should store more details",
+                        "Tools — it needs more capabilities to choose from",
+                        "Judgment — the deciding isn't using what it has",
+                    ],
+                    "answer_index": 2,
+                },
+                {
+                    "id": "module4-mtr-q4",
+                    "prompt": "An agent asks you the same question it asked two steps ago, having lost your earlier answer. Which part failed?",
+                    "options": [
+                        "Memory — earlier context within the task was not kept",
+                        "Tools — the wrong tool was called",
+                        "Judgment — the model is too small",
+                    ],
+                    "answer_index": 0,
+                },
+                {
+                    "id": "module4-mtr-q5",
+                    "prompt": "Why do experienced agent-builders spend more effort on memory and tools than on chasing the cleverest model?",
+                    "options": [
+                        "Clever models are too expensive to run",
+                        "Judgment can only work with what the notebook and hands provide it",
+                        "Memory and tools are easier to advertise",
+                    ],
+                    "answer_index": 1,
+                },
+            ],
+            "guided_blocks": [
+                {
+                    "title": "You have already seen all three",
+                    "predict_first": {
+                        "question": "Think back to Juno's errand trace. Where did Juno keep 'one solid study so far'? What let it search? What chose to skip the mattress ad?",
+                        "hint": "Three different parts did those three different jobs.",
+                    },
+                    "body": "The tally of articles was memory. The search was a tool. Skipping the ad was judgment. Nothing new happened in this lesson — the machine you already watched just got labels on its parts.",
+                    "analogy": "Memory is the notebook, tools are the hands, judgment is the deciding mind.",
+                },
+                {
+                    "title": "Three questions, three parts",
+                    "body": "Memory answers 'what should be kept?' Tools answer 'what can be done?' Judgment answers 'what should happen next?' If you can route those three questions to the three parts, you have the whole lesson.",
+                    "try_this": [
+                        "Open the cheat sheet below and match each question to its part. One pass.",
+                    ],
+                    "checkpoint_after": True,
+                },
+                {
+                    "title": "Tools are granted, not assumed",
+                    "body": "An agent's hands are given to it by a human, deliberately, one at a time. This is worth savoring: an agent physically cannot take an action nobody granted it. In Module 6, granting tools is a line you write in a settings file — a decision you make once, calmly, in advance.",
+                    "remember": "No tool granted, no action possible. The human decides.",
+                },
+                {
+                    "title": "The magic-judgment trap",
+                    "body": "It is easy to treat the AI model as magic and expect judgment to compensate for a thin notebook or missing hands. It cannot. Judgment without evidence is guessing — which is why the fix for a struggling agent is usually better memory or better tools, not a fancier model.",
+                    "remember": "Feed the judgment; don't worship it.",
+                    "kind": "common_mistake",
+                },
+                {
+                    "title": "Say it back, once",
+                    "body": "Notebook, hands, judgment — one real-life example of each, from any helper you can imagine. Three sentences, one pass, done.",
+                    "try_this": [
+                        "Use Juno if inventing an example feels like extra work. Reusing the course example is fully allowed.",
+                    ],
+                    "kind": "teach_it_back",
+                },
+            ],
+            "checkpoint_questions": [
+                {
+                    "id": "module4-mtr-cp1",
+                    "prompt": "Which part answers 'what should be kept from earlier work'?",
+                    "options": [
+                        "Memory",
+                        "Tools",
+                        "Judgment",
+                    ],
+                    "answer_index": 0,
+                },
+                {
+                    "id": "module4-mtr-cp2",
+                    "prompt": "Which part answers 'what can the system actually do'?",
+                    "options": [
+                        "Memory",
+                        "Judgment",
+                        "Tools",
+                    ],
+                    "answer_index": 2,
+                },
+                {
+                    "id": "module4-mtr-cp3",
+                    "prompt": "Who grants an agent its tools?",
+                    "options": [
+                        "The agent grants itself tools as needed",
+                        "A human, deliberately, in advance",
+                        "The AI model vendor, automatically",
+                    ],
+                    "answer_index": 1,
+                },
+            ],
+            "skill_templates": [],
+            "channel_templates": [],
+            "safety_checks": [],
+            "permission_matrix": [],
+            "evaluation_rubric": [],
+            "evaluation_cases": [],
             "artifacts": [
                 _artifact(
                     "lesson_artifacts/agents/memory-tools-reasoning-cheatsheet.md",
-                    "Cheat sheet for the three high-level parts of an agent.",
+                    "Cheat sheet: notebook, hands, judgment — what each part is, the question it answers, and Juno's version.",
                     "text",
-                    inspect_prompt="Look for the question each building block answers.",
-                    change_prompt="Add one beginner example under each section.",
+                    inspect_prompt="Match each part to the question it answers: kept, done, or next.",
+                    change_prompt="Add one everyday example under any part. One line is a complete contribution.",
                 )
             ],
         },
         {
-            "title": "Examples of Real AI Agents",
+            "title": "Four Agents You Already Understand",
             "slug": "examples-of-real-ai-agents",
             "lesson_type": "theory",
-            "estimated_minutes": 10,
-            "content": """# Examples of Real AI Agents
+            "estimated_minutes": 8,
+            "content": """# Four Agents You Already Understand
 
-Agents become easier to understand when students can attach the ideas to concrete jobs.
+*Lesson 6 of 7 · about 8 minutes · everything you've learned, recognized in the wild.*
 
-Useful examples include:
-- a research helper that searches, summarizes, and cites
-- a customer-support helper that reads a ticket, checks a knowledge base, and drafts a safe reply
-- a coding helper that reads files, proposes edits, runs tests, and checks results
-- a scheduling helper that compares calendars and suggests options
+You now hold the full toolkit: the six questions, the loop, checks and stop rules, notebook-hands-judgment. This lesson points that toolkit at four real agents and lets you notice something satisfying — **you can already read them.**
 
-The pattern is the same each time: conversation plus action plus checking.
+Each example below is deliberately described in the same four beats: goal, one tool, one check, one stop rule.
+
+## 1. The research helper (Juno, all grown up)
+**Goal:** gather sources on a topic and summarize them, with citations.
+**Tool:** web search. **Check:** every claim in the summary traces back to a source. **Stop:** requested number of sources delivered, or search limit reached.
+
+## 2. The support helper
+**Goal:** draft a reply to a customer ticket.
+**Tool:** the company knowledge base. **Check:** the draft only promises what policy allows. **Stop:** a draft is ready — a human sends it. (Note where the human sits: the agent drafts, the person decides.)
+
+## 3. The coding helper
+**Goal:** fix a failing test in a codebase.
+**Tool:** read and edit files, run tests. **Check:** the test suite — an automatic, honest judge built right into the job. **Stop:** tests pass, or attempt limit reached, then report.
+
+## 4. The scheduling helper
+**Goal:** find a meeting time for four people.
+**Tool:** calendar lookups. **Check:** proposed slot conflicts with nobody. **Stop:** it *suggests* options and asks for confirmation — booking is the human's move.
+
+## The pattern worth keeping
+
+All four agents are **narrow**. None of them "helps with everything." Narrow is not a limitation to apologize for — narrow is what makes them checkable, and checkable is what makes them trustworthy. The support helper never sends; the scheduler never books. Each has a small, well-drawn territory with a human at the edge.
+
+When you design your own agent next lesson, you will feel a pull toward making it do everything. These four are your permission slip to keep it small.
+
+## Done means done
+
+You are done with this lesson when you can:
+
+- pick any one of the four and recite its goal, tool, check, and stop
+- say in one sentence why narrow beats broad for a first agent
 """,
-            "ai_tutor_prompt": """You are ACADEMIC TUTOR AI HEADMASTER guiding a zero-knowledge student through Examples of Real AI Agents.
-
-Operate in attempt-first mode.
-- Keep examples concrete and role-based.
-- Push the learner to name one action and one check for each example.
-- Avoid abstract hype if a practical job story will work better.
-""",
+            "ai_tutor_prompt": _tutor_prompt(
+                "Four Agents You Already Understand",
+                "reading four real agents (research, support, coding, scheduling) through the goal/tool/check/stop lens, and internalizing that narrow scope is what makes agents checkable and therefore trustworthy.",
+            ),
             "questions": [
-                {"id": "module4-examples-q1", "prompt": "Which task most clearly needs an agent rather than a simpler chatbot?", "options": ["Writing a research summary: search sources, compare claims, draft, check for unsupported statements, and revise", "Displaying a stored FAQ answer when a keyword matches", "Showing the current temperature from a weather API"], "answer_index": 0},
-                {"id": "module4-examples-q2", "prompt": "A coding agent runs a test, sees a failure, reads the error, adjusts the code, and runs the test again. What makes this behave like an agent rather than a script?", "options": ["It uses test results as feedback to decide the next action — that adaptive loop distinguishes it from a fixed script", "It uses Python instead of another language", "It runs multiple test cases simultaneously"], "answer_index": 0},
-                {"id": "module4-examples-q3", "prompt": "A support agent reads a billing error ticket and needs to check the billing system before drafting a reply. Which building block lets it access that system?", "options": ["Tools — the agent has permission to query the billing system as one of its allowed actions", "Memory — it remembers past billing history without needing to look it up", "Reasoning — it figures out the answer from the ticket text alone"], "answer_index": 0},
-                {"id": "module4-examples-q4", "prompt": "A scheduling agent books the same meeting slot twice for two different people. Which building block failed?", "options": ["Tools or Memory — either the calendar tool returned stale data, or the agent did not store the first booking before proceeding", "Reasoning — the agent thought about it incorrectly", "Goal — the goal description was too ambiguous"], "answer_index": 0},
-                {"id": "module4-examples-q5", "prompt": "Why is a narrow agent ('book meeting rooms only') often more valuable than a broad agent ('help with everything')?", "options": ["A narrow scope makes the agent easier to test, safer to trust, and less likely to take unintended actions", "Broader agents are always less intelligent than narrow ones", "Narrow agents consume less electricity and are cheaper to run"], "answer_index": 0},
+                {
+                    "id": "module4-examples-q1",
+                    "prompt": "Which task most clearly needs an agent rather than an answerer?",
+                    "options": [
+                        "Displaying a stored FAQ answer on keyword match",
+                        "Showing the current temperature from a weather feed",
+                        "Researching a topic: search, judge sources, draft, verify claims, revise",
+                    ],
+                    "answer_index": 2,
+                },
+                {
+                    "id": "module4-examples-q2",
+                    "prompt": "The coding helper runs tests, reads the failure, adjusts the code, runs tests again. What makes this an agent rather than a script?",
+                    "options": [
+                        "Test results feed back into what it tries next",
+                        "It is written in a programming language",
+                        "It runs several test files at once",
+                    ],
+                    "answer_index": 0,
+                },
+                {
+                    "id": "module4-examples-q3",
+                    "prompt": "In the support-helper example, why does a human send the reply instead of the agent?",
+                    "options": [
+                        "The agent's tools cannot technically send email",
+                        "Sending is the risky, outward-facing step — so it sits with a person by design",
+                        "Customers dislike receiving automated messages",
+                    ],
+                    "answer_index": 1,
+                },
+                {
+                    "id": "module4-examples-q4",
+                    "prompt": "The scheduling helper books the same room twice for two people. Which parts are the prime suspects?",
+                    "options": [
+                        "Goal — the request was too ambiguous to act on",
+                        "Judgment — the model simply thought incorrectly",
+                        "Tools or memory — stale calendar data, or the first booking was never recorded",
+                    ],
+                    "answer_index": 2,
+                },
+                {
+                    "id": "module4-examples-q5",
+                    "prompt": "Why is 'books meeting rooms only' often a better first agent than 'helps with everything'?",
+                    "options": [
+                        "Narrow scope is easier to check, and checkable is what earns trust",
+                        "Broad agents are illegal in most workplaces",
+                        "Narrow agents use less electricity",
+                    ],
+                    "answer_index": 0,
+                },
             ],
             "guided_blocks": [
-                {"title": "Examples make the abstract concrete", "body": "Students remember agents better when they can attach the idea to jobs they understand. That is why this lesson uses concrete roles instead of abstract architecture alone.", "analogy": "It is easier to understand a toolbelt when you see the jobs each tool is for."},
-                {"title": "The repeated pattern", "body": "Across the examples, the repeated pattern is simple: the agent gets a task, uses allowed tools, checks what happened, and either keeps going or asks for help.", "remember": "Conversation plus action plus checking is the pattern to watch for."},
-                {"title": "Scenario sorting", "body": "One fast way to learn is to sort example tasks by what they need most: research, coding, support, or coordination.", "try_this": ["Open the scenario deck below and sort each scenario into the best-fit agent role."], "checkpoint_after": True},
-                {"title": "Common mistake", "body": "A common mistake is thinking a real agent must be huge or futuristic. Many useful agents are narrow and boring on purpose. Narrow scope is often what makes them safe enough to trust.", "remember": "Useful does not need to mean flashy.", "kind": "common_mistake"},
-                {"title": "Teach it back", "body": "Teach this lesson back by giving one sentence for a research agent, one for a support agent, and one for a coding agent.", "try_this": ["For each one, name the task, one tool, and one check."], "kind": "teach_it_back"},
+                {
+                    "title": "Read one agent with your own toolkit",
+                    "predict_first": {
+                        "question": "Before reading the examples: a coding helper's job is 'fix the failing test.' What would its check be? (You genuinely have enough to answer this now.)",
+                        "hint": "What built-in judge does a codebase already have that says pass or fail?",
+                    },
+                    "body": "The test suite is the check — an automatic judge that comes with the job. Noticing that you could answer this yourself is the real content of this lesson: the toolkit from Lessons 1–5 reads real systems, not just Juno.",
+                    "analogy": "It is the moment in a language course where you overhear a real conversation and realize you followed it.",
+                },
+                {
+                    "title": "Four beats, four agents",
+                    "body": "Goal, tool, check, stop — the same four beats describe all four agents. Read the scenario cards below once, watching the beats repeat. The repetition is the point: agents differ in territory, not in anatomy.",
+                    "try_this": [
+                        "Open the scenario cards and read all four. One pass, no note-taking needed.",
+                    ],
+                    "checkpoint_after": True,
+                },
+                {
+                    "title": "Where the human stands",
+                    "body": "In every example, find the human: sending the support reply, confirming the meeting, reviewing the research. Real agents are designed with a person at the edge of their territory. That placement is a design decision — and in Modules 6 and 8, it becomes a setting you write down.",
+                    "remember": "Every good agent has a human standing at its border.",
+                },
+                {
+                    "title": "The 'everything helper' trap",
+                    "body": "Broad agents demo well and work badly: their territory is too large to check, so trust never accumulates. If a real product claims to do everything, you now know exactly what to ask it: what's the check, and where's the stop?",
+                    "remember": "Useful does not need to mean flashy. Narrow, checkable, trusted — in that order.",
+                    "kind": "common_mistake",
+                },
+                {
+                    "title": "Say it back, once",
+                    "body": "Pick your favorite of the four agents and give its four beats from memory — goal, tool, check, stop. One agent, four sentences, done. (All four would be rehearsal, and rehearsal isn't required.)",
+                    "try_this": [
+                        "One agent only. Choosing the one you'd most want to exist is allowed and encouraged.",
+                    ],
+                    "kind": "teach_it_back",
+                },
             ],
             "checkpoint_questions": [
-                {"id": "module4-examples-cp1", "prompt": "Which pattern repeats across real agent examples?", "options": ["Conversation, action, and checking", "Only logos and menus", "No tools or feedback"], "answer_index": 0},
-                {"id": "module4-examples-cp2", "prompt": "Why can a coding helper be a strong agent example?", "options": ["It can use test results to check progress", "It never needs evidence", "It cannot act on files"], "answer_index": 0},
-                {"id": "module4-examples-cp3", "prompt": "What makes a narrow agent valuable?", "options": ["Clear scope often makes it more useful and safer", "It always replaces human review", "It must be public to be useful"], "answer_index": 0},
+                {
+                    "id": "module4-examples-cp1",
+                    "prompt": "Which four beats describe every agent in this lesson?",
+                    "options": [
+                        "Goal, tool, check, stop",
+                        "Name, brand, price, launch date",
+                        "Search, summarize, send, repeat",
+                    ],
+                    "answer_index": 0,
+                },
+                {
+                    "id": "module4-examples-cp2",
+                    "prompt": "What is the coding helper's built-in check?",
+                    "options": [
+                        "A human reading every line it writes",
+                        "The test suite passing or failing",
+                        "A second AI model watching the first",
+                    ],
+                    "answer_index": 1,
+                },
+                {
+                    "id": "module4-examples-cp3",
+                    "prompt": "Why does narrow scope make an agent more trustworthy?",
+                    "options": [
+                        "Narrow agents are cheaper to advertise",
+                        "Narrow agents never make mistakes",
+                        "A small territory can actually be checked, so trust can accumulate",
+                    ],
+                    "answer_index": 2,
+                },
             ],
-            "skill_templates": [], "channel_templates": [], "safety_checks": [], "permission_matrix": [], "evaluation_rubric": [], "evaluation_cases": [],
+            "skill_templates": [],
+            "channel_templates": [],
+            "safety_checks": [],
+            "permission_matrix": [],
+            "evaluation_rubric": [],
+            "evaluation_cases": [],
             "artifacts": [
                 _artifact(
                     "lesson_artifacts/agents/real-agent-scenarios.md",
-                    "Scenario deck for sorting real tasks into agent-friendly roles.",
+                    "Four agent cards (research, support, coding, scheduling), each in the same four beats, plus two unsorted scenarios to classify.",
                     "text",
-                    inspect_prompt="Read each scenario and decide what the agent is doing beyond just answering text.",
-                    change_prompt="Add one local example of your own from school, work, or daily life.",
+                    inspect_prompt="Read the four cards and notice the same four beats repeating. Then try the two unsorted scenarios at the bottom.",
+                    change_prompt="Write a fifth card for a helper from your own life, using the same four beats. Rough is fine.",
                 )
             ],
         },
         {
-            "title": "Introduction to Our Agents",
-            "slug": "introduction-to-our-agents",
-            "lesson_type": "theory",
-            "estimated_minutes": 10,
-            "content": """# Introduction to Our Agents
-
-This course does not stop at theory. Students eventually meet several build tracks.
-
-- **Hermes** introduces a simpler first build where students see how an agent can be connected and tested.
-- **OpenClaw** introduces a personal-assistant platform with a gateway, sessions, skills, channels, and safety controls.
-- **Claude-based workflows** show how model-specific environments can structure coding or reasoning tasks.
-- **Gemini-style workflows** help students compare different model ecosystems and tool habits.
-
-The point of this lesson is not to memorize brand names. It is to recognize that different agent tracks emphasize different strengths and boundaries.
-""",
-            "ai_tutor_prompt": """You are ACADEMIC TUTOR AI HEADMASTER guiding a zero-knowledge student through Introduction to Our Agents.
-
-Operate in attempt-first mode.
-- Keep the focus on differences in role, workflow, and boundary.
-- Do not let the learner collapse everything into brand names alone.
-- Use later modules as motivation, not as assumed background knowledge.
-""",
-            "questions": [
-                {"id": "module4-tracks-q1", "prompt": "You want an assistant that responds to Telegram messages and keeps conversation history between sessions. Which course track has those capabilities built in?", "options": ["OpenClaw — it has a gateway, sessions, Telegram channel support, and persistent context built in", "A static FAQ page with a contact form", "A simple email auto-responder"], "answer_index": 0},
-                {"id": "module4-tracks-q2", "prompt": "Hermes is introduced before OpenClaw in the course path. Why is this ordering useful for beginners?", "options": ["Hermes offers a simpler first build so students understand basics before OpenClaw adds gateway, sessions, skills, and channels", "Hermes is always a better system than OpenClaw for production use", "OpenClaw requires Hermes to be installed and configured first"], "answer_index": 0},
-                {"id": "module4-tracks-q3", "prompt": "A student used a simple AI to write code but it kept choosing the wrong tools. They ask: 'Would switching to OpenClaw fix that automatically?' What is the honest answer?", "options": ["Not automatically — the fix is configuring the right tool policy and skill set, which OpenClaw supports but does not do by itself", "Yes — OpenClaw always resolves tool selection problems", "No — OpenClaw does not support coding workflows at all"], "answer_index": 0},
-                {"id": "module4-tracks-q4", "prompt": "You need to compare how two different AI models perform on the same task. Which course track is designed for that kind of cross-model exploration?", "options": ["Gemini-style workflows — designed to help students compare different model ecosystems and tool habits", "OpenClaw — it runs both models simultaneously and compares them for you", "Hermes — it always runs two models in parallel by default"], "answer_index": 0},
-                {"id": "module4-tracks-q5", "prompt": "Your agent works correctly but nobody on your team can explain what it does or debug it when something goes wrong. Which aspect of agent design is underdeveloped?", "options": ["Visibility and system design — clarity, auditability, and clear boundaries matter as much as functionality", "Memory — storing more logs will solve the confusion", "Tools — adding more tools will make the system easier to explain"], "answer_index": 0},
-            ],
-            "guided_blocks": [
-                {"title": "Different tracks, different strengths", "body": "This course uses several build tracks because students need to see that agent systems can be shaped around different goals and ecosystems.", "analogy": "Think of them like different vehicles: a bicycle, a van, and a train all move people, but they are built for different jobs."},
-                {"title": "What to compare", "body": "When comparing tracks, focus on the workflow, the tools, the safety model, and the kind of task each one is best at solving.", "remember": "Compare responsibilities, not brand hype."},
-                {"title": "Track preview activity", "body": "Use the comparison card to predict which track best fits a lightweight first build, a personal assistant, or a structured reasoning workflow.", "try_this": ["Open the comparison card below and match each track to its strongest beginner use case."], "checkpoint_after": True},
-                {"title": "Common mistake", "body": "A common mistake is assuming a stronger or more famous model automatically creates a better agent system. The broader system design still matters: sessions, tools, channels, safety, and review all shape the result.", "remember": "A model is part of the system, not the whole system.", "kind": "common_mistake"},
-                {"title": "Teach it back", "body": "Teach the track comparison back by giving one sentence each for Hermes, OpenClaw, and the later capstone path.", "try_this": ["Use the words build, boundary, and workflow in your explanation."], "kind": "teach_it_back"},
-            ],
-            "checkpoint_questions": [
-                {"id": "module4-tracks-cp1", "prompt": "Which track emphasizes gateway, sessions, skills, and channels?", "options": ["OpenClaw", "Theme settings", "Static glossary"], "answer_index": 0},
-                {"id": "module4-tracks-cp2", "prompt": "What should students compare across tracks?", "options": ["Workflow, tools, safety model, and best-fit task", "Only logos", "Only lesson length"], "answer_index": 0},
-                {"id": "module4-tracks-cp3", "prompt": "Why is model fame alone not enough for a comparison?", "options": ["Because the surrounding system design still controls real behavior", "Because models do not matter at all", "Because channels are irrelevant"], "answer_index": 0},
-            ],
-            "skill_templates": [], "channel_templates": [], "safety_checks": [], "permission_matrix": [], "evaluation_rubric": [], "evaluation_cases": [],
-            "artifacts": [
-                _artifact(
-                    "lesson_artifacts/agents/agent-track-comparison.md",
-                    "Course track comparison card for Hermes, OpenClaw, and later build paths.",
-                    "text",
-                    inspect_prompt="Find what each track helps students learn first.",
-                    change_prompt="Rewrite one row in simpler words for a complete beginner.",
-                )
-            ],
-        },
-        {
-            "title": "Video + Activity",
-            "slug": "video-and-activity",
+            "title": "Design Your Own Juno (On Paper)",
+            "slug": "design-your-first-agent",
             "lesson_type": "interactive",
             "estimated_minutes": 15,
-            "content": """# Video + Activity
+            "content": """# Design Your Own Juno (On Paper)
 
-This lesson turns the whole module into one student activity. Instead of only reading definitions, students should now build a first agent blueprint from the ideas they have seen.
+*Lesson 7 of 7 · about 15 minutes · the module's finish line. Paper only — nothing can break.*
 
-The blueprint should answer four beginner questions:
+Six lessons of ideas become one small act of making: you are going to design an agent of your own, on paper, using a four-box blueprint. Then Module 4 is complete.
 
-1. What is the goal?
-2. What tools would the system need?
-3. What should it remember?
-4. What check or stop rule keeps it safe?
+Two ground rules that take the pressure off:
 
-If a student can produce a simple blueprint and defend it, Module 4 has done its job.
+1. **There is no wrong blueprint.** This is a sketch, not a submission. In Module 6 you will rebuild it with real tools, and it will change then anyway — first drafts are supposed to be replaced.
+2. **The finish line is defined below**, before you start. When each box holds one honest sentence, the blueprint is finished. Not polished — finished. Those are different things, and finished is the one that matters today.
+
+## The four boxes
+
+1. **Goal** — one specific job. "Reminds me when library books are due" beats "helps with my life."
+2. **One tool** — the single capability it needs most. Just one. (Real first agents often ship with one tool; you are in good company.)
+3. **One memory** — the one thing it must keep track of. For the library helper: the list of due dates.
+4. **One check + one stop** — how it knows the work is good, and when it ends. "Checks the date against the calendar; stops after showing me today's reminders."
+
+The worksheet below has a filled-in example (Juno's own blueprint) and an empty copy for yours.
+
+## A hint for choosing your goal
+
+Pick a small irritation from your actual week — something you already wish someone would just handle. The best first agents are almost embarrassingly specific. If your idea can be explained to a friend in one breath, it is the right size.
+
+## Done means done — for the blueprint and the module
+
+Your blueprint is finished when:
+
+- each of the four boxes contains one honest sentence
+- you could read it to a friend in under thirty seconds
+
+And with that, Module 4 is finished. Actually finished: every idea this module introduced — the six questions, the loop, checks and stops, the three parts, narrow scope — reappears in Modules 5 and 6 attached to real tools, so there is nothing to hold in your head between now and then. The course carries it forward for you.
+
+**Where this goes next, in three sentences:** Module 5 gives you a quick first build called Hermes, to prove the wiring works. Module 6 gives your agent a real home with a tool called OpenClaw — that is where this blueprint comes back. Module 8 is where you put guardrails around it and decide, with evidence, that you trust it.
 """,
-            "ai_tutor_prompt": """You are ACADEMIC TUTOR AI HEADMASTER guiding a zero-knowledge student through Video + Activity.
-
-Operate in attempt-first mode.
-- Turn the module concepts into one small blueprint, not a giant system.
-- Push for a clear goal, one tool, one memory choice, and one check.
-- Prefer clarity over ambition.
-""",
+            "ai_tutor_prompt": _tutor_prompt(
+                "Design Your Own Juno (On Paper)",
+                "guiding the learner to a finished four-box blueprint: one goal, one tool, one memory, one check + stop. Enforce smallness kindly — if their idea is broad, help them shrink it without making the broad idea feel like a mistake. A blueprint is finished when each box holds one honest sentence; when it does, say so and close the module warmly.",
+            ),
             "questions": [
-                {"id": "module4-activity-q1", "prompt": "A student's blueprint says: 'AI will handle customer questions.' Which essential piece is missing?", "options": ["A specific goal — 'handle questions' is too vague to define what tools, memory, or stop conditions are needed", "A fancier product name for the agent", "A list of competing products to differentiate from"], "answer_index": 0},
-                {"id": "module4-activity-q2", "prompt": "A blueprint lists 8 different tools before defining a clear goal. What is the design problem?", "options": ["Tools should follow from the goal — listing tools first usually means the actual purpose is not clear yet", "Listing 8 tools is always too many regardless of goal", "Tools should always be listed alphabetically before the goal"], "answer_index": 0},
-                {"id": "module4-activity-q3", "prompt": "A student's blueprint has a clear goal and useful tools, but no check or stop rule. What risk does this create?", "options": ["The agent may run indefinitely, take wrong actions, or never know when to report success", "The agent will refuse to start without a check rule", "The goal will become less clear as the agent runs"], "answer_index": 0},
-                {"id": "module4-activity-q4", "prompt": "Which blueprint is stronger for a first project?", "options": ["'An AI that reminds me when fridge items expire by checking a saved list' — specific goal, one tool, clear memory, natural stop", "'An AI that helps with everything in my life' — broad scope covers all possible needs", "'An AI that searches the entire internet and summarizes every topic' — more data means better answers"], "answer_index": 0},
-                {"id": "module4-activity-q5", "prompt": "You describe your blueprint but your classmate cannot explain what it does afterward. What most likely went wrong?", "options": ["The blueprint is too vague — a good design should be explainable in one clear sentence", "Your classmate was not paying close enough attention", "The blueprint needs more technical terminology to be taken seriously"], "answer_index": 0},
+                {
+                    "id": "module4-activity-q1",
+                    "prompt": "A blueprint's goal box says 'AI will handle customer questions.' What is the actual problem with it?",
+                    "options": [
+                        "It needs a catchier product name",
+                        "It should list which competitors it beats",
+                        "It is too vague to tell you what tool, memory, or stop rule the agent needs",
+                    ],
+                    "answer_index": 2,
+                },
+                {
+                    "id": "module4-activity-q2",
+                    "prompt": "A blueprint lists eight tools before the goal box is filled in. What has gone wrong?",
+                    "options": [
+                        "Tools should follow from the goal — a tool list without a goal means the purpose isn't clear yet",
+                        "Eight is fine; blueprints should list every tool that might ever help",
+                        "The tools simply need to be listed in alphabetical order",
+                    ],
+                    "answer_index": 0,
+                },
+                {
+                    "id": "module4-activity-q3",
+                    "prompt": "A blueprint has a clear goal and a good tool but no check and no stop. What risk is built in?",
+                    "options": [
+                        "The agent will refuse to start",
+                        "It can deliver unverified work and never know when it is finished",
+                        "The goal will drift as the agent runs",
+                    ],
+                    "answer_index": 1,
+                },
+                {
+                    "id": "module4-activity-q4",
+                    "prompt": "Which is the stronger first blueprint?",
+                    "options": [
+                        "'An AI that helps with everything in my life' — maximum coverage",
+                        "'An AI that reads the entire internet daily' — maximum information",
+                        "'An AI that tells me which fridge items expire this week, from a list I keep' — one job, one tool, natural stop",
+                    ],
+                    "answer_index": 2,
+                },
+                {
+                    "id": "module4-activity-q5",
+                    "prompt": "You read your blueprint to a friend and they cannot say what it does. What is the most likely fix?",
+                    "options": [
+                        "Add more technical vocabulary so it sounds rigorous",
+                        "Find a more attentive friend",
+                        "Shrink the goal until it fits in one breath",
+                    ],
+                    "answer_index": 2,
+                },
             ],
             "guided_blocks": [
-                {"title": "Turn ideas into a design", "body": "By this point, students have enough pieces to sketch a beginner-safe agent design. The activity matters because understanding grows when students make choices instead of only reading definitions.", "analogy": "It is like drawing the floor plan before building the house."},
-                {"title": "The four questions", "body": "Goal, tools, memory, and checks are enough for a first blueprint. Keep it small on purpose. A tight first design is easier to explain and safer to improve later.", "remember": "Small and clear beats complicated and vague."},
-                {"title": "Blueprint practice", "body": "Use the worksheet to draft one simple agent a student could explain to a friend in under a minute.", "try_this": ["Open the worksheet below and fill in one example for each section.", "Choose one tool and one stop rule before you add anything else."], "checkpoint_after": True},
-                {"title": "Common mistake", "body": "A common mistake is adding too many tools before the goal is clear. That makes the system sound impressive but weakens the design. Start from the job, not the tool list.", "remember": "Goal first, tools second.", "kind": "common_mistake"},
-                {"title": "Teach it back", "body": "Teach your blueprint back to someone else in four parts: goal, tools, memory, check. If the explanation feels simple, that is a good sign.", "try_this": ["Explain your blueprint in 30 seconds."], "kind": "teach_it_back"},
+                {
+                    "title": "Before you design: the pressure valve",
+                    "predict_first": {
+                        "question": "What do you think happens to this blueprint after today — is it graded, kept, or built exactly as written?",
+                        "hint": "Think about what Lesson 3 said about first plans.",
+                    },
+                    "body": "None of those. It is a first plan, and you know what this course thinks of first plans: starting points, not promises. In Module 6 you will rebuild it with real tools and it will change shape then. Today's only job is a sketch with four honest sentences.",
+                    "analogy": "This is the napkin drawing before the house — nobody inspects a napkin for building-code violations.",
+                },
+                {
+                    "title": "Fill the four boxes, in order",
+                    "body": "Goal first — one specific irritation from your real week. Then the single tool that goal needs most, the single thing worth remembering, and one check plus one stop. The order matters: every box after the first is easier because the goal is specific.",
+                    "try_this": [
+                        "Open the worksheet below. Read Juno's filled-in example once.",
+                        "Fill your four boxes. One sentence each. Set a gentle timer for ten minutes if that helps you stop tinkering.",
+                    ],
+                    "checkpoint_after": True,
+                },
+                {
+                    "title": "The thirty-second read",
+                    "body": "Read your blueprint out loud, once, timed. Under thirty seconds and understandable? It is the right size. Over thirty seconds usually means the goal box is hiding two jobs — keep the one you'd want first and let the other go; it can be its own agent someday.",
+                    "remember": "One breath, one job, one agent.",
+                },
+                {
+                    "title": "The polish trap",
+                    "body": "The riskiest moment of this lesson is after the boxes are full, when the urge arrives to reword everything until it is perfect. The finish line was defined before you started: four honest sentences, thirty-second read. If you are past it, the blueprint is finished — and revising a finished sketch is Module 6's job, not tonight's.",
+                    "remember": "Finished was defined in advance. You are allowed to believe it.",
+                    "kind": "common_mistake",
+                },
+                {
+                    "title": "Close the module",
+                    "body": "Read your four sentences to someone — a friend, a rubber duck, the room. That is the module's teach-it-back, and it is the last thing Module 4 asks of you. Everything here returns in Modules 5, 6, and 8 attached to real tools, carried forward by the course, not by your memory.",
+                    "try_this": [
+                        "One read-aloud. Then close the page — genuinely done.",
+                    ],
+                    "kind": "teach_it_back",
+                },
             ],
             "checkpoint_questions": [
-                {"id": "module4-activity-cp1", "prompt": "Which four pieces belong in the beginner blueprint?", "options": ["Goal, tools, memory, check", "Logo, slogan, font, sticker", "Price, ad, badge, theme"], "answer_index": 0},
-                {"id": "module4-activity-cp2", "prompt": "Why should the first blueprint stay small?", "options": ["Small, clear designs are easier to explain, test, and improve", "Because tools never matter", "Because students should avoid examples"], "answer_index": 0},
-                {"id": "module4-activity-cp3", "prompt": "What is a common blueprint mistake?", "options": ["Adding too many tools before the goal is clear", "Writing the goal first", "Including a check rule"], "answer_index": 0},
+                {
+                    "id": "module4-activity-cp1",
+                    "prompt": "What are the four boxes of the blueprint?",
+                    "options": [
+                        "Goal, one tool, one memory, one check + stop",
+                        "Name, logo, price, launch plan",
+                        "Model, dataset, server, budget",
+                    ],
+                    "answer_index": 0,
+                },
+                {
+                    "id": "module4-activity-cp2",
+                    "prompt": "When is the blueprint finished?",
+                    "options": [
+                        "When it has been rewritten until no better wording exists",
+                        "When each box holds one honest sentence and it reads in thirty seconds",
+                        "When it lists every tool the agent could ever need",
+                    ],
+                    "answer_index": 1,
+                },
+                {
+                    "id": "module4-activity-cp3",
+                    "prompt": "What happens to the blueprint in Module 6?",
+                    "options": [
+                        "It is graded against other students' blueprints",
+                        "It must be memorized before starting",
+                        "It gets rebuilt with real tools — changing then is expected",
+                    ],
+                    "answer_index": 2,
+                },
             ],
-            "skill_templates": [], "channel_templates": [], "safety_checks": [], "permission_matrix": [], "evaluation_rubric": [], "evaluation_cases": [],
+            "skill_templates": [],
+            "channel_templates": [],
+            "safety_checks": [],
+            "permission_matrix": [],
+            "evaluation_rubric": [],
+            "evaluation_cases": [],
             "artifacts": [
                 _artifact(
                     "lesson_artifacts/agents/first-agent-blueprint.md",
-                    "Worksheet for designing a first beginner-safe AI agent.",
+                    "The four-box blueprint worksheet: Juno's filled-in example, an empty copy, and the finish-line definition.",
                     "text",
-                    inspect_prompt="Read the worksheet and decide which section feels easiest and which feels hardest.",
-                    change_prompt="Fill in one safe beginner example under each heading.",
+                    inspect_prompt="Read Juno's example blueprint and notice that every box is one plain sentence — that is the target amount of polish.",
+                    change_prompt="Fill in the empty blueprint with your own four sentences. When all four boxes are full, you are done.",
                 )
             ],
         },
