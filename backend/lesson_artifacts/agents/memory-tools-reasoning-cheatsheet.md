@@ -1,9 +1,9 @@
-# Notebook, Hands, Judgment — one card
+# Notebook, Hands, Judgment: one card
 
 | Part | Plain name | The question it answers | Juno's version |
 | --- | --- | --- | --- |
 | Memory | The notebook | What should be kept? | "One solid study so far; need two more" |
-| Tools | The hands | What can be done? | Search and read — granted by a human, nothing more |
+| Tools | The hands | What can be done? | Search and read, granted by a human, nothing more |
 | Reasoning | The judgment | What should happen next? | Keep the study, skip the ad, search again, stop at three |
 
 Two things worth keeping:

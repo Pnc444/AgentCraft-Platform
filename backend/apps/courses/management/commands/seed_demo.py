@@ -318,7 +318,7 @@ CURRICULUM = [
     },
     {
         "order": 10,
-        "title": "Module 8: Capstone — Decide to Trust It",
+        "title": "Module 8: The Trust Capstone",
         "slug": "module-8-capstone-safety-evaluation",
         "description": "Let your assistant run one small job on its own, put guardrails and permissions around it, gather four kinds of evidence, and make a clear, final release decision.",
         "difficulty": 3,

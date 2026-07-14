@@ -1,4 +1,4 @@
-# The Guardrail Matrix — values to seatbelts
+# The Guardrail Matrix: values to seatbelts
 
 Each row pairs one value (what the assistant aims for) with the seatbelt that backs it (a setting that holds regardless) and where you would point to show someone.
 
@@ -9,6 +9,6 @@ Each row pairs one value (what the assistant aims for) with the seatbelt that ba
 | Harmless | Strangers can't reach it; risky tools are denied; sessions are sandboxed | `dmPolicy: pairing`, the tool deny list, `sandbox.mode` in the config |
 | Accountable | Every run leaves a receipt | The saved audit reports and run logs |
 
-**The one rule:** every safety claim points at something you could show someone. If the third column is empty, the row isn't done — and filling it usually takes one line, not one project.
+**The one rule:** every safety claim points at something you could show someone. If the third column is empty, the row is not done yet, and filling it usually takes one line, not one project.
 
 When the matrix is full, "is my project safe?" has stopped being a feeling and become a short list of checkable facts. Lists just need reading.

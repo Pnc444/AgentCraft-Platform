@@ -49,7 +49,7 @@ export function CheckpointQuiz({ questions, onPassed }: CheckpointQuizProps) {
   }
 
   if (!bank.length) {
-    return <p className="text-sm text-craft-muted">—</p>;
+    return <p className="text-sm text-craft-muted">No questions yet.</p>;
   }
 
   if (!question) {
@@ -101,12 +101,12 @@ export function CheckpointQuiz({ questions, onPassed }: CheckpointQuizProps) {
 
       {isCorrect && (
         <p className="flex items-center gap-2 text-sm font-medium text-emerald-700">
-          <CheckCircle2 className="h-4 w-4" /> Correct — checkpoint passed.
+          <CheckCircle2 className="h-4 w-4" /> Correct. Checkpoint passed.
         </p>
       )}
       {isWrong && (
         <p className="flex items-center gap-2 text-sm font-medium text-amber-700">
-          <XCircle className="h-4 w-4" /> Not quite — try again anytime.
+          <XCircle className="h-4 w-4" /> Not quite. Try again anytime.
         </p>
       )}
 

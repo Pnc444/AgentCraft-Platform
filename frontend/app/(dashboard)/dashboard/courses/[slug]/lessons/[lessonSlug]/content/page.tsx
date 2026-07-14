@@ -22,6 +22,7 @@ import { LessonArtifactPack } from "@/components/lessons/LessonArtifactPack";
 import { LessonCapstoneStudio } from "@/components/lessons/LessonCapstoneStudio";
 import { LessonContent } from "@/components/lessons/LessonContent";
 import { LessonSection } from "@/components/lessons/LessonSection";
+import { OpenClawFileExplorer } from "@/components/lessons/OpenClawFileExplorer";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 import { ProgressBar } from "@/components/shared/ProgressBar";
 import { Reveal } from "@/components/shared/Reveal";
@@ -62,11 +63,11 @@ function PredictFirstCard({
           onClick={onReveal}
           className="btn-secondary mt-3 px-3 py-2 text-xs"
         >
-          I&apos;ve thought about it — show the explanation
+          I&apos;ve thought about it. Show the explanation
         </button>
       ) : (
         <p className="mt-2 text-xs font-medium text-emerald-700 dark:text-emerald-300">
-          ✓ Good — you engaged before reading. Now see how your thinking compares.
+          ✓ Good. You engaged before reading. Now see how your thinking compares.
         </p>
       )}
     </div>
@@ -146,6 +147,7 @@ export default function LessonContentPage() {
         ...block,
         inlineArtifacts,
         inlineCapstoneStudio: block.interactive_widget === "capstone_studio",
+        inlineFileExplorer: block.interactive_widget === "openclaw_file_explorer",
       };
     });
   }, [artifactBundle, guidedBlocks]);
@@ -383,6 +385,10 @@ export default function LessonContentPage() {
                   </div>
                 ) : null}
 
+                {predictFirstRevealed && block.inlineFileExplorer ? (
+                  <OpenClawFileExplorer />
+                ) : null}
+
                 {predictFirstRevealed && block.inlineCapstoneStudio && capstoneAssignment ? (
                   <div className="rounded-xl border border-craft-border bg-craft-soft/70 px-4 py-4">
                     <p className="flex items-center gap-2 text-sm font-semibold text-craft-ink">
@@ -499,7 +505,7 @@ export default function LessonContentPage() {
           <button
             type="button"
             onClick={() =>
-              alert("Sandbox integration coming soon — Diego & Douglas wiring it up.")
+              alert("Sandbox integration coming soon. Diego and Douglas are wiring it up.")
             }
             className="btn-primary mt-4"
           >

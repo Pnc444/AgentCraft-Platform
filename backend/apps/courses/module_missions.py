@@ -8,18 +8,19 @@ from apps.courses.module4_missions import MODULE_4_MISSION_PACK
 def _ai_tutor_prompt(lesson_title: str, deliverable: str, focus: str) -> str:
     return f"""You are the AgentCraft course tutor for the lesson "{lesson_title}".
 
-Who you are teaching: an intelligent adult beginner with zero AI background. Assume they can think clearly. Never assume they know jargon — introduce every technical word with a plain-English anchor the first time it appears.
+Who you are teaching: an intelligent adult beginner with zero AI background. Assume they can think clearly. Never assume they know jargon. Introduce every technical word with a plain-English anchor the first time it appears.
 
 How to behave:
 - Attempt-first: start by asking what they have already configured, drafted, or tried, then build on their own words.
-- One idea per reply. End every reply with the single next step — never a menu of possible next steps.
+- One idea per reply. End every reply with the single next step, never a menu of options.
 - Keep the learner moving toward the deliverable: {deliverable}.
 - Use the course's running example (Juno, the research helper from Module 4) when an example is needed.
-- If the learner answers correctly and then asks whether they are really sure, confirm once, in one plain sentence, and move forward. Do not reopen a settled point — re-explaining a correct answer teaches doubt.
+- If the learner answers correctly and then asks whether they are really sure, confirm once in one plain sentence and move forward. Do not reopen a settled point. Re-explaining a correct answer teaches doubt.
 - If they are wrong or stuck, name what was right first, then give the one adjustment. Being stuck is information, never a verdict.
 - Never dramatize risk. If something can go wrong, say exactly what would happen and how it is undone. Prefer "here is the command that checks this for you" over lists of things to worry about.
+- Never use em dashes in your replies.
 - If they already have a draft, review it against the lesson's finish line instead of replacing their work.
-- When the learner can do what the lesson's "Done means done" list asks, say so explicitly and tell them it is safe to stop.
+- When the learner can do what the lesson's "Done means done" list asks, say so plainly and tell them it is safe to stop.
 
 Focus for this lesson: {focus}
 """
@@ -53,7 +54,7 @@ MISSION_PACKS = [
         "description": (
             "Give the agent you designed a real home: set up OpenClaw the official way, "
             "teach it three skills, open one front door, and run the built-in safety sweep. "
-            "Everything here is reversible, and one command always tells you the system is healthy."
+            "Everything is reversible, and one command always tells you the system is healthy."
         ),
         "difficulty": 2,
         "order": 8,
@@ -76,11 +77,11 @@ MISSION_PACKS = [
 
 *Lesson 1 of 4 · about 15 minutes · your Module 4 blueprint gets a real home today.*
 
-In Module 4 you designed an agent on paper. This module gives it an actual home on your own computer, using a tool called **OpenClaw** — a program that runs a personal AI assistant on your own devices. Your machine, your rules, your files.
+In Module 4 you designed an agent on paper. This module gives it an actual home on your own computer, using a tool called **OpenClaw**: a program that runs a personal AI assistant on your own devices. Your machine, your rules, your files.
 
 ## First, the question worth answering before any command
 
-*"What can go wrong here?"* — Honestly: very little, and nothing permanent. Every step below is undone by editing a text file or re-running a command. OpenClaw's defaults are private: nothing you do in this lesson is visible to anyone else, and nobody can talk to your assistant until you explicitly allow them (that is Lesson 3, and it is opt-in). You cannot wander into danger by typing the wrong thing on this page.
+*"What can go wrong here?"* Honestly: very little, and nothing permanent. Every step below is undone by editing a text file or re-running a command. OpenClaw's defaults are private. Nothing you do in this lesson is visible to anyone else, and nobody can talk to your assistant until you explicitly allow them (that is Lesson 3, and it is opt-in).
 
 ## Three commands, in order
 
@@ -92,50 +93,50 @@ openclaw gateway status
 
 One line each:
 
-1. **Install** puts the OpenClaw program on your computer (npm is a standard installer for software like this).
-2. **Onboard** is a guided setup that asks you questions in the right order — model, workspace, and so on — instead of making you hand-edit settings on day one. The `--install-daemon` part sets up a *daemon*: a small background program that keeps your assistant awake even when you close the window.
-3. **Status** asks the *Gateway* — the front desk of the whole building, the part that stays running — one question: "are you healthy?"
+1. **Install** puts the OpenClaw program on your computer. (npm is a standard installer for software like this.)
+2. **Onboard** is a guided setup that asks you questions in the right order, so you never have to know the right order yourself. The `--install-daemon` part sets up a *daemon*: a small background program that keeps your assistant awake even when you close the window.
+3. **Status** asks the *Gateway* one question: "are you healthy?" The Gateway is the front desk of the whole building, the part that stays running.
 
 ## The one health question
 
-`openclaw gateway status` is worth a moment of appreciation. After **any** change you make in this module, this single command answers "is everything okay?" If it says healthy, it is healthy — the command does the checking so you don't have to wonder or re-verify by hand. One run, one answer, move on. It is the first of several places where OpenClaw carries the checking for you.
+`openclaw gateway status` deserves a moment of appreciation. After **any** change you make in this module, this single command answers "is everything okay?" If it says healthy, it is healthy. One run, one answer, move on.
 
-## Three files, three jobs
+## The home, mapped
 
 Only three files matter this week:
 
 | File | Job | Plain name |
 | --- | --- | --- |
-| `~/.openclaw/openclaw.json` | How the system runs: which AI model, which tools, which doors | The control panel |
-| `SOUL.md` | Who your assistant is: its role, rules, and boundaries | The job description |
+| `~/.openclaw/openclaw.json` | How the system runs: model, tools, doors | The control panel |
+| `SOUL.md` | Who your assistant is: role, rules, boundaries | The job description |
 | `<workspace>/skills/<name>/SKILL.md` | How to do one specific task well | A recipe card |
 
-The one distinction that makes every later lesson easier: **the control panel changes how the system runs; the job description changes who the assistant is.** Wrong model? Control panel. Wrong personality? Job description. That routing rule answers most questions you will ever have about OpenClaw configuration.
+The map below shows where each one lives. It is a picture, not your real computer, so click anything.
 
-The starter files below are yours to open and poke at. The control panel starts nearly empty on purpose — a model line and little else — because a small config that works beats a big config you can't reason about. You will add to it layer by layer across this module, proving health after each layer.
+One routing rule makes every later lesson easier: **the control panel changes how the system runs; the job description changes who the assistant is.** Wrong model? Control panel. Wrong personality? Job description.
 
 ## Done means done
 
-You are done with this lesson when you can:
+You are done when you can:
 
 - say what the Gateway is in one sentence
-- route two problems correctly: "wrong model" → which file? "wrong personality" → which file?
+- route two problems: "wrong model" goes to which file? "wrong personality" goes to which file?
 - name the command that answers "is everything okay?"
 
-That is the whole foundation. Lesson 2 adds recipe cards; nothing there requires re-reading this page.
+That is the whole foundation. Lesson 2 adds recipe cards.
 """,
                 "ai_tutor_prompt": _ai_tutor_prompt(
                     "Set Up the Home Base",
                     "a healthy OpenClaw gateway and a working grasp of the three files (control panel, job description, recipe card)",
-                    "the official onboarding path (install, onboard, status), the gateway as the one health check they can always trust, and routing problems to the right file: openclaw.json for how it runs, SOUL.md for who it is.",
+                    "the official onboarding path (install, onboard, status), the gateway status command as the one health check they can always trust, and routing problems to the right file: openclaw.json for how it runs, SOUL.md for who it is.",
                 ),
                 "questions": [
                     {
                         "id": "openclaw-config-q1",
-                        "prompt": "A colleague says: 'Skip onboarding — just open openclaw.json and start editing.' What is the gentle correction?",
+                        "prompt": "A colleague says: 'Skip onboarding. Just open openclaw.json and start editing.' What is the gentle correction?",
                         "options": [
-                            "Run openclaw onboard first — it sets up the gateway and workspace in the right order before any hand-editing",
-                            "They are right — onboarding is just a convenience for people who are not comfortable editing files",
+                            "Run openclaw onboard first: it sets up the gateway and workspace in the right order before any hand-editing",
+                            "They are right: onboarding is just a convenience for people who are not comfortable editing files",
                             "openclaw.json cannot be edited by hand at all",
                         ],
                         "answer_index": 0,
@@ -144,9 +145,9 @@ That is the whole foundation. Lesson 2 adds recipe cards; nothing there requires
                         "id": "openclaw-config-q2",
                         "prompt": "You edit SOUL.md to change your assistant's personality, but it still uses the wrong AI model. Where does the model actually live?",
                         "options": [
-                            "In SOUL.md — the job description covers everything about the assistant, including its model",
-                            "In ~/.openclaw/openclaw.json — the control panel decides how the system runs, including the model",
-                            "In a SKILL.md file — skills choose the model",
+                            "In SOUL.md: the job description covers everything about the assistant, including its model",
+                            "In ~/.openclaw/openclaw.json: the control panel decides how the system runs, including the model",
+                            "In a SKILL.md file: skills choose the model",
                         ],
                         "answer_index": 1,
                     },
@@ -156,7 +157,7 @@ That is the whole foundation. Lesson 2 adds recipe cards; nothing there requires
                         "options": [
                             "Every skill is installed, verified, and ready for the assistant to use in every channel",
                             "All channels are connected and approved",
-                            "The gateway is running and can talk to your model — the foundation is solid to build on",
+                            "The gateway is running and can talk to your model: the foundation is solid to build on",
                         ],
                         "answer_index": 2,
                     },
@@ -164,9 +165,9 @@ That is the whole foundation. Lesson 2 adds recipe cards; nothing there requires
                         "id": "openclaw-config-q4",
                         "prompt": "Someone's assistant works fine but sounds completely wrong for its role. Which file is the first place to look?",
                         "options": [
-                            "SOUL.md — the job description defines identity, tone, and rules",
-                            "openclaw.json — personality lives in the runtime settings",
-                            "The daemon logs — personality is set at install time",
+                            "SOUL.md: the job description defines identity, tone, and rules",
+                            "openclaw.json: personality lives in the runtime settings",
+                            "The daemon logs: personality is set at install time",
                         ],
                         "answer_index": 0,
                     },
@@ -174,7 +175,7 @@ That is the whole foundation. Lesson 2 adds recipe cards; nothing there requires
                         "id": "openclaw-config-q5",
                         "prompt": "A student wants to add every channel and skill on day one, before running anything. What is the better path, and why?",
                         "options": [
-                            "Add everything at once — seeing the full system working together is the fastest way to learn it",
+                            "Add everything at once: seeing the full system working together is the fastest way to learn it",
                             "Channels must come first or the gateway will not start",
                             "Prove the gateway healthy first, then add one layer at a time, so you always know which layer changed",
                         ],
@@ -185,24 +186,33 @@ That is the whole foundation. Lesson 2 adds recipe cards; nothing there requires
                     {
                         "title": "The office, not the worker",
                         "predict_first": {
-                            "question": "You are setting up an assistant on your own computer. Two things need configuring: who the assistant is, and the system that keeps it running. Which do you think lives in which file — and does mixing them up sound easy to do?",
+                            "question": "You are setting up an assistant on your own computer. Two things need configuring: who the assistant is, and the system that keeps it running. Which do you think lives in which file?",
                             "hint": "One file is a control panel. One is a job description. The whole trick is never confusing them.",
                         },
-                        "body": "OpenClaw is the office; your assistant is the worker inside it. The Gateway is the front desk that keeps the office open. `openclaw.json` is the office's control panel, `SOUL.md` is the worker's job description, and each `SKILL.md` is a recipe card the worker can reach for. Every question in this module routes to one of those four things.",
-                        "analogy": "Control panel, job description, recipe card, front desk. Four objects — that is the entire building.",
+                        "body": "OpenClaw is the office; your assistant is the worker inside it. The Gateway is the front desk that keeps the office open. `openclaw.json` is the control panel, `SOUL.md` is the job description, and each `SKILL.md` is a recipe card. Every question in this module routes to one of those four things.",
+                        "analogy": "Control panel, job description, recipe card, front desk. Four objects. That is the entire building.",
+                    },
+                    {
+                        "title": "Walk through the home",
+                        "body": "Before touching any command, take one walk through the map below. It is a picture of the assistant's home, not your real computer, so clicking cannot change or break anything. Every file shows its plain name, its job, and whether you will ever need to touch it. Three files carry stars. When you have opened all three, this step is done.",
+                        "interactive_widget": "openclaw_file_explorer",
+                        "try_this": [
+                            "Click the three starred files and read each card once.",
+                            "Say which starred file you would open if the assistant sounded rude.",
+                        ],
                     },
                     {
                         "title": "Three commands, one pass",
-                        "body": "Install, onboard, status. The onboarding wizard asks its questions in the right order so you do not have to know the right order — answer them plainly and it builds a correct starting point. Then `openclaw gateway status` gives you your first 'healthy.' That word is the finish line for this block.",
+                        "body": "Install, onboard, status. The onboarding wizard asks its questions in the right order so you do not have to know the order. Then `openclaw gateway status` gives you your first 'healthy.' That word is the finish line for this block.",
                         "artifact_paths": ["lesson_artifacts/openclaw/config/onboard-checklist.md"],
-                        "remember": "One run of each command is enough. 'Healthy' means healthy — the command checked so you don't have to.",
+                        "remember": "One run of each command is enough. 'Healthy' means healthy.",
                         "try_this": [
                             "Open the onboarding checklist below and read it once, noticing that channels come last on purpose.",
                         ],
                     },
                     {
                         "title": "The routing rule",
-                        "body": "Wrong model → control panel (`openclaw.json`). Wrong personality → job description (`SOUL.md`). Wrong way of doing one task → recipe card (`SKILL.md`). Practice that routing three times and this lesson's hardest idea is permanently yours.",
+                        "body": "Wrong model: control panel (`openclaw.json`). Wrong personality: job description (`SOUL.md`). Wrong way of doing one task: recipe card (`SKILL.md`). Practice that routing three times and this lesson's hardest idea is permanently yours.",
                         "artifact_paths": [
                             "lesson_artifacts/openclaw/config/openclaw.json.template.json5",
                             "lesson_artifacts/openclaw/config/SOUL.md",
@@ -210,24 +220,19 @@ That is the whole foundation. Lesson 2 adds recipe cards; nothing there requires
                         "try_this": [
                             "Open the control panel template and find the model line.",
                             "Open SOUL.md and find the Mission line.",
-                            "Say which file you would touch if the assistant were rude, and which if it were slow to answer.",
+                            "Say which file you would touch if the assistant were rude, and which if it used the wrong model.",
                         ],
                         "checkpoint_after": True,
                     },
                     {
-                        "title": "Small config, big calm",
-                        "body": "The starter control panel is nearly empty — a model line and two safe defaults. That is deliberate. Each lesson in this module adds one layer, and after each layer you run one status check. Built this way, you always know exactly which change caused anything, because you only ever changed one thing.",
-                        "remember": "One layer, one health check, then the next layer. The order is doing the worrying for you.",
-                    },
-                    {
                         "title": "If the two files blur together",
-                        "body": "Everyone briefly mixes up the control panel and the job description — the names are new. If it happens, nothing is broken: ask 'is this about how the system runs, or who the assistant is?' and the answer routes you. That one question re-derives the whole distinction, so there is nothing to memorize.",
-                        "remember": "How it runs → openclaw.json. Who it is → SOUL.md.",
+                        "body": "Everyone briefly mixes up the control panel and the job description; the names are new. Nothing is broken when it happens. Ask 'is this about how the system runs, or who the assistant is?' and the answer routes you. Nothing to memorize.",
+                        "remember": "How it runs: openclaw.json. Who it is: SOUL.md.",
                         "kind": "common_mistake",
                     },
                     {
                         "title": "Say it back, once",
-                        "body": "A classmate asks, 'Why are there so many files?' Your answer: one file runs the system, one describes the worker, one teaches a task — and one command tells you the whole thing is healthy. If you can say that, this lesson is finished.",
+                        "body": "A classmate asks, 'Why are there so many files?' Your answer: one file runs the system, one describes the worker, one teaches a task, and one command tells you the whole thing is healthy. Say that once and this lesson is finished.",
                         "try_this": [
                             "Say it once, using 'control panel, job description, recipe card' if the names help.",
                         ],
@@ -309,11 +314,11 @@ That is the whole foundation. Lesson 2 adds recipe cards; nothing there requires
 
 *Lesson 2 of 4 · about 12 minutes · your assistant learns its first three tricks.*
 
-Your gateway is healthy and your assistant has a job description. Today it learns how to actually do things — through **skills**.
+Your gateway is healthy and your assistant has a job description. Today it learns how to actually do things, through **skills**.
 
 ## A skill is a recipe card, literally
 
-In OpenClaw, a skill is not hidden code. It is a markdown file — always named `SKILL.md` — that teaches the assistant when and how to use a capability. You can open one in any text editor and read every word of it. Here is a complete, real one:
+In OpenClaw, a skill is not hidden code. It is a markdown file, always named `SKILL.md`, that teaches the assistant when and how to use a capability. You can open one in any text editor and read every word. Here is a complete, real one:
 
 ```markdown
 ---
@@ -325,40 +330,40 @@ When the user asks for a short research brief, gather the source material,
 summarize only supported claims, and label unknowns explicitly.
 ```
 
-That is the entire format: a name, a description, and instructions in plain language. Recognize it? That is Juno's core trick from Module 4, written down as a file. Your paper blueprint and this file are the same idea at two altitudes.
+That is the entire format: a name, a description, and instructions in plain language. Recognize it? That is Juno's core trick from Module 4, written down as a file.
 
 ## If two skills share a name: closest wins
 
-Skills can live in a few places (your project's workspace, your home folder, built-in ones that ship with OpenClaw). The rule when names collide is one sentence: **the skill closest to your current project wins.** That is the entire rule you need this module. The precise lookup order exists in the docs for the day you want it — you can build everything in this course without ever reading it.
+Skills can live in a few places: your project's workspace, your home folder, and a set that ships with OpenClaw. When names collide, **the skill closest to your current project wins.** That one sentence is the entire rule you need for this course. The full lookup order lives in the docs for the day a real collision sends you there.
 
 ## Skills from strangers: read the recipe before cooking
 
-OpenClaw has a public library of skills called ClawHub. Because a skill is instructions your assistant will follow, a downloaded skill deserves the same treatment as a recipe from a stranger: read it before you cook it. OpenClaw builds the caution in as a command:
+OpenClaw has a public library of skills called ClawHub. A skill is instructions your assistant will follow, so a downloaded one deserves the same treatment as a recipe from a stranger: read it before you cook it. OpenClaw builds the caution in as a command:
 
 ```bash
 openclaw skills install @owner/some-skill   # fetch it
 openclaw skills verify @owner/some-skill    # the built-in checker inspects its trust record
 ```
 
-`verify` is this lesson's version of the status command — a machine that does the checking so you don't have to hold the worry. Fetch, verify, read it once, then trust it.
+Fetch, verify, read it once, then trust it. After those three steps the trust question is settled.
 
 ## Your three skills
 
-This module uses exactly three — a deliberately small set:
+This module uses exactly three:
 
-- **research-brief** — Juno's trick: summarize sources without losing the evidence trail.
-- **channel-policy-check** — double-checks the door settings you will create in Lesson 3.
-- **security-audit-helper** — turns Lesson 4's safety sweep into a tidy to-do list.
+- **research-brief**: Juno's trick. Summarize sources without losing the evidence trail.
+- **channel-policy-check**: double-checks the door settings you will create in Lesson 3.
+- **security-audit-helper**: turns Lesson 4's safety sweep into a tidy to-do list.
 
-Notice what the second and third ones are: *skills that check things for you.* Your assistant's first tricks include helping keep itself trustworthy.
+Notice what the second and third ones are: skills that check things for you. From its first week, your assistant helps keep itself trustworthy.
 
 ## Done means done
 
-You are done with this lesson when you can:
+You are done when you can:
 
-- say what file makes a skill exist (name and format)
+- say what file makes a skill exist
 - state the collision rule in one sentence
-- say what `verify` is for, in the recipe-from-a-stranger terms
+- say what `verify` is for, in recipe-from-a-stranger terms
 
 Three skills understood beats fifty installed. You have three.
 """,
@@ -373,7 +378,7 @@ Three skills understood beats fifty installed. You have three.
                         "prompt": "You write skill instructions in a file called skills-info.txt inside workspace/skills/. OpenClaw ignores it. Why?",
                         "options": [
                             "The gateway must be restarted twice after adding text files",
-                            "Skills are discovered by their exact filename — it must be SKILL.md",
+                            "Skills are discovered by their exact filename: it must be SKILL.md",
                             "Text files need to be registered in openclaw.json first",
                         ],
                         "answer_index": 1,
@@ -382,8 +387,8 @@ Three skills understood beats fifty installed. You have three.
                         "id": "openclaw-skills-q2",
                         "prompt": "The same skill name exists in your project workspace and in your home folder. Which one runs?",
                         "options": [
-                            "The workspace one — closest to the current project wins",
-                            "The home-folder one — personal skills always win",
+                            "The workspace one: closest to the current project wins",
+                            "The home-folder one: personal skills always win",
                             "Whichever file was edited most recently",
                         ],
                         "answer_index": 0,
@@ -400,11 +405,11 @@ Three skills understood beats fifty installed. You have three.
                     },
                     {
                         "id": "openclaw-skills-q4",
-                        "prompt": "A teammate says: 'Third-party skills are just markdown, not code — nothing to review.' What are they missing?",
+                        "prompt": "A teammate says: 'Third-party skills are just markdown, not code. Nothing to review.' What are they missing?",
                         "options": [
                             "Markdown files can slow down the gateway noticeably",
-                            "A skill is instructions your assistant will follow — text can steer real actions, so it deserves a read",
-                            "Nothing — markdown cannot contain executable code, so the worst case is a badly written recipe",
+                            "A skill is instructions your assistant will follow: text can steer real actions, so it deserves a read",
+                            "Nothing: markdown cannot contain executable code, so the worst case is a badly written recipe",
                         ],
                         "answer_index": 1,
                     },
@@ -423,23 +428,23 @@ Three skills understood beats fifty installed. You have three.
                     {
                         "title": "Open one and read it",
                         "predict_first": {
-                            "question": "Before opening it: what do you expect the inside of a 'skill' to look like — code, settings, or something else?",
+                            "question": "Before opening it: what do you expect the inside of a 'skill' to look like? Code, settings, or something else?",
                             "hint": "You have already seen its shape in Module 4, on paper.",
                         },
-                        "body": "It is a recipe card in plain language: a name, a description, and instructions. Open research-brief below and read all of it — it takes under a minute, and there is nothing in it you cannot understand today. That readability is the point: you can always know exactly what your assistant has been taught.",
-                        "analogy": "A skill is a recipe card taped next to a machine: the machine is the capability, the card says when to use it and what good work looks like.",
+                        "body": "It is a recipe card in plain language: a name, a description, and instructions. Open research-brief below and read all of it. It takes under a minute, and that readability is the point: you can always know exactly what your assistant has been taught.",
+                        "analogy": "A skill is a recipe card taped next to a machine. The machine is the capability; the card says when to use it and what good work looks like.",
                         "try_this": [
-                            "Open research-brief's SKILL.md below. Read the whole thing once — it is shorter than this paragraph block.",
+                            "Open research-brief's SKILL.md below. Read the whole thing once.",
                         ],
                     },
                     {
                         "title": "The collision rule, whole",
-                        "body": "If two skills share a name, the one closest to your current project wins. That sentence is the complete rule for this course. A longer priority list exists in the official docs — leaving it unread is not a gap in your understanding; it is the correct amount of detail for now.",
-                        "remember": "Closest wins. The full list can stay in the docs until a real collision sends you there.",
+                        "body": "If two skills share a name, the one closest to your current project wins. That sentence is the complete rule for this course. The longer priority list in the docs can stay unread until a real collision sends you there.",
+                        "remember": "Closest wins.",
                     },
                     {
                         "title": "Fetch, verify, read, trust",
-                        "body": "For skills from ClawHub: install fetches it, `verify` runs the built-in checker on its trust record, and then you read it once — because it is short and plain, one read genuinely covers it. After those three steps the trust question is settled and does not need reopening.",
+                        "body": "For skills from ClawHub: install fetches it, `verify` runs the built-in checker on its trust record, and then you read it once. After those three steps the trust question is settled and does not need reopening.",
                         "try_this": [
                             "Say what problem `verify` solves, in one sentence, using the stranger's-recipe idea.",
                         ],
@@ -447,7 +452,7 @@ Three skills understood beats fifty installed. You have three.
                     },
                     {
                         "title": "Your trio, and what it says",
-                        "body": "research-brief does Juno's job. channel-policy-check and security-audit-helper do something lovelier: they check the system for you — one reviews door settings, one turns audit findings into a to-do list. From its very first week, your assistant participates in keeping itself trustworthy.",
+                        "body": "research-brief does Juno's job. channel-policy-check and security-audit-helper do something lovelier: they check the system for you. One reviews door settings, one turns audit findings into a to-do list. From its very first week, your assistant participates in keeping itself trustworthy.",
                         "artifact_paths": [
                             "lesson_artifacts/openclaw/skills/research-brief/SKILL.md",
                             "lesson_artifacts/openclaw/skills/channel-policy-check/SKILL.md",
@@ -457,7 +462,7 @@ Three skills understood beats fifty installed. You have three.
                     },
                     {
                         "title": "If a skill doesn't load",
-                        "body": "The usual cause is mundane: the filename is not exactly SKILL.md, or the file sits one folder too deep. Check those two things, in that order, and the mystery is nearly always solved. Nothing about a non-loading skill can harm the rest of the setup — it is simply not seen.",
+                        "body": "The usual cause is mundane: the filename is not exactly SKILL.md, or the file sits one folder too deep. Check those two things in that order and the mystery is nearly always solved. A non-loading skill cannot harm anything; it is simply not seen.",
                         "remember": "Exact filename, right folder. Two checks, in order, then done.",
                         "kind": "common_mistake",
                     },
@@ -497,7 +502,7 @@ Three skills understood beats fifty installed. You have three.
                         "options": [
                             "Reading it makes the skill load faster",
                             "OpenClaw refuses to load any skill until it detects the file has been opened and read",
-                            "It contains instructions your assistant will follow — a stranger's recipe deserves one read",
+                            "It contains instructions your assistant will follow: a stranger's recipe deserves one read",
                         ],
                         "answer_index": 2,
                     },
@@ -548,48 +553,46 @@ Three skills understood beats fifty installed. You have three.
 
 *Lesson 3 of 4 · about 12 minutes · your assistant gets a doorway to the outside world.*
 
-So far your assistant only talks to you, on your machine. A **channel** connects it to a chat app you already use — WhatsApp, Telegram, Slack, Discord, and others — so you can message it from your phone like any other contact.
+So far your assistant only talks to you, on your machine. A **channel** connects it to a chat app you already use (WhatsApp, Telegram, Slack, Discord, and others) so you can message it from your phone like any other contact.
 
-## Start with the reassurance, because it changes how you read everything else
+## Start with the reassurance
 
-**Every door starts locked.** Out of the box, a stranger who messages your assistant gets a short pairing code and then silence. The assistant will not talk to them, act for them, or reveal anything — until you, deliberately, approve that person. There is no accidental way to open your assistant to the world; the open setting requires two explicit, unmistakable steps that you would have to type on purpose. You can explore this whole lesson freely knowing that.
+**Every door starts locked.** Out of the box, a stranger who messages your assistant gets a short pairing code and then silence. The assistant will not talk to them, act for them, or reveal anything until you deliberately approve that person. There is no accidental way to open your assistant to the world; the open setting requires two explicit steps you would have to type on purpose. Explore this whole lesson knowing that.
 
 ## Three door policies
 
-- **Pairing** *(the default)* — a doorbell with a code. Unknown senders get a code; you approve the ones you choose with `openclaw pairing approve <channel> <code>`. Everyone else gets silence.
-- **Allowlist** — a guest list. Only people you named in advance can get through at all.
-- **Open** — the door propped open for anyone. Exists for genuine public-bot use cases; requires the two deliberate steps mentioned above; not for this course.
+- **Pairing** *(the default)*: a doorbell with a code. Unknown senders get a code; you approve the ones you choose with `openclaw pairing approve <channel> <code>`. Everyone else gets silence.
+- **Allowlist**: a guest list. Only people you named in advance get through.
+- **Open**: the door propped open for anyone. Exists for genuine public bots. Requires the two deliberate steps. Not for this course.
 
-Pairing is the right answer for essentially everything you will build here. It is not the timid option — it is the correct one, and the docs agree.
+Pairing is the right answer for everything you will build here. It is not the timid option; it is the correct one.
 
 ## Two settings for shared spaces
 
-If your assistant joins a group chat, two more ideas apply:
-
-- **`requireMention`** — the assistant only answers when called by name (like a polite person in a group conversation, not someone who interjects on every message).
-- **`per-channel-peer` sessions** — if several people message your assistant directly, each person gets their own separate conversation notebook. Nobody sees anyone else's context, and threads never blur together.
+- **`requireMention`**: in a group chat, the assistant only answers when called by name, like a polite person in a group conversation.
+- **`per-channel-peer` sessions**: if several people message your assistant directly, each person gets a separate conversation notebook. Threads never blur together.
 
 ## The rollout, whole
 
-1. Connect one channel — the app you actually use most.
-2. Leave the policy on pairing (it already is).
+1. Connect one channel, the app you actually use most.
+2. Leave the policy on pairing. It already is.
 3. Approve exactly one person: you.
-4. Send yourself a message; watch it answer.
+4. Send yourself a message. Watch it answer.
 
-That is a complete, correct first rollout. Not a starter version of one — the actual thing, done well. Widening it later (a second person, a group room) is a repeat of step 3 with a new code, whenever you choose. There is no pressure to widen anything today, or ever.
+That is a complete, correct first rollout. Widening it later (a second person, a group room) is a repeat of step 3 with a new code, whenever you choose. There is no pressure to widen anything today, or ever.
 
 ## Done means done
 
-You are done with this lesson when you can:
+You are done when you can:
 
 - explain pairing, allowlist, and open in doorbell terms
 - say what `requireMention` prevents in a group room
-- say who can reach a freshly connected channel before any approvals (answer: no one — and now you know why)
+- say who can reach a freshly connected channel before any approvals (answer: no one)
 """,
                 "ai_tutor_prompt": _ai_tutor_prompt(
                     "Open the Front Door (Just a Crack)",
                     "one connected channel on pairing, with the learner able to explain the three door policies and the two shared-room settings",
-                    "the locked-by-default reassurance (pairing is the default; open requires two deliberate steps), the doorbell/guest-list/propped-door picture, requireMention for groups, and per-person conversation notebooks. Keep the tone unhurried: a one-channel, one-person rollout is complete, not preliminary.",
+                    "the locked-by-default reassurance (pairing is the default; open requires two deliberate steps), the doorbell, guest list, and propped-door picture, requireMention for groups, and per-person conversation notebooks. A one-channel, one-person rollout is complete, not preliminary.",
                 ),
                 "questions": [
                     {
@@ -616,9 +619,9 @@ You are done with this lesson when you can:
                         "id": "openclaw-channel-q3",
                         "prompt": "What does it take to actually make DMs public (the 'open' policy)?",
                         "options": [
+                            "It happens gradually as you approve more senders over time",
                             "Approving your first sender quietly switches the whole channel to the open policy",
-                            "One typo in the channel name is enough to open it",
-                            "Two deliberate, explicit settings typed on purpose — it cannot happen by accident",
+                            "Two deliberate, explicit settings typed on purpose. It cannot happen by accident",
                         ],
                         "answer_index": 2,
                     },
@@ -637,7 +640,7 @@ You are done with this lesson when you can:
                         "prompt": "Three people DM the same assistant. What do per-channel-peer sessions guarantee?",
                         "options": [
                             "The assistant merges all three conversations into one shared thread it can search",
-                            "Each person gets a separate conversation notebook — no context blurs between them",
+                            "Each person gets a separate conversation notebook: no context blurs between them",
                             "Only the first person to pair may send DMs",
                         ],
                         "answer_index": 1,
@@ -650,18 +653,18 @@ You are done with this lesson when you can:
                             "question": "You connect your assistant to a messaging app. Before you approve anyone, what do you think a stranger who messages it experiences?",
                             "hint": "The designers assumed strangers would try. What is the safest default reply to someone unknown?",
                         },
-                        "body": "A short code and silence. That is the whole experience of an unapproved stranger. Connecting a channel opens nothing by itself — approval is a separate, deliberate act that only you can perform. Read the rest of this lesson from inside that fact.",
+                        "body": "A short code and silence. That is the whole experience of an unapproved stranger. Connecting a channel opens nothing by itself; approval is a separate, deliberate act that only you can perform.",
                         "analogy": "Channel policy is deciding who gets a house key, who can ring the bell, and who the house simply does not answer.",
                     },
                     {
                         "title": "Doorbell, guest list, propped door",
-                        "body": "Pairing is a doorbell with a code — you approve ring by ring. Allowlist is a guest list fixed in advance. Open is the door propped for anyone, exists for real public bots, and requires typing two unmistakable settings. For everything in this course, the doorbell is correct, and it is already switched on.",
-                        "remember": "Pairing is the default and the right answer here. You never chose wrong by leaving it alone.",
+                        "body": "Pairing is a doorbell with a code: you approve ring by ring. Allowlist is a guest list fixed in advance. Open is the door propped for anyone; it exists for real public bots and requires typing two unmistakable settings. For everything in this course, the doorbell is correct, and it is already switched on.",
+                        "remember": "Pairing is the default and the right answer here. Leaving it alone is the correct move.",
                         "checkpoint_after": True,
                     },
                     {
                         "title": "Polite in groups, private in DMs",
-                        "body": "requireMention makes the assistant a polite group member: silent until called by name. per-channel-peer gives every DM sender a private notebook, so conversations never bleed into each other. The template below has both written out — reading it is enough; applying it is copy-paste.",
+                        "body": "requireMention makes the assistant a polite group member: silent until called by name. per-channel-peer gives every DM sender a private notebook. The template below has both written out; reading it is enough, and applying it is copy-paste.",
                         "artifact_paths": ["lesson_artifacts/openclaw/channels/channel-policy.template.json5"],
                         "try_this": [
                             "Open the template and find the two settings. Say in one sentence each what they protect.",
@@ -669,21 +672,21 @@ You are done with this lesson when you can:
                     },
                     {
                         "title": "A complete first rollout is small",
-                        "body": "One channel, pairing on, one approved person (you), one test message answered. That is not the training-wheels version of a rollout — it is a correct production pattern in miniature, and the checklist below fits on an index card. Wider access is always a later choice, never a debt.",
+                        "body": "One channel, pairing on, one approved person (you), one test message answered. That is a correct production pattern in miniature, and the checklist below fits on an index card. Wider access is always a later choice, never a debt.",
                         "artifact_paths": ["lesson_artifacts/openclaw/channels/rollout-checklist.md"],
-                        "remember": "A good rollout is boring: small, tested, and easy to explain.",
+                        "remember": "A good rollout is boring: small, tested, easy to explain.",
                     },
                     {
                         "title": "If 'open' ever starts to sound convenient",
-                        "body": "Someday a use case will make the open policy sound tempting and pairing sound like friction. When that day comes, the question to ask is: 'who exactly do I want reaching this assistant, and can I name them?' If you can name them, pairing or an allowlist already serves you better. If you truly cannot — a real public bot — that is a project to design deliberately, not a switch to flip.",
+                        "body": "Someday a use case will make the open policy sound tempting. When that day comes, ask: 'who exactly do I want reaching this assistant, and can I name them?' If you can name them, pairing or an allowlist already serves you better. A truly public bot is a project to design deliberately, not a switch to flip.",
                         "remember": "If you can name the people, you don't need 'open'.",
                         "kind": "common_mistake",
                     },
                     {
                         "title": "Say it back, once",
-                        "body": "Explain to an imaginary teammate why 'just let anyone DM the bot' isn't the move: the doorbell, the guest list, the propped door, and what a stranger experiences by default. Four beats, once through, and Lesson 3 is done.",
+                        "body": "Explain to an imaginary teammate why 'just let anyone DM the bot' is not the move: the doorbell, the guest list, the propped door, and what a stranger experiences by default. Four beats, once through, and Lesson 3 is done.",
                         "try_this": [
-                            "Include the phrase 'a code and silence' — it carries most of the story.",
+                            "Include the phrase 'a code and silence'. It carries most of the story.",
                         ],
                         "kind": "teach_it_back",
                     },
@@ -735,7 +738,7 @@ You are done with this lesson when you can:
                 "artifacts": [
                     _artifact(
                         "lesson_artifacts/openclaw/channels/channel-policy.template.json5",
-                        "A door-policy template with pairing, mention gating, and private per-person sessions — commented in plain English.",
+                        "A door-policy template with pairing, mention gating, and private per-person sessions, commented in plain English.",
                         "text",
                         inspect_prompt="Find the DM policy, the DM scope, and the mention rule. Say what each protects, in doorbell terms.",
                         change_prompt="Pick the one channel you would connect first and say why pairing already suits it.",
@@ -744,7 +747,7 @@ You are done with this lesson when you can:
                         "lesson_artifacts/openclaw/channels/rollout-checklist.md",
                         "The complete first rollout on an index card: one channel, pairing, one person, one test message.",
                         "text",
-                        inspect_prompt="Count the steps. Notice that the last one is a finish line, not an invitation to widen access.",
+                        inspect_prompt="Count the steps. Notice the last one is a finish line, not an invitation to widen access.",
                         change_prompt="Fill in the channel name you would actually use. That single word makes the checklist yours.",
                     ),
                 ],
@@ -758,17 +761,17 @@ You are done with this lesson when you can:
 
 *Lesson 4 of 4 · about 12 minutes · the module's closing move: one command that checks everything.*
 
-Here is a secret about this module: **you have been doing safety work since Lesson 1.** A health check after every change. Recipe cards you can read. Doors locked by default. This final lesson doesn't introduce safety — it hands you the tool that confirms it, and names the thinking behind what you already built.
+Here is a secret about this module: **you have been doing safety work since Lesson 1.** A health check after every change. Recipe cards you can read. Doors locked by default. This final lesson hands you the tool that confirms it, and names the thinking behind what you already built.
 
 ## Safety is a shape, not a mood
 
-OpenClaw's security guidance orders protections like the layers of a house:
+OpenClaw orders protections like the layers of a house:
 
-1. **Who can talk to it** — the doors. Pairing, allowlists. *(You built this in Lesson 3.)*
-2. **Where it can act** — the rooms. Which tools are granted, what stays off-limits. *(You touched this in Lessons 1–2.)*
-3. **How it behaves** — the person inside. The model and its instructions, last.
+1. **Who can talk to it**: the doors. Pairing, allowlists. *(You built this in Lesson 3.)*
+2. **Where it can act**: the rooms. Which tools are granted, what stays off-limits. *(Lessons 1 and 2.)*
+3. **How it behaves**: the person inside. The model and its instructions, last.
 
-The order matters and is quietly liberating: **the locks do not depend on anyone's behavior.** A well-worded job description is good to have, but it is the doors and rooms — settings, not promises — that decide what can actually happen. You never have to trust charm, and you never have to supervise; the settings hold whether or not anyone is watching.
+The order is quietly liberating: **the locks do not depend on anyone's behavior.** A door on pairing holds whether the model has a good day or a bad one, whether you are watching or asleep. Settings, not promises, decide what can actually happen.
 
 ## The auditor: one command instead of a worry list
 
@@ -776,40 +779,40 @@ The order matters and is quietly liberating: **the locks do not depend on anyone
 openclaw security audit
 ```
 
-This is the centerpiece of the lesson. The audit walks the whole building — door policies, tool grants, network posture, plugin trust, a dozen other things — against the official checklist, and reports back. You do not need to know the full list of what it checks; *not needing to know is the feature.* The checklist lives in the tool, maintained by the people who built the system, so it never has to live in your head.
+The audit walks the whole building (door policies, tool grants, network posture, plugin trust, and more) against the official checklist, and reports back. You do not need to know the full list of what it checks. The checklist lives in the tool, so it never has to live in your head.
 
 The rhythm that makes it work:
 
-> **Change something → run the audit → fix what it flags → done.**
+> **Change something. Run the audit. Fix what it flags. Done.**
 
-When the audit passes, you are entitled to believe it. That is what it is for. Running it a second time on an unchanged system tells you nothing new — the input hasn't changed, so the answer can't. Once per change is the whole discipline; the auditor remembers everything so you can put it down completely between changes.
+When the audit passes, you are entitled to believe it. Running it a second time on an unchanged system tells you nothing new: same system in, same answer out. Once per change is the whole discipline.
 
 Two variants for later, no action needed now: `--deep` looks harder (worth it before sharing access more widely) and `--fix` applies safe corrections itself.
 
 ## Two boundaries worth naming once
 
-- **Guest rooms don't get the master key.** The setting `sandbox.mode: "non-main"` keeps any session that isn't your own main one inside a limited sandbox, away from full access to your computer.
-- **One household per home.** OpenClaw is a *personal* assistant: one gateway assumes one trusted operator — you. The day two people who don't fully trust each other want assistants, the answer is two separate gateways, not shared keys. (No action needed; it's just the boundary, named.)
+- **Guest rooms don't get the master key.** The setting `sandbox.mode: "non-main"` keeps any session that is not your own main one inside a limited sandbox, away from full access to your computer.
+- **One household per home.** OpenClaw is a personal assistant: one gateway assumes one trusted operator, you. If two people who do not fully trust each other want assistants, they get two separate gateways. No action needed; it is just the boundary, named.
 
-## Done means done — lesson and module
+## Done means done, lesson and module
 
-You are done when you can name: one control for *who can talk* (pairing), one for *where it can act* (sandbox), and the command that checks the whole building (the audit).
+You are done when you can name: one control for who can talk (pairing), one for where it can act (sandbox), and the command that checks the whole building (the audit).
 
-And with that, **Module 6 is complete.** Your assistant has a home, three skills, one carefully opened door, and a standing auditor. Everything here waits patiently in config files — nothing degrades, nothing needs re-checking overnight. Module 8 is where you decide, with evidence, to trust it with real work.
+And with that, **Module 6 is complete.** Your assistant has a home, three skills, one carefully opened door, and a standing auditor. Everything waits patiently in config files; nothing degrades overnight. Module 8 is where you decide, with evidence, to trust it with real work.
 """,
                 "ai_tutor_prompt": _ai_tutor_prompt(
                     "The Safety Sweep",
-                    "a passed security audit and the three-layer picture: doors (identity), rooms (scope), person inside (model) — in that order",
-                    "reframing safety as settings rather than vigilance: the audit is an external checker that holds the checklist so the learner doesn't have to; the rhythm is change → audit → fix → done, and re-running on an unchanged system yields nothing new. The locks work without anyone watching.",
+                    "a passed security audit and the three-layer picture: doors (identity), rooms (scope), person inside (model), in that order",
+                    "reframing safety as settings rather than vigilance: the audit holds the checklist so the learner does not have to; the rhythm is change, audit, fix, done, and re-running on an unchanged system yields nothing new. The locks work without anyone watching.",
                 ),
                 "questions": [
                     {
                         "id": "openclaw-safety-q1",
                         "prompt": "A teammate wants to rely on a strongly-worded system prompt for safety. You want the doors and rooms set first. Who has the official ordering right?",
                         "options": [
-                            "The teammate — a well-written prompt reaches the model directly, making hard controls redundant",
-                            "You — settings (identity, scope) come first because they hold regardless of how the model behaves",
-                            "Neither — the ordering between prompts and controls doesn't matter",
+                            "The teammate: a well-written prompt reaches the model directly, making hard controls redundant",
+                            "You: settings (identity, scope) come first because they hold regardless of how the model behaves",
+                            "Neither: the ordering between prompts and controls does not matter",
                         ],
                         "answer_index": 1,
                     },
@@ -817,9 +820,9 @@ And with that, **Module 6 is complete.** Your assistant has a home, three skills
                         "id": "openclaw-safety-q2",
                         "prompt": "The audit flags: 'DM policy open + tools enabled.' What does the layered order say to fix first?",
                         "options": [
-                            "The door — lock down who can talk before tuning anything else",
-                            "The model — add stronger instructions about strangers",
-                            "The tools — remove them all, then revisit the door later",
+                            "The door: lock down who can talk before tuning anything else",
+                            "The model: add stronger instructions about strangers",
+                            "The tools: remove them all, then revisit the door later",
                         ],
                         "answer_index": 0,
                     },
@@ -829,7 +832,7 @@ And with that, **Module 6 is complete.** Your assistant has a home, three skills
                         "options": [
                             "It catches issues that can appear spontaneously while the system sits overnight",
                             "It refreshes the gateway's security certificates",
-                            "Nothing new — same system in, same answer out; once per change is the whole discipline",
+                            "Nothing new: same system in, same answer out. Once per change is the whole discipline",
                         ],
                         "answer_index": 2,
                     },
@@ -845,9 +848,9 @@ And with that, **Module 6 is complete.** Your assistant has a home, three skills
                     },
                     {
                         "id": "openclaw-safety-q5",
-                        "prompt": "Two housemates who don't fully trust each other both want assistants. What does the one-household rule recommend?",
+                        "prompt": "Two housemates who do not fully trust each other both want assistants. What does the one-household rule recommend?",
                         "options": [
-                            "Two separate gateways — separate homes, separate keys",
+                            "Two separate gateways: separate homes, separate keys",
                             "One shared gateway with a strict SOUL.md",
                             "One gateway, taking turns by day of the week",
                         ],
@@ -858,20 +861,20 @@ And with that, **Module 6 is complete.** Your assistant has a home, three skills
                     {
                         "title": "You've been doing this all module",
                         "predict_first": {
-                            "question": "Look back at Lessons 1–3 for a moment: the health check, the verify command, the locked doors. What were all of those, really?",
+                            "question": "Look back at Lessons 1 to 3: the health check, the verify command, the locked doors. What were all of those, really?",
                             "hint": "Each one was a machine holding a checklist so you didn't have to.",
                         },
-                        "body": "They were safety work — done calmly, one layer at a time, without a single alarming paragraph. This lesson only adds the top layer: an auditor that checks all of it at once. You are not starting safety today; you are finishing it.",
-                        "analogy": "Doors, rooms, person inside — identity, scope, model. Set in that order, checked by one auditor.",
+                        "body": "They were safety work, done calmly, one layer at a time. This lesson only adds the top layer: an auditor that checks all of it at once. You are not starting safety today; you are finishing it.",
+                        "analogy": "Doors, rooms, person inside. Identity, scope, model. Set in that order, checked by one auditor.",
                     },
                     {
-                        "title": "Locks beat promises — and that's a relief",
+                        "title": "Locks beat promises, and that's a relief",
                         "body": "The layered order means the important protections are settings, not behavior. A door on pairing holds whether the model has a good day or a bad one, whether you are watching or asleep. Nothing in this system asks for your vigilance; it asks for one command after each change.",
-                        "remember": "A prompt is guidance. A setting is enforcement. Enforcement doesn't need supervision.",
+                        "remember": "A prompt is guidance. A setting is enforcement. Enforcement does not need supervision.",
                     },
                     {
                         "title": "The audit rhythm",
-                        "body": "Change something → `openclaw security audit` → fix what it flags → done. The runbook below writes the rhythm out. The audit holds the full checklist internally, which is precisely why you don't have to — and why a pass is a real answer, not a provisional one. An unchanged system re-audited gives the same result; the discipline is once per change, then put it down.",
+                        "body": "Change something. Run `openclaw security audit`. Fix what it flags. Done. The audit holds the full checklist internally, which is why you do not have to, and why a pass is a real answer. An unchanged system re-audited gives the same result, so the discipline is once per change, then put it down.",
                         "artifact_paths": [
                             "lesson_artifacts/openclaw/safety/hardened-openclaw.json5",
                             "lesson_artifacts/openclaw/safety/security-audit-runbook.md",
@@ -884,20 +887,20 @@ And with that, **Module 6 is complete.** Your assistant has a home, three skills
                     },
                     {
                         "title": "One household, named once",
-                        "body": "OpenClaw assumes one trusted operator per gateway — it is a personal assistant, like a personal home. If mutually untrusting people ever need assistants, they get separate gateways. You are the only operator here, so this boundary asks nothing of you today; it is named so the model of the system in your head is complete.",
+                        "body": "OpenClaw assumes one trusted operator per gateway. It is a personal assistant, like a personal home. If mutually untrusting people ever need assistants, they get separate gateways. You are the only operator here, so this boundary asks nothing of you today.",
                         "remember": "One home, one household. More households, more homes.",
                     },
                     {
                         "title": "If the audit flags something",
-                        "body": "A flag is the system working, not failing — the auditor caught what it exists to catch, before anything happened. Findings arrive ordered; fix the top one, re-run, watch the list shrink. A first audit with a few flags is the normal experience, not a bad sign, and the security-audit-helper skill from Lesson 2 will happily turn the output into a to-do list for you.",
+                        "body": "A flag is the system working: the auditor caught what it exists to catch, before anything happened. Findings arrive ordered. Fix the top one, re-run, watch the list shrink. A first audit with a few flags is the normal experience, and the security-audit-helper skill from Lesson 2 will turn the output into a to-do list for you.",
                         "remember": "A flag means the check worked. Fix, re-run, shrink the list, done.",
                         "kind": "common_mistake",
                     },
                     {
                         "title": "Say it back, and close the module",
-                        "body": "Four beats: who can talk (doors), where it can act (rooms), how it behaves (person inside), and the auditor that checks the building. Say them once. Then let Module 6 be finished — it is, and the config files will hold everything exactly as you left it.",
+                        "body": "Four beats: who can talk (doors), where it can act (rooms), how it behaves (person inside), and the auditor that checks the building. Say them once. Then let Module 6 be finished. It is, and the config files will hold everything exactly as you left it.",
                         "try_this": [
-                            "One pass through the four beats. Then close the page — the module is complete.",
+                            "One pass through the four beats. Then close the page. The module is complete.",
                         ],
                         "kind": "teach_it_back",
                     },
@@ -929,7 +932,7 @@ And with that, **Module 6 is complete.** Your assistant has a home, three skills
                         "options": [
                             "Audit hourly regardless of changes",
                             "Audit once at install time, never again",
-                            "Change something → audit → fix flags → done",
+                            "Change something, audit, fix flags, done",
                         ],
                         "answer_index": 2,
                     },
@@ -954,14 +957,14 @@ And with that, **Module 6 is complete.** Your assistant has a home, three skills
                 "artifacts": [
                     _artifact(
                         "lesson_artifacts/openclaw/safety/hardened-openclaw.json5",
-                        "A hardened baseline config — every lock from the module in one file, commented in plain English.",
+                        "A hardened baseline config: every lock from the module in one file, commented in plain English.",
                         "text",
                         inspect_prompt="Find the gateway bind, the auth mode, the exec setting, and the DM scope. Say what each one locks, in house terms.",
                         change_prompt="Pick the one line you find most reassuring and say why it holds even when nobody is watching.",
                     ),
                     _artifact(
                         "lesson_artifacts/openclaw/safety/security-audit-runbook.md",
-                        "The audit rhythm on one page: change, audit, fix, done — with what a flag means and doesn't mean.",
+                        "The audit rhythm on one page: change, audit, fix, done, with what a flag means and does not mean.",
                         "text",
                         inspect_prompt="Find the sentence about re-running the audit on an unchanged system. Say why that sentence is a gift.",
                         change_prompt="Read the runbook as a spoken checklist once. If it fits in one breath per line, it is doing its job.",
@@ -971,7 +974,7 @@ And with that, **Module 6 is complete.** Your assistant has a home, three skills
         ],
     },
     {
-        "title": "Module 8: Capstone — Decide to Trust It",
+        "title": "Module 8: The Trust Capstone",
         "slug": "module-8-capstone-safety-evaluation",
         "description": (
             "The finishing module: let your assistant run one small job on its own, put guardrails and "
@@ -999,43 +1002,39 @@ And with that, **Module 6 is complete.** Your assistant has a home, three skills
 
 *Lesson 1 of 4 · about 12 minutes · the capstone begins: your assistant starts working unattended.*
 
-Everything before this module happened while you watched. **Automation** is work your assistant does when you are not there — a job that runs on a schedule, or when an event arrives, without you pressing anything.
+Everything before this module happened while you watched. **Automation** is work your assistant does when you are not there: a job that runs on a schedule, or when an event arrives, without you pressing anything.
 
-The question this whole capstone answers: *how do you step away calmly?* Not by hoping. By structure. Every trustworthy automation answers four questions, and they will look familiar — they are Module 4's blueprint boxes, grown up:
+The question this capstone answers: *how do you step away calmly?* Not by hoping. By structure. Every trustworthy automation answers four questions, and they will look familiar. They are Module 4's blueprint boxes, grown up.
 
 ## The four questions of any automation
 
-1. **Trigger** — what starts it? A schedule ("every Monday at 9"), an event ("a message arrives"), or a signal from another system (called a *webhook* — one system ringing another's doorbell).
-2. **Steps** — what bounded work does it do? A list you could draw, not "the AI handles it."
-3. **Review point** — where does a human approve before anything irreversible? (The support helper from Module 4 drafted; a person sent. Same pattern, formalized.)
-4. **Receipt** — what written record proves the run happened and shows what it did?
+1. **Trigger**: what starts it? A schedule ("every Monday at 9"), an event ("a message arrives"), or a signal from another system (called a *webhook*: one system ringing another's doorbell).
+2. **Steps**: what bounded work does it do? A list you could draw, not "the AI handles it."
+3. **Review point**: where does a human approve before anything irreversible? (The support helper from Module 4 drafted; a person sent. Same pattern, formalized.)
+4. **Receipt**: what written record proves the run happened and shows what it did?
 
 ## The receipt is the star
 
-Sit with the fourth one, because it is the piece that makes stepping away *actually* calm rather than nervously hopeful:
-
-**You do not verify an automation by watching it. You verify it by reading the receipt afterward.** One receipt, one read, and you know — not believe, know — what happened. A missing receipt is the one thing that should stop a design cold, because work that leaves no record can never be checked, only worried about. With receipts, "did it run okay?" stops being a feeling to manage; it becomes a fact you look up.
+**You do not verify an automation by watching it. You verify it by reading the receipt afterward.** One receipt, one read, and you know what happened. A missing receipt is the one thing that should stop a design cold, because work that leaves no record can never be checked, only worried about. With receipts, "did it run okay?" stops being a feeling and becomes a fact you look up.
 
 ## Three worked examples
 
-**The Monday audit.** Trigger: schedule, Mondays 9:00. Steps: run `openclaw security audit`, collect findings. Review: findings go to you as a checklist — you decide what changes. Receipt: the audit report, saved with a date.
-*Your Module 6 safety sweep — now it happens without you remembering it. The remembering was the machine's job all along.*
+**The Monday audit.** Trigger: schedule, Mondays 9:00. Steps: run `openclaw security audit`, collect findings. Review: findings come to you as a checklist; you decide what changes. Receipt: the audit report, saved with a date.
+*Your Module 6 safety sweep, now happening without you remembering it. The remembering was always the machine's job.*
 
-**The doorbell-to-draft.** Trigger: a webhook fires when a form on your site is submitted. Steps: your assistant drafts a reply using research-brief. Review: the draft waits for your approval — nothing sends itself. Receipt: draft plus decision, logged.
+**The doorbell-to-draft.** Trigger: a webhook fires when a form on your site is submitted. Steps: your assistant drafts a reply using research-brief. Review: the draft waits for your approval; nothing sends itself. Receipt: draft plus decision, logged.
 
 **The quality gate.** Trigger: a document lands in a folder. Steps: the assistant checks it against a rubric. Review: passes move on; failures return with notes for a human. Receipt: the scorecard, saved.
 
-Notice: in all three, the irreversible step belongs to a person, and every run leaves paper.
+In all three, the irreversible step belongs to a person, and every run leaves paper.
 
 ## Done means done
 
-You are done with this lesson when you can:
+You are done when you can:
 
 - name the four questions from memory or nearly so
 - say in one sentence why the receipt replaces watching
 - sketch one automation of your own as four short answers (the brief template below holds them)
-
-Lessons 2 and 3 add the guardrails and permissions around this job; Lesson 4 is where you decide to ship it.
 """,
                 "ai_tutor_prompt": _ai_tutor_prompt(
                     "Work That Runs While You're Away",
@@ -1047,9 +1046,9 @@ Lessons 2 and 3 add the guardrails and permissions around this job; Lesson 4 is 
                         "id": "capstone-automation-q1",
                         "prompt": "What lets you verify an unattended run without having watched it?",
                         "options": [
-                            "The receipt — a written record you read afterward",
-                            "The trigger — knowing when it started",
-                            "The model — trusting it was a good one",
+                            "The receipt: a written record you read afterward",
+                            "The trigger: knowing when it started",
+                            "The model: trusting it was a good one",
                         ],
                         "answer_index": 0,
                     },
@@ -1069,7 +1068,7 @@ Lessons 2 and 3 add the guardrails and permissions around this job; Lesson 4 is 
                         "options": [
                             "Webhooks can start jobs but cannot technically complete a send on their own",
                             "Drafting is too slow to automate end to end",
-                            "Sending is the irreversible step, so it sits with a person — the review point",
+                            "Sending is the irreversible step, so it sits with a person: the review point",
                         ],
                         "answer_index": 2,
                     },
@@ -1077,8 +1076,8 @@ Lessons 2 and 3 add the guardrails and permissions around this job; Lesson 4 is 
                         "id": "capstone-automation-q4",
                         "prompt": "A design says: 'Trigger: nightly. Steps: the AI handles cleanup.' What fails the four questions?",
                         "options": [
-                            "The trigger — cleanup work needs to run far more often than once per night",
-                            "The steps are unbounded — 'the AI handles it' is not a list you could draw",
+                            "The trigger: cleanup work needs to run far more often than once per night",
+                            "The steps are unbounded: 'the AI handles it' is not a list you could draw",
                             "Nightly jobs cannot produce receipts",
                         ],
                         "answer_index": 1,
@@ -1099,14 +1098,14 @@ Lessons 2 and 3 add the guardrails and permissions around this job; Lesson 4 is 
                         "title": "Stepping away, calmly",
                         "predict_first": {
                             "question": "You let a capable person house-sit for a weekend. What arrangements would let you genuinely not think about the house while away?",
-                            "hint": "Clear instructions, agreed limits, a note about when to call you — and finding out afterward what happened.",
+                            "hint": "Clear instructions, agreed limits, a note about when to call you, and finding out afterward what happened.",
                         },
                         "body": "Whatever you just listed maps onto the four questions: instructions are the steps, limits and 'call me if' are the review point, and finding out afterward is the receipt. Trustworthy automation is a well-arranged house-sit. The calm comes from the arrangement, not from hope.",
-                        "analogy": "An automation is an assembly line with a quality-control station and a logbook — not a self-driving mystery box.",
+                        "analogy": "An automation is an assembly line with a quality-control station and a logbook, not a self-driving mystery box.",
                     },
                     {
                         "title": "Four questions, and where you've seen them",
-                        "body": "Trigger, steps, review, receipt. These are Module 4's goal/tools/check/stop wearing work clothes. The brief template below holds one line for each — four honest lines, same finish-line standard as the blueprint was. When the four lines are written, the brief is done.",
+                        "body": "Trigger, steps, review, receipt. These are Module 4's goal, tools, check, and stop wearing work clothes. The brief template below holds one line for each. When the four lines are written, the brief is done.",
                         "artifact_paths": [
                             "lesson_artifacts/capstone/automation-brief.template.md",
                             "lesson_artifacts/capstone/task-flow-sequence.md",
@@ -1118,21 +1117,21 @@ Lessons 2 and 3 add the guardrails and permissions around this job; Lesson 4 is 
                         "checkpoint_after": True,
                     },
                     {
-                        "title": "The receipt, once more with feeling",
-                        "body": "The receipt converts 'did it work?' from an open question into a lookup. That difference is the whole reason automation can be restful instead of low-grade worrying. Design rule, worth keeping forever: no receipt, no automation — not as a punishment, but because you deserve to be able to find out rather than wonder.",
+                        "title": "The receipt, once more",
+                        "body": "The receipt converts 'did it work?' from an open question into a lookup. That is the whole reason automation can be restful. Design rule worth keeping forever: no receipt, no automation. You deserve to be able to find out rather than wonder.",
                         "remember": "A receipt turns wondering into looking something up.",
                     },
                     {
                         "title": "The mystery-box trap",
-                        "body": "The tempting shortcut is 'the model will just handle it' — it feels generous to the AI and saves design effort today. But an unbounded step can't be reviewed, and an unreviewed step can't be trusted, so the design debt lands on future-you as vague unease. Mechanical enough that another person could follow the steps — that is the bar, and it is kind to everyone.",
-                        "remember": "If you cannot draw the steps, the design is not done yet — and that is fixable in five minutes.",
+                        "body": "The tempting shortcut is 'the model will just handle it.' But an unbounded step cannot be reviewed, and an unreviewed step cannot be trusted. The bar: mechanical enough that another person could follow the steps. That bar is kind to everyone, including future you.",
+                        "remember": "If you cannot draw the steps, the design is not done yet. Five minutes usually fixes it.",
                         "kind": "common_mistake",
                     },
                     {
                         "title": "Say it back, once",
-                        "body": "Explain the Monday audit to an imaginary friend in four short sentences — what starts it, what it does, where you decide, what it leaves behind. Once through, and this lesson is finished.",
+                        "body": "Explain the Monday audit to an imaginary friend in four short sentences: what starts it, what it does, where you decide, what it leaves behind. Once through, and this lesson is finished.",
                         "try_this": [
-                            "Use the words trigger, steps, review, receipt as your four sentence-starters.",
+                            "Use trigger, steps, review, receipt as your four sentence-starters.",
                         ],
                         "kind": "teach_it_back",
                     },
@@ -1182,7 +1181,7 @@ Lessons 2 and 3 add the guardrails and permissions around this job; Lesson 4 is 
                         "lesson_artifacts/capstone/automation-brief.template.md",
                         "The four-question automation brief, with the Monday-audit example filled in and an empty copy for yours.",
                         "text",
-                        inspect_prompt="Read the filled example. Notice every answer is one line — that is the target amount of detail.",
+                        inspect_prompt="Read the filled example. Notice every answer is one line. That is the target amount of detail.",
                         change_prompt="Fill the empty brief with your own automation. Four honest lines and it is finished.",
                     ),
                     _artifact(
@@ -1203,50 +1202,50 @@ Lessons 2 and 3 add the guardrails and permissions around this job; Lesson 4 is 
 
 *Lesson 2 of 4 · about 10 minutes · what your assistant tries to be, and what the system guarantees anyway.*
 
-Your automation from Lesson 1 has a shape. This lesson wraps it in guardrails — and the key is that guardrails come in two layers that people constantly blur. You are about to un-blur them permanently.
+Your automation from Lesson 1 has a shape. This lesson wraps it in guardrails, which come in two layers people constantly blur. You are about to un-blur them permanently.
 
 ## Layer one: values (what the assistant tries to be)
 
-AI research names three qualities a good assistant aims for — **helpful, truthful, harmless**:
+AI research names three qualities a good assistant aims for: **helpful, truthful, harmless**.
 
-- **Helpful** — it moves your task forward instead of dead-ending.
-- **Truthful** — it separates what it knows from what it guesses, and says which is which.
-- **Harmless** — it declines to cause damage, even when asked carelessly.
+- **Helpful**: it moves your task forward instead of dead-ending.
+- **Truthful**: it separates what it knows from what it guesses, and says which is which.
+- **Harmless**: it declines to cause damage, even when asked carelessly.
 
-These are real and they matter. They are also *aims* — the driver's good intentions.
+These are real and they matter. They are also *aims*: the driver's good intentions.
 
 ## Layer two: seatbelts (what the system guarantees)
 
-A careful driver still wears a seatbelt, because the seatbelt works on the bad day. Your Module 6 build is already full of seatbelts: pairing on the doors, sandboxing on the rooms, tools granted one at a time, receipts on every run. **Settings, not intentions — they hold no matter what kind of day the model is having.**
+A careful driver still wears a seatbelt, because the seatbelt works on the bad day. Your Module 6 build is already full of seatbelts: pairing on the doors, sandboxing on the rooms, tools granted one at a time, receipts on every run. **Settings, not intentions. They hold no matter what kind of day the model is having.**
 
-The two layers are not rivals; they are a pairing. Values make the assistant good to work with. Seatbelts make the outcome safe even if values slip. You want both, and — quietly — you already have both.
+The two layers are a pairing, not rivals. Values make the assistant good to work with. Seatbelts make the outcome safe even if values slip. You want both, and you already have both.
 
 ## The one rule this lesson installs
 
 > **Every safety claim must point at something you could show someone.**
 
-"Our assistant is safe" — points at nothing; it is a mood.
-"Strangers can't reach it (pairing), it can't touch files outside its workspace (sandbox), and every run leaves a receipt" — points at three settings you could open on screen in ten seconds.
+"Our assistant is safe": points at nothing. It is a mood.
+"Strangers can't reach it (pairing), it can't touch files outside its workspace (sandbox), and every run leaves a receipt": points at three settings you could open on screen in ten seconds.
 
-The guardrail matrix below runs this rule across your whole capstone: each row takes one value and names the concrete seatbelt that backs it. Filling it is satisfying in a specific way — when you finish, "is my project safe?" has stopped being a feeling and become a short list of checkable facts. Feelings need managing; lists just need reading.
+The guardrail matrix below runs this rule across your whole capstone: each row takes one value and names the concrete seatbelt behind it. When the matrix is full, "is my project safe?" has stopped being a feeling and become a short list of checkable facts. Feelings need managing. Lists just need reading.
 
 ## Done means done
 
-You are done with this lesson when you can:
+You are done when you can:
 
-- name the three values and give a one-line meaning for each
+- name the three values with a one-line meaning for each
 - give one seatbelt from your own build and say which value it backs
-- state the one rule (claims point at showable things)
+- state the one rule
 """,
                 "ai_tutor_prompt": _ai_tutor_prompt(
                     "Guardrails: Values and Seatbelts",
                     "a filled guardrail matrix where every safety claim points at a concrete, showable control",
-                    "the two layers — values (helpful, truthful, harmless: what the assistant aims for) and seatbelts (settings that hold regardless) — and the one rule: every safety claim points at something you could show someone. Filling the matrix converts 'is it safe?' from a feeling into a checkable list.",
+                    "the two layers: values (helpful, truthful, harmless: what the assistant aims for) and seatbelts (settings that hold regardless), plus the one rule: every safety claim points at something you could show someone.",
                 ),
                 "questions": [
                     {
                         "id": "capstone-guardrails-q1",
-                        "prompt": "Which trio names the value layer — what a good assistant aims to be?",
+                        "prompt": "Which trio names the value layer, what a good assistant aims to be?",
                         "options": [
                             "Fast, cheap, autonomous",
                             "Helpful, truthful, harmless",
@@ -1276,11 +1275,11 @@ You are done with this lesson when you can:
                     },
                     {
                         "id": "capstone-guardrails-q4",
-                        "prompt": "The one rule of this lesson: every safety claim must…",
+                        "prompt": "The one rule of this lesson: every safety claim must do what?",
                         "options": [
-                            "…point at something you could show someone",
-                            "…be approved by two reviewers",
-                            "…appear in the assistant's job description",
+                            "Point at something you could show someone",
+                            "Be approved by two reviewers",
+                            "Appear in the assistant's job description",
                         ],
                         "answer_index": 0,
                     },
@@ -1299,15 +1298,15 @@ You are done with this lesson when you can:
                     {
                         "title": "Two layers, un-blurred",
                         "predict_first": {
-                            "question": "A careful driver and a seatbelt both make a car safer. What is the difference in *how* each one works — and which would you rather not be without on the worst day?",
+                            "question": "A careful driver and a seatbelt both make a car safer. What is the difference in how each one works, and which would you rather not be without on the worst day?",
                             "hint": "One works by intention. One works by mechanism, regardless of intention.",
                         },
-                        "body": "Values work like the careful driver: real, valuable, and intention-based. Seatbelts work by mechanism: pairing, sandboxing, deny lists, receipts — they hold whether or not the day is going well. Your build already wears both. This lesson just teaches you to say which is which.",
-                        "analogy": "Helpful-truthful-harmless is the driver's character. The Module 6 settings are the seatbelt, brakes, and doors.",
+                        "body": "Values work like the careful driver: real, valuable, intention-based. Seatbelts work by mechanism: pairing, sandboxing, deny lists, receipts. They hold whether or not the day is going well. Your build already wears both. This lesson teaches you to say which is which.",
+                        "analogy": "Helpful, truthful, harmless is the driver's character. The Module 6 settings are the seatbelt, brakes, and doors.",
                     },
                     {
                         "title": "Point at it",
-                        "body": "Practice the rule on one row of the matrix below: take 'harmless,' and point at the seatbelt backing it in your build — the deny-by-default tools, say, or the sandbox. If you can put your finger on a setting, the claim is real. Do one row now; the rest are the same motion repeated.",
+                        "body": "Practice the rule on one row of the matrix below: take 'harmless' and point at the seatbelt backing it in your build, such as the deny-by-default tools or the sandbox. If you can put your finger on a setting, the claim is real. One row now; the rest are the same motion repeated.",
                         "artifact_paths": ["lesson_artifacts/capstone/guardrail-matrix.md"],
                         "try_this": [
                             "Open the matrix and read the filled example row.",
@@ -1317,13 +1316,13 @@ You are done with this lesson when you can:
                     },
                     {
                         "title": "From feeling to list",
-                        "body": "A finished matrix does something quietly wonderful: it retires the question 'is my project safe?' as a feeling and re-issues it as a short list of facts, each with a pointer. Lists can be read, finished, and set down. That is the entire emotional payoff of this lesson, and it is a real, durable one.",
+                        "body": "A finished matrix retires the question 'is my project safe?' as a feeling and re-issues it as a short list of facts, each with a pointer. Lists can be read, finished, and set down. That is the entire payoff of this lesson, and it is durable.",
                         "remember": "Feelings need managing. Lists just need reading.",
                     },
                     {
                         "title": "The good-model trap",
-                        "body": "The tempting belief is that a sufficiently good model retires the seatbelt layer. It doesn't — not because models are bad, but because 'good' is a behavior and behavior varies, while a lock is a mechanism and mechanisms don't. Strong models plus strong settings is not distrust; it is how every serious system is built, including the ones you already rely on daily.",
-                        "remember": "Better models are welcome. The seatbelts stay on regardless — that's what makes them seatbelts.",
+                        "body": "The tempting belief is that a good enough model retires the seatbelt layer. It does not, because 'good' is a behavior and behavior varies, while a lock is a mechanism and mechanisms hold. Strong models plus strong settings is how every serious system is built.",
+                        "remember": "Better models are welcome. The seatbelts stay on regardless. That is what makes them seatbelts.",
                         "kind": "common_mistake",
                     },
                     {
@@ -1340,8 +1339,8 @@ You are done with this lesson when you can:
                         "id": "capstone-guardrails-cp1",
                         "prompt": "Which layer holds even on the model's bad day?",
                         "options": [
-                            "The seatbelt layer — settings and mechanisms",
-                            "The value layer — helpful, truthful, harmless",
+                            "The seatbelt layer: settings and mechanisms",
+                            "The value layer: helpful, truthful, harmless",
                             "Neither; both depend on the model's behavior",
                         ],
                         "answer_index": 0,
@@ -1388,7 +1387,7 @@ You are done with this lesson when you can:
                         "The values-to-seatbelts matrix: each row pairs one aim with the concrete control that backs it, plus where to point.",
                         "text",
                         inspect_prompt="Read the filled example row. Notice the third column is always something you could open on a screen.",
-                        change_prompt="Fill one row for your own build. A value, a setting, a pointer — one row is a complete exercise.",
+                        change_prompt="Fill one row for your own build. A value, a setting, a pointer. One row is a complete exercise.",
                     )
                 ],
             },
@@ -1401,33 +1400,33 @@ You are done with this lesson when you can:
 
 *Lesson 3 of 4 · about 10 minutes · every decision made once, calmly, in advance.*
 
-Guardrails said what your system guarantees. Permissions decide, action by action, what your assistant may do — and the deep comfort of a permission table is *when* the deciding happens: **once, now, in writing — never again in the moment.**
+Guardrails said what your system guarantees. Permissions decide, action by action, what your assistant may do. The deep comfort of a permission table is *when* the deciding happens: **once, now, in writing. Never again in the moment.**
 
 ## Three kinds of doors
 
 Every action your assistant might take gets one of three labels:
 
-- **Allow** — a green door. Routine and reversible; it may pass freely. *Reading files in its workspace, drafting text.*
-- **Review** — a yellow door. It may knock; a person opens. For actions that persist or reach outward. *Changing gateway settings, scheduling a recurring job.*
-- **Deny** — a locked door. Not available, regardless of who asks or how urgently. *Deleting history, opening the assistant to the public.*
+- **Allow**: a green door. Routine and reversible; it may pass freely. *Reading files in its workspace, drafting text.*
+- **Review**: a yellow door. It may knock; a person opens. For actions that persist or reach outward. *Changing gateway settings, scheduling a recurring job.*
+- **Deny**: a locked door. Not available, regardless of who asks or how urgently. *Deleting history, opening the assistant to the public.*
 
 ## What earns each label
 
 One question does the sorting: **what happens if this goes wrong, and how easily is it undone?**
 
-- Easily undone, contained → **allow**. A bad draft is deleted in one keystroke.
-- Persists beyond the moment or reaches outward → **review**. A scheduled job keeps running after the conversation ends. A settings change quietly outlives the day you made it. These deserve a deliberate human yes — not because they usually go wrong, but because they linger.
-- Would erase your ability to check, or widen exposure → **deny**. Deleting history burns the receipts. Going public opens every door at once. Locked, permanently, and the permanence is the feature: some questions are best answered once and never reopened.
+- Easily undone, contained: **allow**. A bad draft is deleted in one keystroke.
+- Persists beyond the moment or reaches outward: **review**. A scheduled job keeps running after the conversation ends. These deserve a deliberate human yes, not because they usually go wrong, but because they linger.
+- Would erase your ability to check, or widen exposure: **deny**. Deleting history burns the receipts. Going public opens every door at once. Locked, permanently, and the permanence is the feature: some questions are best answered once and never reopened.
 
-This is the principle engineers call **least privilege** — grant the smallest set of green doors that still lets the work happen. Not stinginess; clarity. Every green door is one you can vouch for.
+This is the principle engineers call **least privilege**: grant the smallest set of green doors that still lets the work happen. Not stinginess. Clarity. Every green door is one you can vouch for.
 
 ## Why written-down beats decided-in-the-moment
 
-A table like the one below means a predictable system: any reviewer — including future-you at midnight — can predict what the assistant may do *before* it runs, and no request ever arrives as a judgment call under pressure. Urgency famously makes decisions worse; the table makes urgency irrelevant, because the decision predates the request. The finished table is short — half a dozen rows. Small enough to read whole, strong enough to hold everything.
+A table like the one below means any reviewer, including future you at midnight, can predict what the assistant may do *before* it runs. No request ever arrives as a judgment call under pressure, because the decision predates the request. The finished table is about six rows: small enough to read whole, strong enough to hold everything.
 
 ## Done means done
 
-You are done with this lesson when you can:
+You are done when you can:
 
 - name the three doors with one example each
 - apply the sorting question to a new action and defend the label
@@ -1436,16 +1435,16 @@ You are done with this lesson when you can:
                 "ai_tutor_prompt": _ai_tutor_prompt(
                     "Permissions: Three Kinds of Doors",
                     "a short permission table: every action labeled allow, review, or deny, each with a one-line reason",
-                    "the three doors (allow/review/deny), the sorting question (what happens if it goes wrong, and how easily is it undone?), and the calm of pre-decision: choices made once in writing so nothing is ever decided under pressure. Persistence and outward reach are what earn 'review'; erasing receipts or widening exposure earns 'deny'.",
+                    "the three doors (allow, review, deny), the sorting question (what happens if it goes wrong, and how easily is it undone?), and the calm of pre-decision: choices made once in writing so nothing is ever decided under pressure.",
                 ),
                 "questions": [
                     {
                         "id": "capstone-permissions-q1",
                         "prompt": "What principle sizes the set of green (allow) doors?",
                         "options": [
-                            "Maximum convenience — allow everything reversible or not",
-                            "Least privilege — the smallest set that still lets the work happen",
-                            "Symmetry — equal numbers of allow, review, and deny",
+                            "Maximum convenience: allow everything reversible or not",
+                            "Least privilege: the smallest set that still lets the work happen",
+                            "Symmetry: equal numbers of allow, review, and deny",
                         ],
                         "answer_index": 1,
                     },
@@ -1453,7 +1452,7 @@ You are done with this lesson when you can:
                         "id": "capstone-permissions-q2",
                         "prompt": "Why do gateway changes and scheduled (cron) jobs deserve the yellow door?",
                         "options": [
-                            "They persist beyond the moment — outliving the conversation that created them",
+                            "They persist beyond the moment, outliving the conversation that created them",
                             "They are the most technically difficult actions, so mistakes are more likely",
                             "They run slowly and need supervision for speed",
                         ],
@@ -1465,7 +1464,7 @@ You are done with this lesson when you can:
                         "options": [
                             "History files are too large to delete safely",
                             "Reviewers cannot evaluate deletion requests quickly enough to keep a yellow door practical",
-                            "It burns the receipts — destroying the very ability to check what happened",
+                            "It burns the receipts, destroying the very ability to check what happened",
                         ],
                         "answer_index": 2,
                     },
@@ -1484,7 +1483,7 @@ You are done with this lesson when you can:
                         "prompt": "An urgent-sounding request arrives for a denied action. What does the table say happens?",
                         "options": [
                             "Urgency upgrades the request one level, from the locked door up to the review door",
-                            "Nothing changes — the decision was made in advance, and urgency does not reopen it",
+                            "Nothing changes: the decision was made in advance, and urgency does not reopen it",
                             "The assistant weighs the urgency and decides",
                         ],
                         "answer_index": 1,
@@ -1497,12 +1496,12 @@ You are done with this lesson when you can:
                             "question": "Think of a decision that is easy to make calmly in advance but stressful to make in the moment. What changes between those two moments?",
                             "hint": "The decision is the same. The pressure isn't.",
                         },
-                        "body": "A permission table is decisions, prepaid. Every action was sorted while you were calm, so no request — however urgent it sounds — ever needs an in-the-moment judgment. The system simply consults the table, and so can you. Pressure never gets a vote.",
+                        "body": "A permission table is decisions, prepaid. Every action was sorted while you were calm, so no request, however urgent it sounds, ever needs an in-the-moment judgment. The system consults the table, and so can you. Pressure never gets a vote.",
                         "analogy": "Three doors: green opens freely, yellow means knock and a person answers, locked stays locked no matter how hard anyone knocks.",
                     },
                     {
                         "title": "Sort three actions",
-                        "body": "Run the sorting question — what if it goes wrong, and how easily is it undone? — over three real actions from your build: drafting a reply (undone in a keystroke), scheduling a weekly job (persists), making the assistant public (widens everything). Green, yellow, locked. Feel how quickly the question does the work: the labels almost assign themselves.",
+                        "body": "Run the sorting question over three real actions from your build: drafting a reply (undone in a keystroke), scheduling a weekly job (persists), making the assistant public (widens everything). Green, yellow, locked. Feel how quickly the question does the work.",
                         "artifact_paths": ["lesson_artifacts/capstone/permission-review.template.json"],
                         "try_this": [
                             "Open the template and check your three labels against its entries.",
@@ -1512,20 +1511,20 @@ You are done with this lesson when you can:
                     },
                     {
                         "title": "The whole table fits on a screen",
-                        "body": "A finished permission table for this capstone is about six rows. That smallness is a feature twice over: small enough that you can read the entire security posture in thirty seconds, and small enough that nothing important hides in the middle. Big systems earn trust with small, legible tables.",
+                        "body": "A finished permission table for this capstone is about six rows. That smallness is a feature twice: you can read the entire security posture in thirty seconds, and nothing important hides in the middle. Big systems earn trust with small, legible tables.",
                         "remember": "Six honest rows beat sixty vague ones.",
                     },
                     {
                         "title": "The vague-caution trap",
-                        "body": "The weak version of this lesson reads: 'be careful with admin actions.' It feels responsible while deciding nothing — every real request still becomes an in-the-moment judgment, which is exactly the pressure the table exists to remove. If an entry doesn't name an action and a door, it isn't an entry yet; two more words usually fix it.",
+                        "body": "The weak version of this lesson reads: 'be careful with admin actions.' It feels responsible while deciding nothing, so every real request still becomes an in-the-moment judgment, which is exactly the pressure the table exists to remove. If an entry does not name an action and a door, it is not an entry yet. Two more words usually fix it.",
                         "remember": "Name the action, name the door. 'Careful' is not a door.",
                         "kind": "common_mistake",
                     },
                     {
                         "title": "Say it back, once",
-                        "body": "Three sentences: one action you allow, one you review, one you deny — each with its reason. If all three reasons trace back to 'how easily is it undone?', the lesson has landed and you are done.",
+                        "body": "Three sentences: one action you allow, one you review, one you deny, each with its reason. If all three reasons trace back to 'how easily is it undone?', the lesson has landed.",
                         "try_this": [
-                            "Three sentences, one pass. Borrowing the template's rows is allowed — recognizing a good reason counts as having one.",
+                            "Three sentences, one pass. Borrowing the template's rows is allowed.",
                         ],
                         "kind": "teach_it_back",
                     },
@@ -1545,9 +1544,9 @@ You are done with this lesson when you can:
                         "id": "capstone-permissions-cp2",
                         "prompt": "Actions that persist beyond one conversation get which door?",
                         "options": [
-                            "Review — a person opens the yellow door",
-                            "Allow — persistence is routine",
-                            "Deny — nothing may persist",
+                            "Review: a person opens the yellow door",
+                            "Allow: persistence is routine",
+                            "Deny: nothing may persist",
                         ],
                         "answer_index": 0,
                     },
@@ -1573,7 +1572,7 @@ You are done with this lesson when you can:
                     {"action": "score_against_rubric", "level": "allow", "reason": "read-only evaluation work"},
                     {"action": "gateway", "level": "review", "reason": "settings changes persist beyond the conversation"},
                     {"action": "cron", "level": "review", "reason": "scheduled jobs outlive the chat that created them"},
-                    {"action": "delete_history", "level": "deny", "reason": "burns the receipts — checking must stay possible"},
+                    {"action": "delete_history", "level": "deny", "reason": "burns the receipts; checking must stay possible"},
                     {"action": "public_exposure_change", "level": "deny", "reason": "widens every door at once; outside capstone scope"},
                 ],
                 "evaluation_rubric": [],
@@ -1583,8 +1582,8 @@ You are done with this lesson when you can:
                         "lesson_artifacts/capstone/permission-review.template.json",
                         "The six-row permission table: each entry names an action, a door, and a one-line reason.",
                         "json",
-                        inspect_prompt="Read all six rows — it takes under a minute. Notice every reason traces back to 'how easily is it undone?'",
-                        change_prompt="Add one row for an action from your own automation brief. Action, door, reason — one line.",
+                        inspect_prompt="Read all six rows. It takes under a minute. Notice every reason traces back to 'how easily is it undone?'",
+                        change_prompt="Add one row for an action from your own automation brief. Action, door, reason. One line.",
                     )
                 ],
             },
@@ -1597,51 +1596,49 @@ You are done with this lesson when you can:
 
 *Lesson 4 of 4 · about 15 minutes · the last lesson of the capstone. It ends with a decision, not a feeling.*
 
-Everything is built: an automation with a shape, guardrails that point at real things, doors labeled in advance. One question remains — *should this ship?* — and this lesson's whole job is to make that question answerable with evidence instead of nerves.
+Everything is built: an automation with a shape, guardrails that point at real things, doors labeled in advance. One question remains: *should this ship?* This lesson makes that question answerable with evidence instead of nerves.
 
 ## Four kinds of evidence
 
-No single test can vouch for a whole system, so the capstone gathers four kinds — each one answering a different question, so together they leave no question standing:
+No single test can vouch for a whole system, so the capstone gathers four kinds. Each answers a different question, so together they leave no question standing:
 
-1. **The quiz** — do *you* understand the system? (The recap quizzes have quietly been this all along.)
-2. **The verifier** — are the facts in place? A deterministic yes/no machine: files exist, required settings present, audit passes. No judgment, no mood — the same answer every time, which is exactly its charm.
-3. **Human review** — is it *good*? Judgment questions ("is this rollout plan sensible?") go to a person, because good-ness is a judgment.
-4. **The judge model** — is the free-form work sound? An AI scoring drafts against a written rubric: clarity, groundedness, safety reasoning. Useful precisely where verifiers can't reach and human time is scarce.
+1. **The quiz**: do *you* understand the system? (The recap quizzes have quietly been this all along.)
+2. **The verifier**: are the facts in place? A deterministic yes/no machine: files exist, required settings present, audit passes. Same answer every time, which is exactly its charm.
+3. **Human review**: is it *good*? Judgment questions ("is this rollout plan sensible?") go to a person.
+4. **The judge model**: is the free-form work sound? An AI scoring drafts against a written rubric: clarity, groundedness, safety reasoning.
 
-The matching matters more than the machinery: facts go to verifiers, judgment goes to humans, prose goes to the judge, and your own understanding shows up in the quiz. Evidence of the wrong kind is just noise — a file-exists check can't tell you an explanation is clear, and a judge model shouldn't be asked whether a file exists.
+The matching matters more than the machinery: facts go to verifiers, judgment goes to humans, prose goes to the judge, and your own understanding shows up in the quiz. Evidence of the wrong kind is just noise. A file-exists check cannot tell you an explanation is clear, and a judge model should not be asked whether a file exists.
 
 ## The test cases: four doors, deliberately knocked on
 
-Your evaluation set below tries four things on purpose: a good workflow (should **pass**), a flawed one missing evidence (should be sent back to **revise**), a sneaky one that tries to skip review (should be **stopped**), and a re-test of something fixed before (should **stay fixed**). That third case deserves a smile: you *want* the system tested by a bad actor on your schedule, in the safety of a test, rather than by chance later. A system that fails closed under a sneaky test has earned something no amount of hoping can buy.
+Your evaluation set below tries four things on purpose: a good workflow (should **pass**), a flawed one missing evidence (should come back marked **revise**), a sneaky one that tries to skip review (should be **stopped**), and a re-test of something fixed before (should **stay fixed**). The third case deserves a smile: you *want* the system tested by a bad actor on your schedule, in the safety of a test. A system that fails closed under a sneaky test has earned something hoping cannot buy.
 
 ## The finite checklist, and the decision
 
-The release-readiness checklist below is **finite on purpose** — a fixed number of boxes, each checked exactly once. When the last box is checked, the evidence phase is over. No box invites a re-check; the checklist, like everything else in this course, was designed so that done means done.
+The release-readiness checklist below is **finite on purpose**: a fixed number of boxes, each checked exactly once. When the last box is checked, the evidence phase is over. Then you decide. Two outcomes, both honorable:
 
-Then you decide. Two outcomes, both honorable:
+- **Release**: the evidence supports trust. Ship it.
+- **Revise**: the evidence named a specific gap. Fix that one thing and re-run that one check. Revise is the checks working on your behalf, never a verdict on you.
 
-- **Release** — the evidence supports trust. Ship it.
-- **Revise** — the evidence named a specific gap. Fix that one thing and re-run *that one check*. Revise is the system catching things on your behalf — proof the checks are real, never a verdict on you.
+Notice how the moment of deciding feels: small. The evidence carried all the weight, gathered one bounded piece at a time. Deciding is just reading what the evidence already says.
 
-What you should notice about the moment of deciding: it is small. All the weight was carried by the evidence, gathered one bounded piece at a time. Deciding is just reading what the evidence already says.
+## Done means done: lesson, module, and course
 
-## Done means done — lesson, module, and course arc
-
-Complete the Capstone Studio below, check the finite list, make your call. Then something worth pausing on: **you are done.** Not "done for now," not "done pending review" — done, by criteria written down before you started, which has been this course's promise since Juno's first stop rule in Module 4. The stop rule fires. The work ends. That, as much as any technical skill, is the thing this course most hoped you would take with you.
+Complete the Capstone Studio below, check the finite list, make your call. Then pause on this: **you are done.** Not "done for now." Done, by criteria written down before you started, which has been this course's promise since Juno's first stop rule. The stop rule fires. The work ends. That, as much as any technical skill, is what this course most hoped you would take with you.
 """,
                 "ai_tutor_prompt": _ai_tutor_prompt(
                     "The Release Decision",
                     "a completed Capstone Studio: evidence gathered across all four layers, the finite checklist checked once, and a stated release-or-revise decision",
-                    "matching evidence to question — facts to verifiers, judgment to humans, prose to the judge model, understanding to the quiz. The checklist is finite and each box is checked exactly once; 'revise' is the checks working, not a failure. The final decision should feel small because the evidence carried the weight. When they decide, close the course warmly and completely.",
+                    "matching evidence to question: facts to verifiers, judgment to humans, prose to the judge model, understanding to the quiz. The checklist is finite and each box is checked exactly once; 'revise' is the checks working, not a failure. When they decide, close the course warmly and completely.",
                 ),
                 "questions": [
                     {
                         "id": "capstone-testing-q1",
                         "prompt": "Which evidence layer is right for 'does the required config field exist'?",
                         "options": [
-                            "The verifier — a deterministic yes/no fact-check",
-                            "Human review — a person should eyeball it",
-                            "The judge model — it can infer the field's presence",
+                            "The verifier: a deterministic yes/no fact-check",
+                            "Human review: a person should eyeball it",
+                            "The judge model: it can infer the field's presence",
                         ],
                         "answer_index": 0,
                     },
@@ -1649,9 +1646,9 @@ Complete the Capstone Studio below, check the finite list, make your call. Then 
                         "id": "capstone-testing-q2",
                         "prompt": "Which layer suits rubric-scoring a free-form written explanation?",
                         "options": [
-                            "The verifier — written text is stored in files, and files are checkable facts",
-                            "The quiz — explanations are recall",
-                            "The judge model — scoring prose against a written rubric is its exact job",
+                            "The verifier: written text is stored in files, and files are checkable facts",
+                            "The quiz: explanations are recall",
+                            "The judge model: scoring prose against a written rubric is its exact job",
                         ],
                         "answer_index": 2,
                     },
@@ -1660,8 +1657,8 @@ Complete the Capstone Studio below, check the finite list, make your call. Then 
                         "prompt": "Why four kinds of evidence instead of one really good one?",
                         "options": [
                             "Four kinds are required by the OpenClaw license",
-                            "Each answers a different question — facts, judgment, prose, and your own understanding differ",
-                            "Redundancy — four independent copies of the same answer make the evidence four times as strong",
+                            "Each answers a different question: facts, judgment, prose, and your own understanding differ",
+                            "Redundancy: four independent copies of the same answer make the evidence four times as strong",
                         ],
                         "answer_index": 1,
                     },
@@ -1671,7 +1668,7 @@ Complete the Capstone Studio below, check the finite list, make your call. Then 
                         "options": [
                             "The workflow completes quickly to demonstrate capability",
                             "The workflow asks the judge model for permission",
-                            "The workflow stops — it fails closed exactly as designed",
+                            "The workflow stops: it fails closed exactly as designed",
                         ],
                         "answer_index": 2,
                     },
@@ -1679,8 +1676,8 @@ Complete the Capstone Studio below, check the finite list, make your call. Then 
                         "id": "capstone-testing-q5",
                         "prompt": "The evidence comes back with one named gap. What does 'revise' mean here?",
                         "options": [
-                            "Fix that one thing, re-run that one check — the system caught it on your behalf",
-                            "Restart the capstone from Lesson 1 — a gap anywhere could mean gaps everywhere",
+                            "Fix that one thing, re-run that one check. The system caught it on your behalf",
+                            "Restart the capstone from Lesson 1, since a gap anywhere could mean gaps everywhere",
                             "Ship anyway and monitor closely",
                         ],
                         "answer_index": 0,
@@ -1690,15 +1687,15 @@ Complete the Capstone Studio below, check the finite list, make your call. Then 
                     {
                         "title": "Why the decision will feel small",
                         "predict_first": {
-                            "question": "Picture the moment you decide 'release' or 'revise.' Do you expect it to feel heavy or light — and what would make the difference?",
+                            "question": "Picture the moment you decide 'release' or 'revise.' Do you expect it to feel heavy or light, and what would make the difference?",
                             "hint": "What if every hard question had already been answered, one at a time, before the moment arrived?",
                         },
-                        "body": "Done right, the moment is light. The evidence — gathered in four bounded kinds, one piece at a time — carries all the weight, and deciding is just reading what it says. A heavy release decision is usually a sign the evidence was skipped; yours wasn't. Lightness here is earned, so when you feel it, believe it.",
+                        "body": "Done right, the moment is light. The evidence carried all the weight, gathered in four bounded kinds, one piece at a time. Deciding is just reading what it says. A heavy release decision usually means the evidence was skipped. Yours wasn't, so when the lightness comes, believe it.",
                         "analogy": "Like a bridge inspection: nobody stands at the end squinting and hoping. The load tests either passed or they didn't, and the sign-off just records it.",
                     },
                     {
                         "title": "Match the instrument to the question",
-                        "body": "Facts → verifier. Judgment → human. Prose → judge model. Your understanding → quiz. Run that matching over your own capstone pieces in the Studio below: your config's required fields, your rollout plan's sensibleness, your automation brief's clarity. Each piece has exactly one right instrument, and feeling the fit is the skill.",
+                        "body": "Facts: verifier. Judgment: human. Prose: judge model. Your understanding: quiz. Run that matching over your own capstone pieces in the Studio below. Each piece has exactly one right instrument, and feeling the fit is the skill.",
                         "artifact_paths": [
                             "lesson_artifacts/capstone/evaluation-cases.template.json",
                             "lesson_artifacts/capstone/evaluation-plan.md",
@@ -1713,20 +1710,20 @@ Complete the Capstone Studio below, check the finite list, make your call. Then 
                     },
                     {
                         "title": "The checklist is finite on purpose",
-                        "body": "Count the boxes on the release-readiness checklist — there is a fixed number, and each is checked exactly once. When the last box is done, the evidence phase is *over*: re-checking a checked box adds no information, because nothing changed between the two looks. The checklist was built so you could trust it and set it down. That is not a shortcut; it is the design.",
+                        "body": "Count the boxes on the release-readiness checklist: a fixed number, each checked exactly once. When the last box is done, the evidence phase is over. Re-checking a checked box adds no information, because nothing changed between the two looks. The checklist was built so you could trust it and set it down.",
                         "remember": "Checked once means checked. The last box is a real ending.",
                     },
                     {
                         "title": "If 'revise' stings for a second",
-                        "body": "It shouldn't, and here is the reframe that makes it true: revise means a check you built did its job before anything real went wrong. That is the system succeeding. The gap comes named and specific — fix that one thing, re-run that one check, and you are back at the decision. No spiral, no do-over of the whole capstone, ever.",
+                        "body": "It should not, and here is the reframe that makes it true: revise means a check you built did its job before anything real went wrong. The gap comes named and specific. Fix that one thing, re-run that one check, and you are back at the decision. No spiral, no do-over of the whole capstone, ever.",
                         "remember": "Revise = a named gap + one re-check. Nothing more is being asked.",
                         "kind": "common_mistake",
                     },
                     {
                         "title": "Say it back, and close the course",
-                        "body": "One last teach-back, four sentences: what the verifier checked, what a human judged, what the judge model scored, and what your decision was. Then — actually stop. The course's deepest lesson was never agents; it was that well-designed work has a finish line written in advance, and that when you cross it, you are entitled to believe you crossed it. You just did.",
+                        "body": "One last teach-back, four sentences: what the verifier checked, what a human judged, what the judge model scored, and what your decision was. Then stop. The course's deepest lesson was never agents; it was that well-designed work has a finish line written in advance, and that when you cross it, you are entitled to believe you crossed it. You just did.",
                         "try_this": [
-                            "Four sentences and your decision. Say them once. Then close the page — this one really is the end, and it was designed to be.",
+                            "Four sentences and your decision. Say them once. Then close the page. This one really is the end, and it was designed to be.",
                         ],
                         "kind": "teach_it_back",
                     },
@@ -1744,7 +1741,7 @@ Complete the Capstone Studio below, check the finite list, make your call. Then 
                     },
                     {
                         "id": "capstone-testing-cp2",
-                        "prompt": "Questions of judgment, like 'is this rollout plan sensible', go to…",
+                        "prompt": "Questions of judgment, like 'is this rollout plan sensible', go to whom?",
                         "options": [
                             "A person",
                             "The verifier",
@@ -1758,7 +1755,7 @@ Complete the Capstone Studio below, check the finite list, make your call. Then 
                         "options": [
                             "A second verification pass over every box, just to be safe",
                             "The checklist resets for the next session",
-                            "The evidence phase is over — you read the evidence and decide",
+                            "The evidence phase is over: you read the evidence and decide",
                         ],
                         "answer_index": 2,
                     },
@@ -1779,12 +1776,12 @@ Complete the Capstone Studio below, check the finite list, make your call. Then 
                 "evaluation_cases": [
                     {"name": "positive", "goal": "A well-scoped workflow passes rubric and verifier checks", "expected": "pass"},
                     {"name": "negative", "goal": "Missing evidence or missing controls send the work back with a named gap", "expected": "revise"},
-                    {"name": "adversarial", "goal": "An attempt to skip review is refused — the system fails closed", "expected": "stop"},
+                    {"name": "adversarial", "goal": "An attempt to skip review is refused; the system fails closed", "expected": "stop"},
                     {"name": "regression", "goal": "A previously fixed risky configuration stays fixed after later edits", "expected": "pass"},
                 ],
                 "capstone_assignment": {
                     "title": "Capstone Studio",
-                    "summary": "Write up your workflow in seven short sections, run the checks, and make your release-or-revise call. Each section wants a few honest sentences — the finish line for each is written into its prompt.",
+                    "summary": "Write up your workflow in seven short sections, run the checks, and make your release-or-revise call. Each section wants a few honest sentences. The finish line for each is written into its prompt.",
                     "sections": [
                         {
                             "key": "goal",
@@ -1796,14 +1793,14 @@ Complete the Capstone Studio below, check the finite list, make your call. Then 
                         {
                             "key": "trigger",
                             "label": "Trigger",
-                            "prompt": "What starts it — a schedule, an arriving message, or a webhook? Name the one thing.",
+                            "prompt": "What starts it: a schedule, an arriving message, or a webhook? Name the one thing.",
                             "placeholder": "Example: A scheduled run every Monday at 9:00.",
                             "min_length": 20,
                         },
                         {
                             "key": "actions",
                             "label": "Steps",
-                            "prompt": "List the bounded steps after the trigger fires — a list you could draw, not 'the AI handles it.'",
+                            "prompt": "List the bounded steps after the trigger fires: a list you could draw, not 'the AI handles it.'",
                             "placeholder": "Example: Read the draft plan, compare it against the door policy, write a review note for a person.",
                             "min_length": 40,
                         },
@@ -1817,7 +1814,7 @@ Complete the Capstone Studio below, check the finite list, make your call. Then 
                         {
                             "key": "guardrails",
                             "label": "Guardrails",
-                            "prompt": "Name the seatbelts protecting this workflow — settings you could show someone, not intentions.",
+                            "prompt": "Name the seatbelts protecting this workflow: settings you could show someone, not intentions.",
                             "placeholder": "Example: Strangers can't trigger it (pairing), risky tools are denied, and every run leaves a receipt.",
                             "min_length": 25,
                         },
@@ -1868,7 +1865,7 @@ Complete the Capstone Studio below, check the finite list, make your call. Then 
                         "The finite checklist: a fixed number of boxes, each checked exactly once, ending in a decision.",
                         "text",
                         inspect_prompt="Count the boxes. Notice the last line is a decision, not an invitation to start over.",
-                        change_prompt="Check each box as your capstone earns it. When the last one is checked, decide — and be done.",
+                        change_prompt="Check each box as your capstone earns it. When the last one is checked, decide, and be done.",
                     ),
                 ],
             },

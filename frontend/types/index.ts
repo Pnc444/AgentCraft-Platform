@@ -25,7 +25,7 @@ export interface GuidedLessonBlock {
   checkpoint_questions?: CheckpointQuestion[];
   kind?: "common_mistake" | "teach_it_back";
   artifact_paths?: string[];
-  interactive_widget?: "capstone_studio";
+  interactive_widget?: "capstone_studio" | "openclaw_file_explorer";
   /** Brilliant-style: question shown BEFORE the explanation to prompt thinking first. */
   predict_first?: { question: string; hint?: string };
 }

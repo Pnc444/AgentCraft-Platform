@@ -1,5 +1,5 @@
-// The hardened baseline — every lock from Module 6 in one file.
-// Each of these is a setting, not a promise: it holds whether or not anyone is watching.
+// The hardened baseline: every lock from Module 6 in one file.
+// Each of these is a setting, not a promise. It holds whether or not anyone is watching.
 {
   gateway: {
     mode: "local",
@@ -14,7 +14,7 @@
   },
   tools: {
     profile: "messaging",
-    // Powerful tools stay off until deliberately granted — deny by default.
+    // Powerful tools stay off until deliberately granted. Deny by default.
     deny: ["group:automation", "group:runtime", "group:fs", "sessions_spawn", "sessions_send"],
     // File access stays inside the workspace.
     fs: { workspaceOnly: true },

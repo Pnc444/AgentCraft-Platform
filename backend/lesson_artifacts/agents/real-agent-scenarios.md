@@ -1,4 +1,4 @@
-# Four Agent Cards — same four beats every time
+# Four Agent Cards: same four beats every time
 
 ## 1. The research helper (Juno, all grown up)
 - **Goal:** gather sources on a topic and summarize them, with citations
@@ -10,12 +10,12 @@
 - **Goal:** draft a reply to a customer ticket
 - **Tool:** the company knowledge base
 - **Check:** the draft only promises what policy allows
-- **Stop:** a draft is ready — a human sends it
+- **Stop:** a draft is ready; a human sends it
 
 ## 3. The coding helper
 - **Goal:** fix a failing test
-- **Tool:** read/edit files, run tests
-- **Check:** the test suite — an automatic judge built into the job
+- **Tool:** read and edit files, run tests
+- **Check:** the test suite, an automatic judge built into the job
 - **Stop:** tests pass, or attempt limit reached, then report
 
 ## 4. The scheduling helper
@@ -26,9 +26,7 @@
 
 All four are narrow on purpose. Narrow is what makes them checkable, and checkable is what makes them trustworthy.
 
----
-
-## Two unsorted scenarios — your turn
+## Two unsorted scenarios: your turn
 
 **A.** A helper that watches a mailbox and files receipts into folders by month.
 **B.** A helper that investigates why a website is slow: measures, forms a hunch, tests it, tries the next hunch.

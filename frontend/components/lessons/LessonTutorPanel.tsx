@@ -97,7 +97,7 @@ export function LessonTutor({
     setMessages([
       {
         role: "assistant",
-        text: `I'm your AgentCraft tutor for “${lessonTitle}”. Ask anything you're stuck on — the live AI connection is still being wired up, but this is where help will live.`,
+        text: `I'm your AgentCraft tutor for “${lessonTitle}”. Ask anything you're stuck on. The live AI connection is still being wired up, but this is where help will live.`,
       },
     ]);
     setDraft("");
@@ -156,7 +156,7 @@ export function LessonTutor({
       { role: "user", text },
       {
         role: "assistant",
-        text: "Thanks — the AI tutor isn't connected yet. When it is, I'll answer with this lesson's context. For now, try re-reading the lesson content or marking notes on what confused you.",
+        text: "Thanks. The AI tutor isn't connected yet. When it is, I'll answer with this lesson's context. For now, try re-reading the lesson content or marking notes on what confused you.",
       },
     ]);
     setDraft("");

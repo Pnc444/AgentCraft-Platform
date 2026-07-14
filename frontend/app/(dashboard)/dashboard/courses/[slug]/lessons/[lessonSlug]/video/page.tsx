@@ -31,14 +31,14 @@ export default function LessonVideoPage() {
           onWatched={markVideoWatched}
         />
         {lesson.video_watched ? (
-          <p className="mt-3 text-sm text-emerald-700">Video watched — you can take the Recap Quiz.</p>
+          <p className="mt-3 text-sm text-emerald-700">Video watched. You can take the Recap Quiz.</p>
         ) : lesson.require_full_watch ? (
           <p className="mt-3 text-sm text-craft-muted">
             Watch all the way through to unlock the Recap Quiz.
           </p>
         ) : (
           <p className="mt-3 text-sm text-craft-muted">
-            This video is optional — you can skip ahead to the Recap Quiz anytime.
+            This video is optional. You can skip ahead to the Recap Quiz anytime.
           </p>
         )}
       </LessonSection>

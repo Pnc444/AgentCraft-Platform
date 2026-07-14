@@ -115,7 +115,7 @@ export function RecapQuiz({
                 You passed with {score}%!
               </p>
               <p className="mt-1 text-sm text-emerald-700/80 dark:text-emerald-200/80">
-                Great work — this lesson is complete. Taking you to progress…
+                Great work. This lesson is complete. Taking you to progress…
               </p>
             </div>
           </div>
@@ -190,14 +190,14 @@ export function RecapQuiz({
       {showResult && score !== null && !passed && (
         <p className="flex items-center gap-2 text-sm font-medium text-amber-700 dark:text-amber-300 animate-fade-up">
           <XCircle className="h-4 w-4" />
-          Score: {score}% — need {passScore}% to pass. Try again.
+          Score: {score}%. You need {passScore}% to pass. Try again.
         </p>
       )}
 
       {showResult && passed && score !== null && (
         <p className="flex items-center gap-2 text-sm font-medium text-emerald-700 dark:text-emerald-300">
           <CheckCircle2 className="h-4 w-4" />
-          Score: {score}% — passed (≥ {passScore}%).
+          Score: {score}%. Passed (at least {passScore}%).
         </p>
       )}
 

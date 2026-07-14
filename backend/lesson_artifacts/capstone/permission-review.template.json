@@ -4,37 +4,37 @@
       "action": "draft_content",
       "level": "allow",
       "approver": null,
-      "reason": "Routine and undone in a keystroke - a green door"
+      "reason": "Routine and undone in a keystroke: a green door"
     },
     {
       "action": "score_against_rubric",
       "level": "allow",
       "approver": null,
-      "reason": "Read-only evaluation work - nothing to undo"
+      "reason": "Read-only evaluation work: nothing to undo"
     },
     {
       "action": "gateway",
       "level": "review",
       "approver": "human-reviewer",
-      "reason": "Settings changes persist beyond the conversation that made them - a person opens this door"
+      "reason": "Settings changes persist beyond the conversation that made them: a person opens this door"
     },
     {
       "action": "cron",
       "level": "review",
       "approver": "human-reviewer",
-      "reason": "Scheduled jobs outlive the chat that created them - persistence earns the yellow door"
+      "reason": "Scheduled jobs outlive the chat that created them: persistence earns the yellow door"
     },
     {
       "action": "delete_history",
       "level": "deny",
       "approver": null,
-      "reason": "Burns the receipts - checking must stay possible, so this stays locked no matter who asks"
+      "reason": "Burns the receipts. Checking must stay possible, so this stays locked no matter who asks"
     },
     {
       "action": "public_exposure_change",
       "level": "deny",
       "approver": null,
-      "reason": "Widens every door at once - locked, and the permanence is the feature"
+      "reason": "Widens every door at once. Locked, and the permanence is the feature"
     }
   ]
 }

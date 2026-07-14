@@ -1,4 +1,4 @@
-// The control panel — deliberately small.
+// The control panel, deliberately small.
 // A small config that works beats a big config you can't reason about.
 // You will add to this one layer at a time across Module 6,
 // running `openclaw gateway status` after each layer.

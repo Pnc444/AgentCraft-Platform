@@ -166,7 +166,7 @@ export function LessonVideo({
       </div>
       <p className="text-xs text-craft-muted">
         {watched
-          ? "Video watched — you can take the Recap Quiz."
+          ? "Video watched. You can take the Recap Quiz."
           : "Watch the video to the end before taking the Recap Quiz."}
       </p>
     </div>

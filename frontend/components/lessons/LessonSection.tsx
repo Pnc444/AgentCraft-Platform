@@ -21,7 +21,7 @@ export function LessonSection({ title, icon, children, empty, className }: Lesso
         {title}
       </h2>
       {empty || !children ? (
-        <p className="mt-4 text-sm text-craft-faint">—</p>
+        <p className="mt-4 text-sm text-craft-faint">Nothing here yet.</p>
       ) : (
         <div className="mt-4">{children}</div>
       )}

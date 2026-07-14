@@ -1,4 +1,4 @@
-// Door policy — every door starts locked, and this file keeps it that way.
+// Door policy: every door starts locked, and this file keeps it that way.
 {
   session: {
     // Each person gets a private conversation notebook. Threads never blur.
