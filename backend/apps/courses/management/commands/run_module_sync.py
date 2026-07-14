@@ -31,13 +31,13 @@ class Command(BaseCommand):
         parser.add_argument(
             "--output-root",
             default=str(default_output_root()),
-            help="Repo root for generated Preston artifacts.",
+            help="Repo root for generated lesson artifacts.",
         )
         parser.add_argument(
             "--course",
             action="append",
             dest="courses",
-            help="Limit execution to a course slug. Repeat to run multiple Preston-owned modules.",
+            help="Limit execution to a course slug. Repeat to run multiple modules.",
         )
 
     def handle(self, *args, **options):
@@ -91,7 +91,7 @@ class Command(BaseCommand):
         if structure_errors:
             report["passed"] = False
             self.stdout.write(json.dumps(report, indent=2))
-            raise CommandError("One or more Preston mission packs are structurally invalid.")
+            raise CommandError("One or more mission packs are structurally invalid.")
 
         validation_failures = [
             error
@@ -104,4 +104,4 @@ class Command(BaseCommand):
         self.stdout.write(json.dumps(report, indent=2))
 
         if validation_failures and mode in {"validate", "publish", "run-all"} and apply:
-            raise CommandError("Validation failed for one or more Preston-owned modules.")
+            raise CommandError("Validation failed for one or more modules.")
