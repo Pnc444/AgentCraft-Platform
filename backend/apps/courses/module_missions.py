@@ -135,7 +135,7 @@ That is the whole foundation. Lesson 2 adds recipe cards; nothing there requires
                         "prompt": "A colleague says: 'Skip onboarding — just open openclaw.json and start editing.' What is the gentle correction?",
                         "options": [
                             "Run openclaw onboard first — it sets up the gateway and workspace in the right order before any hand-editing",
-                            "They are right; onboarding is only for people who cannot edit files",
+                            "They are right — onboarding is just a convenience for people who are not comfortable editing files",
                             "openclaw.json cannot be edited by hand at all",
                         ],
                         "answer_index": 0,
@@ -144,7 +144,7 @@ That is the whole foundation. Lesson 2 adds recipe cards; nothing there requires
                         "id": "openclaw-config-q2",
                         "prompt": "You edit SOUL.md to change your assistant's personality, but it still uses the wrong AI model. Where does the model actually live?",
                         "options": [
-                            "In SOUL.md, under the persona section",
+                            "In SOUL.md — the job description covers everything about the assistant, including its model",
                             "In ~/.openclaw/openclaw.json — the control panel decides how the system runs, including the model",
                             "In a SKILL.md file — skills choose the model",
                         ],
@@ -154,7 +154,7 @@ That is the whole foundation. Lesson 2 adds recipe cards; nothing there requires
                         "id": "openclaw-config-q3",
                         "prompt": "openclaw gateway status reports healthy. What exactly do you now know?",
                         "options": [
-                            "Every skill is installed and verified",
+                            "Every skill is installed, verified, and ready for the assistant to use in every channel",
                             "All channels are connected and approved",
                             "The gateway is running and can talk to your model — the foundation is solid to build on",
                         ],
@@ -174,9 +174,9 @@ That is the whole foundation. Lesson 2 adds recipe cards; nothing there requires
                         "id": "openclaw-config-q5",
                         "prompt": "A student wants to add every channel and skill on day one, before running anything. What is the better path, and why?",
                         "options": [
-                            "Add everything at once — it saves time overall",
+                            "Add everything at once — seeing the full system working together is the fastest way to learn it",
                             "Channels must come first or the gateway will not start",
-                            "Prove the gateway healthy first, then add one layer at a time — so if something misbehaves, you know which layer did it",
+                            "Prove the gateway healthy first, then add one layer at a time, so you always know which layer changed",
                         ],
                         "answer_index": 2,
                     },
@@ -249,8 +249,8 @@ That is the whole foundation. Lesson 2 adds recipe cards; nothing there requires
                         "id": "openclaw-config-cp2",
                         "prompt": "Which file is the runtime control panel?",
                         "options": [
-                            "SOUL.md",
-                            "SKILL.md",
+                            "The workspace SOUL.md file",
+                            "A skill's SKILL.md file",
                             "~/.openclaw/openclaw.json",
                         ],
                         "answer_index": 2,
@@ -404,7 +404,7 @@ Three skills understood beats fifty installed. You have three.
                         "options": [
                             "Markdown files can slow down the gateway noticeably",
                             "A skill is instructions your assistant will follow — text can steer real actions, so it deserves a read",
-                            "Nothing — markdown is inert and always safe",
+                            "Nothing — markdown cannot contain executable code, so the worst case is a badly written recipe",
                         ],
                         "answer_index": 1,
                     },
@@ -412,9 +412,9 @@ Three skills understood beats fifty installed. You have three.
                         "id": "openclaw-skills-q5",
                         "prompt": "Why does this module teach exactly three skills instead of a catalog of fifty?",
                         "options": [
-                            "OpenClaw supports a maximum of three skills per workspace",
-                            "The other skills cost money",
-                            "Three understood skills build real capability; fifty installed ones build clutter you cannot vouch for",
+                            "OpenClaw workspaces support at most three skills, so the course simply uses that limit",
+                            "The other skills on ClawHub cost money, and this course avoids paid material",
+                            "Three understood skills build capability; fifty installed ones build clutter you cannot vouch for",
                         ],
                         "answer_index": 2,
                     },
@@ -496,7 +496,7 @@ Three skills understood beats fifty installed. You have three.
                         "prompt": "Why read a downloaded skill before trusting it?",
                         "options": [
                             "Reading it makes the skill load faster",
-                            "OpenClaw refuses to run unread skills",
+                            "OpenClaw refuses to load any skill until it detects the file has been opened and read",
                             "It contains instructions your assistant will follow — a stranger's recipe deserves one read",
                         ],
                         "answer_index": 2,
@@ -596,7 +596,7 @@ You are done with this lesson when you can:
                         "id": "openclaw-channel-q1",
                         "prompt": "A stranger messages your freshly connected assistant. With default settings, what happens?",
                         "options": [
-                            "The assistant answers but refuses risky requests",
+                            "The assistant answers politely but declines anything that sounds risky or personal",
                             "They receive a pairing code and otherwise silence, until you approve them",
                             "The message is delivered to you for manual reply",
                         ],
@@ -616,7 +616,7 @@ You are done with this lesson when you can:
                         "id": "openclaw-channel-q3",
                         "prompt": "What does it take to actually make DMs public (the 'open' policy)?",
                         "options": [
-                            "It happens automatically after thirty days of use",
+                            "Approving your first sender quietly switches the whole channel to the open policy",
                             "One typo in the channel name is enough to open it",
                             "Two deliberate, explicit settings typed on purpose — it cannot happen by accident",
                         ],
@@ -628,7 +628,7 @@ You are done with this lesson when you can:
                         "options": [
                             "It answers only when called by name, instead of reacting to every message",
                             "It hides the assistant from members who have not paired",
-                            "It disables logging inside the group",
+                            "It disables message logging inside the group so the chatter stays private",
                         ],
                         "answer_index": 0,
                     },
@@ -636,7 +636,7 @@ You are done with this lesson when you can:
                         "id": "openclaw-channel-q5",
                         "prompt": "Three people DM the same assistant. What do per-channel-peer sessions guarantee?",
                         "options": [
-                            "The assistant answers all three in one shared thread",
+                            "The assistant merges all three conversations into one shared thread it can search",
                             "Each person gets a separate conversation notebook — no context blurs between them",
                             "Only the first person to pair may send DMs",
                         ],
@@ -714,7 +714,7 @@ You are done with this lesson when you can:
                         "prompt": "When do per-channel-peer sessions matter most?",
                         "options": [
                             "When the gateway runs without a daemon",
-                            "When one person uses two devices",
+                            "When one person messages the assistant from two different personal devices",
                             "When several people can DM the same assistant and each needs a private thread",
                         ],
                         "answer_index": 2,
@@ -807,7 +807,7 @@ And with that, **Module 6 is complete.** Your assistant has a home, three skills
                         "id": "openclaw-safety-q1",
                         "prompt": "A teammate wants to rely on a strongly-worded system prompt for safety. You want the doors and rooms set first. Who has the official ordering right?",
                         "options": [
-                            "The teammate — a strong prompt makes hard controls redundant",
+                            "The teammate — a well-written prompt reaches the model directly, making hard controls redundant",
                             "You — settings (identity, scope) come first because they hold regardless of how the model behaves",
                             "Neither — the ordering between prompts and controls doesn't matter",
                         ],
@@ -827,7 +827,7 @@ And with that, **Module 6 is complete.** Your assistant has a home, three skills
                         "id": "openclaw-safety-q3",
                         "prompt": "You ran the audit after your last change and it passed. Nothing has changed since. What does running it again tonight accomplish?",
                         "options": [
-                            "It catches issues that appear spontaneously over time",
+                            "It catches issues that can appear spontaneously while the system sits overnight",
                             "It refreshes the gateway's security certificates",
                             "Nothing new — same system in, same answer out; once per change is the whole discipline",
                         ],
@@ -1067,7 +1067,7 @@ Lessons 2 and 3 add the guardrails and permissions around this job; Lesson 4 is 
                         "id": "capstone-automation-q3",
                         "prompt": "In the doorbell-to-draft example, why does the draft wait for your approval instead of sending itself?",
                         "options": [
-                            "Webhooks cannot technically trigger sending",
+                            "Webhooks can start jobs but cannot technically complete a send on their own",
                             "Drafting is too slow to automate end to end",
                             "Sending is the irreversible step, so it sits with a person — the review point",
                         ],
@@ -1077,7 +1077,7 @@ Lessons 2 and 3 add the guardrails and permissions around this job; Lesson 4 is 
                         "id": "capstone-automation-q4",
                         "prompt": "A design says: 'Trigger: nightly. Steps: the AI handles cleanup.' What fails the four questions?",
                         "options": [
-                            "The trigger is too infrequent for cleanup work",
+                            "The trigger — cleanup work needs to run far more often than once per night",
                             "The steps are unbounded — 'the AI handles it' is not a list you could draw",
                             "Nightly jobs cannot produce receipts",
                         ],
@@ -1288,7 +1288,7 @@ You are done with this lesson when you can:
                         "id": "capstone-guardrails-q5",
                         "prompt": "'Truthful' is backed by which kind of concrete support in a strong capstone?",
                         "options": [
-                            "A larger, more knowledgeable model",
+                            "A larger, more knowledgeable model that simply makes fewer factual mistakes",
                             "A check that claims trace to sources and unknowns are labeled as unknowns",
                             "A rule that answers stay under one paragraph",
                         ],
@@ -1350,7 +1350,7 @@ You are done with this lesson when you can:
                         "id": "capstone-guardrails-cp2",
                         "prompt": "Why is 'dmPolicy: pairing' stronger than a written promise to be careful?",
                         "options": [
-                            "It is shorter to type",
+                            "It is written in a settings file, which the assistant reads more carefully",
                             "It mechanically changes who can reach the assistant, regardless of behavior",
                             "It improves the assistant's tone",
                         ],
@@ -1454,7 +1454,7 @@ You are done with this lesson when you can:
                         "prompt": "Why do gateway changes and scheduled (cron) jobs deserve the yellow door?",
                         "options": [
                             "They persist beyond the moment — outliving the conversation that created them",
-                            "They are the most technically difficult actions",
+                            "They are the most technically difficult actions, so mistakes are more likely",
                             "They run slowly and need supervision for speed",
                         ],
                         "answer_index": 0,
@@ -1464,7 +1464,7 @@ You are done with this lesson when you can:
                         "prompt": "Why is deleting history a locked door rather than a yellow one?",
                         "options": [
                             "History files are too large to delete safely",
-                            "Reviewers cannot evaluate deletion requests quickly enough",
+                            "Reviewers cannot evaluate deletion requests quickly enough to keep a yellow door practical",
                             "It burns the receipts — destroying the very ability to check what happened",
                         ],
                         "answer_index": 2,
@@ -1483,7 +1483,7 @@ You are done with this lesson when you can:
                         "id": "capstone-permissions-q5",
                         "prompt": "An urgent-sounding request arrives for a denied action. What does the table say happens?",
                         "options": [
-                            "Urgency upgrades the request to the review door",
+                            "Urgency upgrades the request one level, from the locked door up to the review door",
                             "Nothing changes — the decision was made in advance, and urgency does not reopen it",
                             "The assistant weighs the urgency and decides",
                         ],
@@ -1535,7 +1535,7 @@ You are done with this lesson when you can:
                         "id": "capstone-permissions-cp1",
                         "prompt": "What question sorts actions into the three doors?",
                         "options": [
-                            "How often will this action run?",
+                            "How often will this action run, and at what time of day?",
                             "What happens if it goes wrong, and how easily is it undone?",
                             "Which tool implements this action?",
                         ],
@@ -1649,7 +1649,7 @@ Complete the Capstone Studio below, check the finite list, make your call. Then 
                         "id": "capstone-testing-q2",
                         "prompt": "Which layer suits rubric-scoring a free-form written explanation?",
                         "options": [
-                            "The verifier — text is a fact like any other",
+                            "The verifier — written text is stored in files, and files are checkable facts",
                             "The quiz — explanations are recall",
                             "The judge model — scoring prose against a written rubric is its exact job",
                         ],
@@ -1660,8 +1660,8 @@ Complete the Capstone Studio below, check the finite list, make your call. Then 
                         "prompt": "Why four kinds of evidence instead of one really good one?",
                         "options": [
                             "Four kinds are required by the OpenClaw license",
-                            "Each answers a different question — facts, judgment, prose, and your own understanding need different instruments",
-                            "Redundancy — four copies of the same answer is safer than one",
+                            "Each answers a different question — facts, judgment, prose, and your own understanding differ",
+                            "Redundancy — four independent copies of the same answer make the evidence four times as strong",
                         ],
                         "answer_index": 1,
                     },
@@ -1680,7 +1680,7 @@ Complete the Capstone Studio below, check the finite list, make your call. Then 
                         "prompt": "The evidence comes back with one named gap. What does 'revise' mean here?",
                         "options": [
                             "Fix that one thing, re-run that one check — the system caught it on your behalf",
-                            "Restart the capstone from Lesson 1 to be thorough",
+                            "Restart the capstone from Lesson 1 — a gap anywhere could mean gaps everywhere",
                             "Ship anyway and monitor closely",
                         ],
                         "answer_index": 0,
@@ -1756,7 +1756,7 @@ Complete the Capstone Studio below, check the finite list, make your call. Then 
                         "id": "capstone-testing-cp3",
                         "prompt": "What happens after the last checklist box is checked?",
                         "options": [
-                            "A second verification pass, to be safe",
+                            "A second verification pass over every box, just to be safe",
                             "The checklist resets for the next session",
                             "The evidence phase is over — you read the evidence and decide",
                         ],

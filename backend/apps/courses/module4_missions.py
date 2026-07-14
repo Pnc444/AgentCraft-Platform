@@ -112,7 +112,7 @@ One pass through this page is enough. If the six questions do not feel solid yet
                     "id": "module4-agent-q1",
                     "prompt": "You ask Juno for three article summaries. It delivers them and stops. Which part of the six questions did the stopping come from?",
                     "options": [
-                        "The plan — it planned to stop",
+                        "The plan — its original plan happened to include stopping at that point",
                         "The stop rule — the finish line was defined before the work started",
                         "The memory — it forgot what else to do",
                     ],
@@ -123,7 +123,7 @@ One pass through this page is enough. If the six questions do not feel solid yet
                     "prompt": "An app replies to every support email with the same fixed template. A friend calls it an AI agent. What is the kindest accurate correction?",
                     "options": [
                         "It never chooses a next step based on what it finds, so it is an auto-responder, not an agent",
-                        "It is an agent, just a very small one",
+                        "It is an agent, just a very small one — replying automatically is acting on the world",
                         "It would be an agent if it were written in a different language",
                     ],
                     "answer_index": 0,
@@ -143,7 +143,7 @@ One pass through this page is enough. If the six questions do not feel solid yet
                     "prompt": "What separates an agent from a chatbot in this course's definition?",
                     "options": [
                         "An agent acts toward a goal and checks its work; a chatbot mainly answers",
-                        "An agent uses a bigger AI model than a chatbot does",
+                        "An agent runs on a bigger and more advanced AI model than a chatbot does",
                         "An agent always talks to more than one person at a time",
                     ],
                     "answer_index": 0,
@@ -153,7 +153,7 @@ One pass through this page is enough. If the six questions do not feel solid yet
                     "prompt": "Juno finds its three good articles in two minutes but keeps searching for twenty more. What is missing from its design?",
                     "options": [
                         "More memory to hold extra articles",
-                        "A better plan for the first search",
+                        "A better plan — the first search should have been written more carefully",
                         "A working stop rule — the goal was met, so the work should end",
                     ],
                     "answer_index": 2,
@@ -297,7 +297,7 @@ That is the whole lesson. There is no hidden nuance you missed — the three-sha
                     "options": [
                         "An agent — anything involving AI should use one",
                         "An answerer — the responses are fixed, so nothing needs to decide a next step",
-                        "A checklist — twenty questions means twenty steps",
+                        "A checklist — each of the twenty questions is one fixed step to run in order",
                     ],
                     "answer_index": 1,
                 },
@@ -315,7 +315,7 @@ That is the whole lesson. There is no hidden nuance you missed — the three-sha
                     "id": "module4-compare-q3",
                     "prompt": "A teammate says: 'Let's use agents for everything, they're smarter.' What is the fair reply?",
                     "options": [
-                        "Agree — agents outperform simpler shapes on every task",
+                        "Agree — agents are the most capable shape, and capability is always worth having",
                         "Disagree — agents cannot handle real production work",
                         "Agents cost more and need more care; use the simplest shape that solves the job reliably",
                     ],
@@ -325,7 +325,7 @@ That is the whole lesson. There is no hidden nuance you missed — the three-sha
                     "id": "module4-compare-q4",
                     "prompt": "Which task genuinely needs an agent rather than a simpler shape?",
                     "options": [
-                        "Sending a fixed weekly summary email every Monday at 9am",
+                        "Sending the same fixed weekly summary email to every subscriber each Monday at 9am",
                         "Diagnosing a server outage: check logs, try a fix, verify, escalate if still broken",
                         "Showing today's temperature on a dashboard",
                     ],
@@ -336,7 +336,7 @@ That is the whole lesson. There is no hidden nuance you missed — the three-sha
                     "prompt": "You spent a week building an agent that sends one fixed welcome message on signup. A colleague says a simple trigger would have done it. Are they right?",
                     "options": [
                         "Yes — the steps never change, so a checklist-style trigger was the right size",
-                        "No — user-facing messages always justify an agent",
+                        "No — anything users see justifies an agent, and the week was an investment in quality",
                         "Only if the number of signups is small",
                     ],
                     "answer_index": 0,
@@ -490,7 +490,7 @@ Next lesson takes the two quietest words in the loop — *look* and *stop* — a
                     "id": "module4-workflow-q1",
                     "prompt": "In Juno's trace, the paywalled article gets skipped and the plan adjusts. Which loop steps did that?",
                     "options": [
-                        "Understand and plan — the goal was re-read",
+                        "Understand and plan — Juno went back and re-read the goal before continuing",
                         "Look and decide — the result was examined, then the plan changed",
                         "Act alone — the tool fixed it automatically",
                     ],
@@ -510,7 +510,7 @@ Next lesson takes the two quietest words in the loop — *look* and *stop* — a
                     "id": "module4-workflow-q3",
                     "prompt": "A hotel-booking agent finds a room for $89 against a $100 budget. What should the decide step conclude?",
                     "options": [
-                        "Keep searching — something cheaper might exist",
+                        "Keep searching — an even cheaper room might still exist somewhere out there",
                         "Ask the user to raise the budget",
                         "Stop — the goal is met; continuing adds time and risk for no gain",
                     ],
@@ -530,7 +530,7 @@ Next lesson takes the two quietest words in the loop — *look* and *stop* — a
                     "id": "module4-workflow-q5",
                     "prompt": "Why is 'the first plan is a starting point, not a promise' good agent design rather than sloppiness?",
                     "options": [
-                        "Because plans are expensive to write carefully",
+                        "Because writing one careful plan up front would take longer than the errand itself",
                         "Because the world answers back — results arrive that no plan could fully predict",
                         "Because agents cannot store plans in memory",
                     ],
@@ -690,7 +690,7 @@ That's it. Short lesson on purpose — the idea is small, sharp, and worth keepi
                     "id": "module4-stop-q3",
                     "prompt": "Why does 'no more than ten searches, then report what you have' make an agent MORE trustworthy?",
                     "options": [
-                        "It guarantees the goal is always achieved",
+                        "It guarantees the goal is achieved before the searches are used up",
                         "It makes the agent run faster overall",
                         "It means the agent can never silently run away with a task",
                     ],
@@ -855,7 +855,7 @@ You are done with this lesson when you can:
                     "id": "module4-mtr-q1",
                     "prompt": "A support agent gives contradictory answers to the same question two days apart because it retains nothing between conversations. Which part is weak?",
                     "options": [
-                        "Judgment — the model reasons poorly",
+                        "Judgment — the model reasons differently from one day to the next",
                         "Memory — nothing from earlier work is being kept or used",
                         "Tools — it lacks a search capability",
                     ],
@@ -886,7 +886,7 @@ You are done with this lesson when you can:
                     "prompt": "An agent asks you the same question it asked two steps ago, having lost your earlier answer. Which part failed?",
                     "options": [
                         "Memory — earlier context within the task was not kept",
-                        "Tools — the wrong tool was called",
+                        "Tools — the question-asking tool was accidentally called a second time",
                         "Judgment — the model is too small",
                     ],
                     "answer_index": 0,
@@ -895,7 +895,7 @@ You are done with this lesson when you can:
                     "id": "module4-mtr-q5",
                     "prompt": "Why do experienced agent-builders spend more effort on memory and tools than on chasing the cleverest model?",
                     "options": [
-                        "Clever models are too expensive to run",
+                        "Clever models are too expensive to run on everyday agent errands",
                         "Judgment can only work with what the notebook and hands provide it",
                         "Memory and tools are easier to advertise",
                     ],
@@ -1039,7 +1039,7 @@ You are done with this lesson when you can:
                     "id": "module4-examples-q1",
                     "prompt": "Which task most clearly needs an agent rather than an answerer?",
                     "options": [
-                        "Displaying a stored FAQ answer on keyword match",
+                        "Displaying a stored FAQ answer whenever a matching keyword appears in a question",
                         "Showing the current temperature from a weather feed",
                         "Researching a topic: search, judge sources, draft, verify claims, revise",
                     ],
@@ -1061,7 +1061,7 @@ You are done with this lesson when you can:
                     "options": [
                         "The agent's tools cannot technically send email",
                         "Sending is the risky, outward-facing step — so it sits with a person by design",
-                        "Customers dislike receiving automated messages",
+                        "Customers dislike automated replies, so a person is kept visible at the end",
                     ],
                     "answer_index": 1,
                 },
@@ -1070,7 +1070,7 @@ You are done with this lesson when you can:
                     "prompt": "The scheduling helper books the same room twice for two people. Which parts are the prime suspects?",
                     "options": [
                         "Goal — the request was too ambiguous to act on",
-                        "Judgment — the model simply thought incorrectly",
+                        "Judgment — the model simply thought incorrectly about which slot was free",
                         "Tools or memory — stale calendar data, or the first booking was never recorded",
                     ],
                     "answer_index": 2,
@@ -1080,7 +1080,7 @@ You are done with this lesson when you can:
                     "prompt": "Why is 'books meeting rooms only' often a better first agent than 'helps with everything'?",
                     "options": [
                         "Narrow scope is easier to check, and checkable is what earns trust",
-                        "Broad agents are illegal in most workplaces",
+                        "Broad agents overwhelm their users with too many options and settings",
                         "Narrow agents use less electricity",
                     ],
                     "answer_index": 0,
@@ -1150,7 +1150,7 @@ You are done with this lesson when you can:
                     "prompt": "Why does narrow scope make an agent more trustworthy?",
                     "options": [
                         "Narrow agents are cheaper to advertise",
-                        "Narrow agents never make mistakes",
+                        "Narrow agents never make mistakes, so there is nothing to check",
                         "A small territory can actually be checked, so trust can accumulate",
                     ],
                     "answer_index": 2,
@@ -1222,7 +1222,7 @@ And with that, Module 4 is finished. Actually finished: every idea this module i
                     "prompt": "A blueprint's goal box says 'AI will handle customer questions.' What is the actual problem with it?",
                     "options": [
                         "It needs a catchier product name",
-                        "It should list which competitors it beats",
+                        "It never says which customers it serves or which languages it must support",
                         "It is too vague to tell you what tool, memory, or stop rule the agent needs",
                     ],
                     "answer_index": 2,
@@ -1232,7 +1232,7 @@ And with that, Module 4 is finished. Actually finished: every idea this module i
                     "prompt": "A blueprint lists eight tools before the goal box is filled in. What has gone wrong?",
                     "options": [
                         "Tools should follow from the goal — a tool list without a goal means the purpose isn't clear yet",
-                        "Eight is fine; blueprints should list every tool that might ever help",
+                        "Eight is fine — a thorough blueprint lists every tool that might ever help the agent someday",
                         "The tools simply need to be listed in alphabetical order",
                     ],
                     "answer_index": 0,
@@ -1241,7 +1241,7 @@ And with that, Module 4 is finished. Actually finished: every idea this module i
                     "id": "module4-activity-q3",
                     "prompt": "A blueprint has a clear goal and a good tool but no check and no stop. What risk is built in?",
                     "options": [
-                        "The agent will refuse to start",
+                        "The agent will refuse to start until a check and a stop rule are added",
                         "It can deliver unverified work and never know when it is finished",
                         "The goal will drift as the agent runs",
                     ],
@@ -1251,7 +1251,7 @@ And with that, Module 4 is finished. Actually finished: every idea this module i
                     "id": "module4-activity-q4",
                     "prompt": "Which is the stronger first blueprint?",
                     "options": [
-                        "'An AI that helps with everything in my life' — maximum coverage",
+                        "'An AI that helps with everything in my life' — one assistant covering every need beats many small ones",
                         "'An AI that reads the entire internet daily' — maximum information",
                         "'An AI that tells me which fridge items expire this week, from a list I keep' — one job, one tool, natural stop",
                     ],
