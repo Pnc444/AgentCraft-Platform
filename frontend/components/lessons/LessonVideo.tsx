@@ -35,6 +35,12 @@ export function youtubeVideoId(url: string): string | null {
   return null;
 }
 
+/** True for locally-hosted or direct video files (e.g. /videos/lessons/foo.mp4). */
+export function isDirectVideoUrl(url: string): boolean {
+  const clean = url.trim().split(/[?#]/)[0].toLowerCase();
+  return /\.(mp4|webm|mov|m4v)$/.test(clean);
+}
+
 declare global {
   interface Window {
     YT?: {
@@ -126,6 +132,32 @@ export function LessonVideo({
       playerRef.current = null;
     };
   }, [containerId, id, onWatched, watched]);
+
+  if (isDirectVideoUrl(url)) {
+    return (
+      <div className="space-y-2">
+        <div className="overflow-hidden rounded-xl border border-craft-border bg-black shadow-elevated ring-1 ring-black/20">
+          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+          <video
+            className="aspect-video w-full"
+            src={url}
+            controls
+            playsInline
+            preload="metadata"
+            title={title}
+            onEnded={() => {
+              if (!watchedRef.current) onWatched?.();
+            }}
+          />
+        </div>
+        <p className="text-xs text-craft-muted">
+          {watched
+            ? "Video watched — you can take the Recap Quiz."
+            : "Watch the video to the end before taking the Recap Quiz."}
+        </p>
+      </div>
+    );
+  }
 
   if (!id) {
     return (

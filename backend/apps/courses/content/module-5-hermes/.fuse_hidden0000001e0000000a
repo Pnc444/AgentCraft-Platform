@@ -1,5 +1,6 @@
 # What Hermes Is
 
+
 ## Not a model — an orchestrator
 Hermes doesn't run AI on your machine. It's a program that sits between you and a model provider: it takes your task, sends API calls to an LLM, and **executes actions** based on the responses — running shell commands, reading and writing files, calling other services. The heavy thinking happens on the provider's servers; the *doing* happens on yours. That last part is why this module cares so much about safety.
 

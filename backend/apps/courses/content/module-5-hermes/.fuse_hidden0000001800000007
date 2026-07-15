@@ -1,5 +1,6 @@
 # Install and Blank Slate Setup
 
+
 ## What we're doing
 Install Hermes and get it to a **blank slate**: no API keys, no memory, no skills, nothing configured. We deliberately stop *before* the first conversation — the agent doesn't get turned on until it's sandboxed (next lesson).
 

@@ -382,6 +382,165 @@ body {
   .prose-lesson a {
     @apply font-medium text-cyan-600 underline-offset-2 hover:underline dark:text-cyan-400;
   }
+
+  /* Tables: full lines + boxed cells */
+  .prose-lesson table {
+    @apply mb-6 w-full border-collapse overflow-hidden rounded-xl text-sm;
+    border: 1px solid var(--craft-border);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .prose-lesson thead th {
+    @apply px-4 py-3 text-left font-semibold;
+    background: var(--craft-soft);
+    color: var(--craft-ink);
+    border: 1px solid var(--craft-border);
+  }
+
+  .prose-lesson tbody td {
+    @apply px-4 py-3 align-top;
+    border: 1px solid var(--craft-border);
+  }
+
+  .prose-lesson tbody tr:nth-child(even) td {
+    background: color-mix(in srgb, var(--craft-soft) 55%, transparent);
+  }
+
+  /* Lesson images: framed screenshots */
+  .prose-lesson img {
+    @apply my-4 h-auto max-w-full rounded-xl;
+    border: 1px solid var(--craft-border);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* <details> dropdowns: clickable warning-orange box */
+  .prose-lesson details {
+    @apply mb-6 overflow-hidden rounded-xl;
+    border: 1px solid #f59e0b66;
+    background: #fffbeb;
+  }
+
+  .dark .prose-lesson details {
+    border-color: #f59e0b4d;
+    background: #2a1f0a;
+  }
+
+  .prose-lesson details > summary {
+    @apply flex cursor-pointer select-none items-center gap-2 px-4 py-3 font-semibold transition-colors;
+    color: #b45309;
+    list-style: none;
+  }
+
+  .dark .prose-lesson details > summary {
+    color: #fbbf24;
+  }
+
+  .prose-lesson details > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .prose-lesson details > summary::before {
+    content: "▸";
+    @apply inline-block transition-transform duration-200;
+  }
+
+  .prose-lesson details[open] > summary::before {
+    transform: rotate(90deg);
+  }
+
+  .prose-lesson details > summary::after {
+    content: "click to expand";
+    @apply ml-auto text-xs font-normal opacity-70;
+  }
+
+  .prose-lesson details[open] > summary::after {
+    content: "click to collapse";
+  }
+
+  .prose-lesson details > summary:hover {
+    background: #fef3c7;
+  }
+
+  .dark .prose-lesson details > summary:hover {
+    background: #3a2c0f;
+  }
+
+  .prose-lesson details[open] > summary {
+    border-bottom: 1px solid #f59e0b4d;
+  }
+
+  .prose-lesson details > *:not(summary) {
+    @apply mx-4 first-of-type:mt-3;
+  }
+
+  .prose-lesson details > *:last-child {
+    @apply mb-4;
+  }
+}
+
+/* Lesson diagrams (plain CSS — classes are referenced from markdown content,
+   so they must not depend on Tailwind JIT scanning) */
+.lesson-diagram {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 1.5rem 0;
+}
+
+.lesson-diagram .ld-box {
+  flex: 1 1 0;
+  min-width: 160px;
+  border: 2px solid var(--craft-border);
+  border-radius: 0.75rem;
+  background: var(--craft-card);
+  box-shadow: var(--shadow-card);
+  padding: 1rem;
+  text-align: center;
+}
+
+.lesson-diagram .ld-box.ld-accent {
+  border-color: var(--craft-accent);
+  background: var(--craft-accent-soft);
+}
+
+.lesson-diagram .ld-box.ld-warning {
+  border-color: var(--craft-warning);
+  background: #fffbeb;
+}
+
+.dark .lesson-diagram .ld-box.ld-warning {
+  background: #2a1f0a;
+}
+
+.lesson-diagram .ld-title {
+  font-weight: 700;
+  color: var(--craft-ink);
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.lesson-diagram .ld-sub {
+  font-size: 0.8rem;
+  color: var(--craft-muted);
+  line-height: 1.4;
+}
+
+.lesson-diagram .ld-arrow {
+  align-self: center;
+  color: var(--craft-faint);
+  font-size: 1.4rem;
+  font-weight: 700;
+  padding: 0 0.25rem;
+}
+
+.lesson-diagram .ld-caption {
+  flex-basis: 100%;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--craft-faint);
+  margin-top: 0.25rem;
 }
 
 /* react-easy-crop needs a positioned parent; reinforce layout if CSS import lags */

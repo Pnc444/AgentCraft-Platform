@@ -9,6 +9,11 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "${POSTGRES_PORT:-5433}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d agentcraft"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
 
   redis:
     image: redis:7-alpine
@@ -19,15 +24,19 @@ services:
     build:
       context: ./backend
       dockerfile: ../infra/docker/Dockerfile.backend
-    command: python manage.py runserver 0.0.0.0:8000
+    # Auto-migrate + sync curriculum content (md files -> Postgres) on every start,
+    # so lesson content is always up to date without manual commands.
+    command: sh -c "python manage.py migrate && python manage.py sync_content && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./backend:/app
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     env_file: .env
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
   frontend:
     build:

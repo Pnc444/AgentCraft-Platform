@@ -1,5 +1,6 @@
 # Why Docker?
 
+
 ## The problem Docker solves
 You build an agent on your machine and it works. Your friend runs the same code and it breaks — different Python version, missing library, wrong OS. "It works on my machine" is the oldest bug in software.
 

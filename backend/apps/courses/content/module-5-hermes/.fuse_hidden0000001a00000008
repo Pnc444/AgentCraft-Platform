@@ -1,5 +1,6 @@
 # OpenRouter and Your First Conversation
 
+
 ## Why OpenRouter
 One API key, many models. OpenRouter sits in the third box of our diagram: Hermes sends it requests, it routes them to whichever model we pick. Swapping models later is a config change, not a rebuild.
 

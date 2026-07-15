@@ -1,5 +1,6 @@
 # Sandbox Verification Lab
 
+
 ## Try to break out
 You built the box; now try to escape it. Ask your agent to do things it *should not be able to do* and watch each one fail. Ten minutes of failed escapes teaches the isolation model better than any slide — and you'll remember it.
 
