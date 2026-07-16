@@ -133,6 +133,24 @@ function ImageCarousel({ images, captions }: { images?: string; captions?: strin
   );
 }
 
+/** Anchor renderer: external links open in a new tab; internal links behave normally. */
+function MarkdownLink({
+  href,
+  children,
+  ...props
+}: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+  const isExternal = /^(https?:)?\/\//i.test(href ?? "");
+  return (
+    <a
+      href={href}
+      {...props}
+      {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+    >
+      {children}
+    </a>
+  );
+}
+
 /** Renders existing lesson Markdown without altering the source string. */
 export function LessonContent({ content }: LessonContentProps) {
   return (
@@ -144,6 +162,7 @@ export function LessonContent({ content }: LessonContentProps) {
           {
             pre: CodeBlock,
             carousel: ImageCarousel,
+            a: MarkdownLink,
           } as import("react-markdown").Components
         }
       >

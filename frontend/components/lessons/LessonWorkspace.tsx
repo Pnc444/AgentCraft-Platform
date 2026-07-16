@@ -10,7 +10,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCourse, getLesson, updateLessonProgress } from "@/lib/api/courses";
 import {
@@ -51,7 +51,17 @@ const LessonWorkspaceContext = createContext<LessonWorkspaceValue | null>(null);
 
 export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
   const { slug, lessonSlug } = useParams<{ slug: string; lessonSlug: string }>();
+  const pathname = usePathname();
   const queryClient = useQueryClient();
+
+  // Next.js only resets window scroll on navigation, but the dashboard scrolls
+  // inside <main> (overflow-y-auto). Reset both whenever the lesson route changes
+  // so prev/next (and step changes) always land at the top of the page.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.querySelector("main")?.scrollTo(0, 0);
+  }, [pathname]);
+
   const [tutorOpen, setTutorOpen] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const autoStartedId = useRef<number | null>(null);
