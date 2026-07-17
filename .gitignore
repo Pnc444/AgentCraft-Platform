@@ -18,4 +18,5 @@ node_modules/
 .vscode/
 .idea/
 .DS_Store
+.fuse_hidden*
 CONTENT-TODO.md
