@@ -216,6 +216,219 @@ Answer the question below. You can retry as many times as you need.
 }
 
 
+# Module 4.5 recap questions — real questions written from the lesson content.
+MODULE_4_5_RECAP = {
+    "why-docker": [
+        {
+            "id": "m45-wd-1",
+            "prompt": "What problem is Docker primarily built to solve?",
+            "options": [
+                "Computers not having enough storage for big apps",
+                "\u201cIt works on my machine\u201d \u2014 code breaking on other computers due to environment differences",
+                "Slow internet connections when downloading software",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m45-wd-2",
+            "prompt": "What does a Docker container package together?",
+            "options": [
+                "The app plus everything it needs to run \u2014 code, runtime, libraries, settings",
+                "Only the app's source code",
+                "Just the operating system, with no application code",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m45-wd-3",
+            "prompt": "Why does isolation matter when running AI agents?",
+            "options": [
+                "It makes the agent respond faster",
+                "It hides the agent from other students",
+                "An agent in a container can't wreck the rest of your computer",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m45-wd-4",
+            "prompt": "Why does the course run every student's agent in the same container environment?",
+            "options": [
+                "Reproducibility \u2014 the builds behave the same for everyone",
+                "Because Docker is the only way to run Python",
+                "So students can't modify their own code",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m45-wd-5",
+            "prompt": "In the shipping-container analogy, what is your computer?",
+            "options": [
+                "The crane",
+                "The ship \u2014 it carries containers without caring what's inside",
+                "The cargo inside the container",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "docker-main-terms": [
+        {
+            "id": "m45-mt-1",
+            "prompt": "What's the difference between an image and a container?",
+            "options": [
+                "An image is a read-only snapshot; a container is a running instance of it",
+                "They're two names for the same thing",
+                "A container is the recipe; an image is the dish",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m45-mt-2",
+            "prompt": "Where does `docker run` download images from if they're not on your machine?",
+            "options": [
+                "Your operating system's app store",
+                "GitHub",
+                "Docker Hub (a registry)",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m45-mt-3",
+            "prompt": "What is a volume for?",
+            "options": [
+                "Persistent storage that survives even when the container is deleted",
+                "Making containers run louder",
+                "Limiting how much CPU a container can use",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m45-mt-4",
+            "prompt": "What does port mapping do?",
+            "options": [
+                "Deletes unused network ports",
+                "Connects a port on your machine to a port inside a container",
+                "Encrypts traffic between containers",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m45-mt-5",
+            "prompt": "If you delete a container, what happens to the image it was made from?",
+            "options": [
+                "The image is deleted too",
+                "The image becomes read-only",
+                "Nothing \u2014 deleting a container never touches the image",
+            ],
+            "answer_index": 2,
+        },
+    ],
+    "installing-docker-desktop": [
+        {
+            "id": "m45-id-1",
+            "prompt": "On Windows, what should you do with the \u201cUse WSL 2\u201d option during install?",
+            "options": [
+                "Keep it checked \u2014 Docker Desktop on Windows runs on WSL 2",
+                "Uncheck it to save disk space",
+                "It doesn't matter either way",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m45-id-2",
+            "prompt": "Do you need to create a Docker account for this course?",
+            "options": [
+                "Yes, containers won't run without one",
+                "No \u2014 you can skip sign-in; it's not required",
+                "Only on Mac",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m45-id-3",
+            "prompt": "How do you know Docker is ready to use?",
+            "options": [
+                "The installer window closes",
+                "Your computer restarts automatically",
+                "The whale icon stops animating and the dashboard shows \u201cEngine running\u201d",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m45-id-4",
+            "prompt": "Which command verifies Docker is installed from a terminal?",
+            "options": [
+                "docker --version",
+                "docker install --check",
+                "wsl --status",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m45-id-5",
+            "prompt": "The installer says \u201cVirtualization is not enabled.\u201d Where do you fix that?",
+            "options": [
+                "In Docker Desktop's settings menu",
+                "In your BIOS/UEFI settings (Intel VT-x / AMD-V)",
+                "By reinstalling Windows",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "first-containers": [
+        {
+            "id": "m45-fc-1",
+            "prompt": "You run `docker run hello-world` and the image isn't on your machine. What happens?",
+            "options": [
+                "Docker pulls the image from Docker Hub, creates a container, and runs it",
+                "You get an error and must download the image manually",
+                "Docker builds the image from a Dockerfile on your desktop",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m45-fc-2",
+            "prompt": "In `docker run -d -p 8080:80 nginx`, what does `-p 8080:80` mean?",
+            "options": [
+                "Run 8,080 copies on 80 CPUs",
+                "Limit the container to 8080 MB of memory",
+                "Map port 8080 on your machine to port 80 inside the container",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m45-fc-3",
+            "prompt": "What does the `-d` flag do?",
+            "options": [
+                "Deletes the container when it stops",
+                "Runs the container detached, in the background",
+                "Downloads the image without running it",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m45-fc-4",
+            "prompt": "After you stop and delete the nginx container, what's left on your machine?",
+            "options": [
+                "Leftover nginx config files you must clean up",
+                "A background service that keeps running",
+                "Just the cached image \u2014 your machine is otherwise unchanged",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m45-fc-5",
+            "prompt": "You get \u201cport is already allocated\u201d on 8080. What's the fix?",
+            "options": [
+                "Use a different host port, e.g. `-p 8081:80`",
+                "Restart your computer",
+                "Delete the nginx image and re-pull it",
+            ],
+            "answer_index": 0,
+        },
+    ],
+}
+
+
 # Module 3 recap questions — real questions (ported from feat/module3).
 MODULE_3_RECAP = {
     "what-prompts-are": [
@@ -566,10 +779,10 @@ CURRICULUM = [
         "published": True,
         "difficulty": 2,
         "lessons": [
-            ("Why Docker?", "why-docker", "theory", 8),
-            ("The Main Terms", "docker-main-terms", "theory", 8),
-            ("Installing Docker Desktop", "installing-docker-desktop", "interactive", 15),
-            ("Your First Containers", "first-containers", "sandbox", 12),
+            ("Why Docker?", "why-docker", "theory", 8, {"questions": MODULE_4_5_RECAP["why-docker"]}),
+            ("The Main Terms", "docker-main-terms", "theory", 8, {"questions": MODULE_4_5_RECAP["docker-main-terms"]}),
+            ("Installing Docker Desktop", "installing-docker-desktop", "interactive", 15, {"questions": MODULE_4_5_RECAP["installing-docker-desktop"]}),
+            ("Your First Containers", "first-containers", "sandbox", 12, {"questions": MODULE_4_5_RECAP["first-containers"]}),
         ],
     },
     {
