@@ -487,7 +487,7 @@ CURRICULUM = [
         "title": "Introduction to AI",
         "slug": "module-1-introduction-to-ai",
         "description": "What AI and LLMs are, a brief history, and a checkpoint. Terminology is introduced as you go.",
-        "published": False,
+        "published": True,
         "difficulty": 1,
         "lessons": [
             ("What is AI?", "what-is-ai", "theory", 8),
@@ -502,7 +502,7 @@ CURRICULUM = [
         "title": "How LLMs Work",
         "slug": "module-1-5-how-llms-work",
         "description": "Context windows, tokens, and training vs inference.",
-        "published": False,
+        "published": True,
         "difficulty": 1,
         "lessons": [
             ("Context Windows", "context-windows", "theory", 8),
@@ -515,7 +515,7 @@ CURRICULUM = [
         "title": "Exploring LLM Models",
         "slug": "module-2-exploring-llm-models",
         "description": "Compare Hermes, Claude, Gemini, OpenAI, and open-source models — strengths, weaknesses, and when to choose each.",
-        "published": False,
+        "published": True,
         "difficulty": 1,
         "lessons": [
             ("Introducing Different Models", "introducing-different-models", "theory", 12),
@@ -531,7 +531,7 @@ CURRICULUM = [
         "title": "Prompting",
         "slug": "module-3-prompting",
         "description": "What prompts are, how context shapes responses, system vs user prompts, and hands-on practice.",
-        "published": False,
+        "published": True,
         "difficulty": 1,
         "lessons": [
             ("What Prompts Are", "what-prompts-are", "theory", 8, {"questions": MODULE_3_RECAP["what-prompts-are"]}),
@@ -546,7 +546,7 @@ CURRICULUM = [
         "title": "AI Agents",
         "slug": "module-4-ai-agents",
         "description": "What agents are, how they differ from chatbots, workflows, and an intro to Hermes, OpenClaw, Claude, and Gemini agents.",
-        "published": False,
+        "published": True,
         "difficulty": 2,
         "lessons": [
             ("What an AI Agent Is", "what-an-ai-agent-is", "theory", 10),
