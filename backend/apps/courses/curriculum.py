@@ -216,6 +216,271 @@ Answer the question below. You can retry as many times as you need.
 }
 
 
+# Module 3 recap questions — real questions (ported from feat/module3).
+MODULE_3_RECAP = {
+    "what-prompts-are": [
+        {
+            "id": "m3-wpa-rq1",
+            "prompt": "In this course, a prompt is best described as:",
+            "options": [
+                "The text and instructions you send to an LLM to shape its response",
+                "A password that unlocks the model's training data",
+                "The model's reply after it finishes generating",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-wpa-rq2",
+            "prompt": "Which is NOT typically part of a well-formed prompt?",
+            "options": [
+                "Your router's MAC address",
+                "The task you want done",
+                "Relevant background context",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-wpa-rq3",
+            "prompt": "Why do prompts matter for agents you'll build later?",
+            "options": [
+                "They are the main way you tell the model what to do, how to behave, and what context to use",
+                "They replace the need for any tools or code",
+                "They only affect spelling and grammar, not behavior",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-wpa-rq4",
+            "prompt": "An LLM generates a response by:",
+            "options": [
+                "Predicting likely next tokens based on everything in the prompt (and prior conversation)",
+                "Looking up a single pre-written answer in a fixed database",
+                "Running only on keywords you bold in the prompt",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-wpa-rq5",
+            "prompt": "If you change your prompt but keep the same model, you should expect:",
+            "options": [
+                "Different outputs, because the model conditions on the new instructions and context",
+                "Exactly the same output every time",
+                "The model to refuse all requests",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "how-context-affects-responses": [
+        {
+            "id": "m3-hcar-rq1",
+            "prompt": "Context in prompting refers to:",
+            "options": [
+                "All the information the model can see when generating (history, docs, examples, etc.)",
+                "Only the font size of your message",
+                "The physical location of the data center",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-hcar-rq2",
+            "prompt": "Two people send the identical question but with different prior messages in the chat. The answers may differ because:",
+            "options": [
+                "The model uses conversation history as part of its context",
+                "Models randomly ignore earlier messages",
+                "User prompts cannot include more than one sentence",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-hcar-rq3",
+            "prompt": "You paste a 50-page document above your question. What is a realistic trade-off?",
+            "options": [
+                "Richer answers from that material, but you use more of the context window and may hit limits",
+                "The model automatically summarizes all 50 pages with zero token cost",
+                "Longer context always makes answers shorter",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-hcar-rq4",
+            "prompt": "Which change is most likely to alter the model's answer?",
+            "options": [
+                "Adding a paragraph that defines key terms and constraints before your question",
+                "Sending the same text with an extra space at the end",
+                "Using a different browser tab color",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-hcar-rq5",
+            "prompt": "If important facts are missing from the context, the model may:",
+            "options": [
+                "Guess or fill gaps plausibly (hallucinate) instead of admitting ignorance",
+                "Always stop and ask a clarifying question",
+                "Access private files on your computer without permission",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "system-vs-user-prompts": [
+        {
+            "id": "m3-svup-rq1",
+            "prompt": "A system prompt is usually:",
+            "options": [
+                "Hidden instructions that set behavior, role, and rules for the assistant",
+                "The same thing as the user's latest chat message",
+                "Only used when the model is offline",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-svup-rq2",
+            "prompt": "A user prompt is:",
+            "options": [
+                "What the end user (or your app on their behalf) sends as the request",
+                "A secret key stored in the GPU",
+                "The model's internal weight file",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-svup-rq3",
+            "prompt": "Why separate system and user prompts when building an agent?",
+            "options": [
+                "So stable rules and persona stay in system instructions while each request stays in user messages",
+                "Because models cannot read user messages at all",
+                "To make every response identical regardless of the question",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-svup-rq4",
+            "prompt": "In a chat API, message roles often include:",
+            "options": [
+                "system, user, and assistant",
+                "only user and printer",
+                "admin, guest, and firewall",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-svup-rq5",
+            "prompt": "Putting 'Always reply in JSON' in the system prompt is useful because:",
+            "options": [
+                "It applies consistently to every turn without repeating it in each user message",
+                "It hides the rule from the model entirely",
+                "It disables the model's ability to follow instructions",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "good-and-bad-prompts": [
+        {
+            "id": "m3-gabp-rq1",
+            "prompt": "Which prompt is stronger for getting useful output?",
+            "options": [
+                "'Summarize the text below in 3 bullet points for a busy manager; use plain language.'",
+                "'Do something with this.'",
+                "'Write stuff.'",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-gabp-rq2",
+            "prompt": "A common problem with vague prompts is:",
+            "options": [
+                "The model has to guess your goal, audience, and format",
+                "The model runs out of electricity",
+                "The context window doubles in size",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-gabp-rq3",
+            "prompt": "Which pair of instructions is worst for the model?",
+            "options": [
+                "'Be extremely brief' and 'Write at least 800 words' in the same prompt",
+                "'Use bullet points' and 'Keep it under 5 bullets'",
+                "'Explain for a beginner' and 'Avoid jargon'",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-gabp-rq4",
+            "prompt": "The CRAFT-style checklist includes:",
+            "options": [
+                "Context, Role, Action, Format, and constraints/Tone",
+                "CPU, RAM, ASCII, FTP, and TLS only",
+                "Copy, Rename, Archive, File, and Trash",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-gabp-rq5",
+            "prompt": "Good prompts often specify:",
+            "options": [
+                "Who the answer is for, what to do, and how the output should look",
+                "Only a single emoji",
+                "Nothing — shorter is always better",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "hands-on-prompt-exercises": [
+        {
+            "id": "m3-hope-rq1",
+            "prompt": "When judging two prompts, you should prioritize:",
+            "options": [
+                "Clarity, relevant context, and explicit output format",
+                "Which one is shorter, even if vague",
+                "Which one uses the most technical buzzwords",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-hope-rq2",
+            "prompt": "Prompt A: 'Fix my code.' Prompt B: 'Find the bug in this Python function, explain it in 2 sentences, then show a corrected version.' Which is better for a coding assistant?",
+            "options": [
+                "Prompt B — it states the language, task, and output shape",
+                "Prompt A — less text always wins",
+                "They are equally good because both mention code",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-hope-rq3",
+            "prompt": "After trying a weak prompt and a strong prompt on the same model, a good sign the strong prompt worked is:",
+            "options": [
+                "The answer matches your requested format, audience, and constraints more closely",
+                "The model returns a random Wikipedia article",
+                "Both outputs are identical every time",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-hope-rq4",
+            "prompt": "If a prompt omits the audience ('for executives' vs 'for new hires'), you should expect:",
+            "options": [
+                "A generic answer that may not fit the reader",
+                "The model to refuse to answer",
+                "Automatic translation into another language",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-hope-rq5",
+            "prompt": "The best next step when a prompt gives poor results is usually to:",
+            "options": [
+                "Add missing context, clarify the task, and specify format — then test again",
+                "Assume the model is broken and never use AI again",
+                "Remove all details until the prompt is one word",
+            ],
+            "answer_index": 0,
+        },
+    ],
+}
+
+
 CURRICULUM = [
     {
         "order": 1,
@@ -269,11 +534,11 @@ CURRICULUM = [
         "published": False,
         "difficulty": 1,
         "lessons": [
-            ("What Prompts Are", "what-prompts-are", "theory", 8),
-            ("How Context Affects Responses", "how-context-affects-responses", "theory", 10),
-            ("System Prompts vs User Prompts", "system-vs-user-prompts", "theory", 10),
-            ("Good and Bad Prompts", "good-and-bad-prompts", "theory", 10),
-            ("Hands-on Prompt Exercises", "hands-on-prompt-exercises", "interactive", 15),
+            ("What Prompts Are", "what-prompts-are", "theory", 8, {"questions": MODULE_3_RECAP["what-prompts-are"]}),
+            ("How Context Affects Responses", "how-context-affects-responses", "theory", 10, {"questions": MODULE_3_RECAP["how-context-affects-responses"]}),
+            ("System Prompts vs User Prompts", "system-vs-user-prompts", "theory", 10, {"questions": MODULE_3_RECAP["system-vs-user-prompts"]}),
+            ("Good and Bad Prompts", "good-and-bad-prompts", "theory", 10, {"questions": MODULE_3_RECAP["good-and-bad-prompts"]}),
+            ("Hands-on Prompt Exercises", "hands-on-prompt-exercises", "interactive", 15, {"questions": MODULE_3_RECAP["hands-on-prompt-exercises"]}),
         ],
     },
     {
