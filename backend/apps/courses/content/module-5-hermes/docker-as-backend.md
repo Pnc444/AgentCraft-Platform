@@ -24,16 +24,41 @@ Here's the three-box diagram again — this lesson is about wrapping the middle 
 </div>
 
 ## What the Docker backend actually gives you
-- **Read-only root filesystem** — the agent can't modify the container's system files or install anything outside its workspace.
-- **Only mounted volumes are writable** — workspace and skills directories, nothing else. Your desktop, documents, and dotfiles don't exist as far as the agent is concerned.
-- **Dropped Linux capabilities + namespace isolation** — no mounting filesystems, no touching network config, own PID/network/mount namespaces.
-- **PID, memory, and CPU limits** — a runaway loop hits a ceiling instead of eating the machine.
-- **Credentials mounted read-only** — the agent can use keys to call the model, but can't modify or move them.
+- **A separate filesystem** — the container has its own files. Your desktop, documents, and dotfiles don't exist as far as the agent is concerned. Anything the agent writes stays in the container and disappears when the container is deleted.
+- **Dropped Linux capabilities + namespace isolation** — `--cap-drop ALL` and `no-new-privileges`: no mounting filesystems, no touching the host's network config, its own process/network/mount namespaces.
+- **PID, memory, and CPU limits** — a process limit of 256 plus the memory/CPU caps we set below, so a runaway loop hits a ceiling instead of eating the machine.
+- **Keys stay outside the box** — your API key lives in `~/.hermes/.env` on the *host*, and the model calls happen from the host process. The sandboxed commands never see the key at all (unless you explicitly forward it).
 
 ## Set it up
-*(TODO: exact steps — switch config `sandbox backend` from `local` to `docker`, plus the run flags we standardize on:)*
+Hermes builds the hardened `docker run` command for you — you just switch the terminal backend. One command:
 
+```bash
+hermes config set terminal.backend docker
 ```
-docker run -d --name hermes-agent \
-  --read-only \
-  --tmpfs /tm
+
+Then add our course-standard resource limits. Open `~/.hermes/config.yaml` and make the `terminal` section look like this:
+
+```yaml
+terminal:
+  backend: docker
+  container_cpu: 1          # CPU cores the agent can use
+  container_memory: 2048    # MB — a runaway process hits this ceiling
+  container_persistent: true
+```
+
+That's the whole setup. Hermes will pull a default sandbox image (`nikolaik/python-nodejs`) the first time it needs it.
+
+## How it behaves
+Hermes starts **one long-lived container** the first time the agent runs a command, and routes every terminal and file call through it. Installed packages and files in `/workspace` persist from one command to the next — it feels like a normal shell, it's just a shell *in the box*. The container is stopped and removed when Hermes shuts down.
+
+## Verify the box exists
+Start Hermes, ask the agent to run any command (e.g. *"run `whoami`"*), then in **your own** terminal:
+
+```bash
+docker ps
+```
+
+You should see a new container running (image `nikolaik/python-nodejs:...`). That container is where the agent now lives. In the next lesson we give it a brain; in the lesson after that, you'll try to break out of the box yourself.
+
+## Takeaway
+One config change, and every command the agent runs is inside a locked-down, resource-capped container instead of directly on your machine. Box first, power switch later.

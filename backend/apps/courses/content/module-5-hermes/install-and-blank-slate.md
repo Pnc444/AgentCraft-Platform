@@ -4,7 +4,7 @@
 Install Hermes and get it to a **blank slate**: no API keys, no memory, no skills, nothing configured. We deliberately stop *before* the first conversation — the agent doesn't get turned on until it's sandboxed (next lesson).
 
 ## Install
-Official installer one-liner. *(TODO: pick the release tag we pin for the course.)*
+Official installer one-liner. This course was built and tested on **Hermes Agent v0.18.2** — newer versions will most likely work fine, but if a menu or config key looks different from the screenshots, version drift is why.
 
 **Windows (PowerShell):**
 ```powershell

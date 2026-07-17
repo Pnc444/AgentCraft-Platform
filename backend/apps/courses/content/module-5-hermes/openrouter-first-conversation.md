@@ -6,11 +6,18 @@ One API key, many models. OpenRouter sits in the third box of our diagram: Herme
 ## Get a key (the safe way)
 - **Sign up here: [https://openrouter.ai](https://openrouter.ai)** — then create your API key at [https://openrouter.ai/settings/keys](https://openrouter.ai/settings/keys).
 - Create the OpenRouter account with a **dedicated email**, not your personal one — one identity for the agent means one kill switch if anything goes wrong.
-- Set a **hard spending cap** in the dashboard before the first request. If the agent loops, the cap stops the bleeding.
-- *(TODO: recommended starting model + cap amount for the course.)*
+- Set a **hard spending cap of $5** in the dashboard before the first request. If the agent loops, the cap stops the bleeding. $5 is more than enough for this whole course.
+- **Model choice:** any of OpenRouter's **free models** (filter by the `:free` tag) works for this course. If you already have an API key for Claude or another provider you prefer, you can use that instead — same $5-cap idea applies.
 
 ## Wire it up
-*(TODO: exact config keys — where the OpenRouter key goes, how it's mounted read-only into the container from the previous lesson.)*
+Two commands. Hermes routes each value to the right file automatically (keys go to `~/.hermes/.env`, settings to `config.yaml`):
+
+```bash
+hermes config set OPENROUTER_API_KEY sk-or-your-key-here
+hermes config set model your-chosen-model
+```
+
+One detail worth appreciating: the key lives in `~/.hermes/.env` on your **host**, and model calls are made by the Hermes process — also on your host. The sandboxed container from the previous lesson never sees the key. The agent can *use* the model, but a command running inside the box can't read or leak the credential.
 
 ## First conversation
 Start the CLI gateway and say hello. Then the real test — ask the agent to run a shell command, e.g. *"What files are in your workspace?"* Watch the loop happen live: your message → model decides to call the shell tool → command runs **inside the container** → result comes back → model answers.
