@@ -22,10 +22,12 @@ def placeholder(title: str) -> str:
 
 
 def load_content(course_slug: str, lesson_slug: str, title: str) -> str:
-    """Prefer a content/*.md file; fall back to in-file dicts, then placeholder."""
+    """Prefer a non-empty content/*.md file; fall back to in-file dicts, then placeholder."""
     path = CONTENT_DIR / course_slug / f"{lesson_slug}.md"
     if path.is_file():
-        return path.read_text(encoding="utf-8")
+        text = path.read_text(encoding="utf-8")
+        if text.strip():
+            return text
     return MODULE_1_CONTENT.get(lesson_slug, placeholder(title))
 
 
