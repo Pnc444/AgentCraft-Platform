@@ -21,6 +21,8 @@ curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
 ```
 
+![Installer finished in the terminal](/images/lessons/hermes-install/installer-done.png)
+
 To pin everyone to the same version, download the script first and run it with `-Tag <release>` (Windows) or `--tag <release>` (macOS/Linux) instead of piping.
 
 Note: the installer clones the Hermes source from GitHub under the hood — that's read-only download, no GitHub account or credentials involved. The agent itself never touches GitHub in this course.
@@ -29,6 +31,8 @@ Note: the installer clones the Hermes source from GitHub under the hood — that
 - **No credentials yet** — we add OpenRouter in lesson 4, after the sandbox is up.
 - **Empty workspace and skills directory** — the agent starts with no memory. Everything it "knows" later, it learned in this course, which makes its behavior explainable.
 - **Default config only** — walk through the config file and point out the `sandbox backend` setting. It defaults to `local`. Remember that word; next lesson is about never using it.
+
+![Default config.yaml — note the sandbox backend defaults to local](/images/lessons/hermes-install/config-defaults.png)
 
 ## Checkpoint
 Everyone should have: Hermes installed, config file open, no keys entered, agent **not yet run**. If you already ran it locally — stop it now; we'll explain why in the next lesson.

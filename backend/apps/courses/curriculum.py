@@ -216,6 +216,271 @@ Answer the question below. You can retry as many times as you need.
 }
 
 
+# Module 5 recap questions — real questions written from the lesson content.
+MODULE_5_RECAP = {
+    "what-hermes-is": [
+        {
+            "id": "m5-wh-1",
+            "prompt": "What is Hermes?",
+            "options": [
+                "An AI model that runs on your machine",
+                "An orchestrator that sits between you and a model provider, and executes actions",
+                "A chat website like ChatGPT",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-wh-2",
+            "prompt": "In the three-box diagram, which box runs on YOUR machine?",
+            "options": [
+                "The agent loop + tools (Hermes itself)",
+                "The model provider",
+                "None of them \u2014 everything runs in the cloud",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-wh-3",
+            "prompt": "Where does the \u201cheavy thinking\u201d happen?",
+            "options": [
+                "On your machine, inside the container",
+                "In the gateway (e.g. Telegram)",
+                "On the model provider's servers",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m5-wh-4",
+            "prompt": "What is a gateway in the Hermes architecture?",
+            "options": [
+                "How tasks get in \u2014 the CLI now, chat apps later",
+                "The firewall between the agent and the internet",
+                "The database where memories are stored",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-wh-5",
+            "prompt": "Why does this module care so much about safety?",
+            "options": [
+                "Because the model might become self-aware",
+                "Because the *doing* \u2014 shell commands, file access \u2014 happens on your machine",
+                "Because OpenRouter requires it",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "install-and-blank-slate": [
+        {
+            "id": "m5-ib-1",
+            "prompt": "What does \u201cblank slate\u201d mean after installing Hermes?",
+            "options": [
+                "No API keys, no memory, no skills, nothing configured",
+                "A fresh conversation window",
+                "An empty Docker container",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-ib-2",
+            "prompt": "Why do we deliberately stop BEFORE the first conversation?",
+            "options": [
+                "The API key takes 24 hours to activate",
+                "The agent doesn't get turned on until it's sandboxed",
+                "To let the installer finish downloading models",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-ib-3",
+            "prompt": "What does the `sandbox backend` setting default to?",
+            "options": [
+                "docker",
+                "ssh",
+                "local \u2014 which we will never use for a running agent",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m5-ib-4",
+            "prompt": "At the end of this lesson's checkpoint, the agent should be:",
+            "options": [
+                "Installed but NOT yet run \u2014 no keys entered",
+                "Running with the default settings",
+                "Connected to Telegram",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-ib-5",
+            "prompt": "The course pins a specific Hermes version. What should you do if your install looks different?",
+            "options": [
+                "Uninstall Docker and try again",
+                "Expect version drift \u2014 newer versions likely work, minor differences are normal",
+                "Stop the course and wait for an update",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "docker-as-backend": [
+        {
+            "id": "m5-db-1",
+            "prompt": "Why do we set up the Docker backend BEFORE the first real conversation?",
+            "options": [
+                "Docker makes the model respond faster",
+                "With the default `local` backend there is no isolation at all \u2014 box before power switch",
+                "OpenRouter refuses connections from unsandboxed agents",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-db-2",
+            "prompt": "Which command switches Hermes to the Docker backend?",
+            "options": [
+                "hermes config set terminal.backend docker",
+                "docker run hermes --sandbox",
+                "hermes --enable-docker",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-db-3",
+            "prompt": "How many sandbox containers does Hermes use while it runs?",
+            "options": [
+                "A new container for every command",
+                "Two \u2014 one for files, one for commands",
+                "One long-lived container that every command runs inside",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m5-db-4",
+            "prompt": "Where does your API key live once the sandbox is running?",
+            "options": [
+                "In ~/.hermes/.env on the host \u2014 commands inside the container never see it",
+                "Copied into the container at /workspace/.env",
+                "Uploaded to the model provider for safekeeping",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-db-5",
+            "prompt": "How do you verify the sandbox container actually exists?",
+            "options": [
+                "Ask the agent \u2014 it always knows",
+                "Run `docker ps` in your own terminal and look for the sandbox container",
+                "Check Task Manager for a process called hermes-box",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "openrouter-first-conversation": [
+        {
+            "id": "m5-of-1",
+            "prompt": "Why does the course use OpenRouter?",
+            "options": [
+                "It's the only provider Hermes supports",
+                "One API key, many models \u2014 swapping models is a config change, not a rebuild",
+                "It's the fastest provider",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-of-2",
+            "prompt": "Why create the OpenRouter account with a dedicated email?",
+            "options": [
+                "One identity for the agent means one kill switch if anything goes wrong",
+                "OpenRouter bans personal email domains",
+                "It gets you more free credits",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-of-3",
+            "prompt": "What must you set in the OpenRouter dashboard BEFORE the first request?",
+            "options": [
+                "A profile picture for the agent",
+                "Two-factor authentication",
+                "A hard spending cap (the course uses $5)",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m5-of-4",
+            "prompt": "Where does `hermes config set OPENROUTER_API_KEY ...` store the key?",
+            "options": [
+                "In ~/.hermes/.env",
+                "Inside the sandbox container",
+                "In config.yaml next to the model name",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-of-5",
+            "prompt": "The parity checkpoint requires every student's agent to do what?",
+            "options": [
+                "Write a poem and send an email",
+                "Respond to a CLI message AND successfully run a shell command",
+                "Connect to Telegram and Discord",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "sandbox-verification-lab": [
+        {
+            "id": "m5-sv-1",
+            "prompt": "What's the point of the escape-attempt lab?",
+            "options": [
+                "You verify the containment yourself \u2014 failed escapes teach the isolation model",
+                "To find bugs in Docker and report them",
+                "To measure how fast the agent responds",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-sv-2",
+            "prompt": "You ask the agent to read a file on your Desktop. What happens?",
+            "options": [
+                "It reads it \u2014 the sandbox only blocks writes",
+                "The path doesn't exist \u2014 the container has its own filesystem",
+                "Docker shows a permission popup",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-sv-3",
+            "prompt": "The agent appends a line to /etc/hosts and it WORKS. Why is that still contained?",
+            "options": [
+                "It edited the container's copy \u2014 your machine's file is untouched and the change dies with the container",
+                "It isn't \u2014 that's a security hole you should report",
+                "Docker automatically reverts the change every minute",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-sv-4",
+            "prompt": "Why is the fork bomb an instructor-only demo?",
+            "options": [
+                "It requires a paid Docker license",
+                "It's boring to watch twice",
+                "Run outside a sandbox it will freeze the machine \u2014 the demo shows the container's PID limit catching it",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m5-sv-5",
+            "prompt": "\u201cFetch https://example.com and summarize it\u201d works from inside the sandbox. What's the lesson?",
+            "options": [
+                "The sandbox is broken and needs reconfiguring",
+                "Docker limits what the agent can *touch*, not what it can *say to the internet* \u2014 that's Module 6's problem",
+                "Websites can't tell the request came from a container",
+            ],
+            "answer_index": 1,
+        },
+    ],
+}
+
+
 # Module 4.5 recap questions — real questions written from the lesson content.
 MODULE_4_5_RECAP = {
     "why-docker": [
@@ -793,11 +1058,11 @@ CURRICULUM = [
         "published": True,
         "difficulty": 2,
         "lessons": [
-            ("What Hermes Is", "what-hermes-is", "theory", 8),
-            ("Install and Blank Slate Setup", "install-and-blank-slate", "interactive", 15),
-            ("Docker as Backend", "docker-as-backend", "sandbox", 15),
-            ("OpenRouter and Your First Conversation", "openrouter-first-conversation", "interactive", 15),
-            ("Sandbox Verification Lab", "sandbox-verification-lab", "sandbox", 12),
+            ("What Hermes Is", "what-hermes-is", "theory", 8, {"questions": MODULE_5_RECAP["what-hermes-is"]}),
+            ("Install and Blank Slate Setup", "install-and-blank-slate", "interactive", 15, {"questions": MODULE_5_RECAP["install-and-blank-slate"]}),
+            ("Docker as Backend", "docker-as-backend", "sandbox", 15, {"questions": MODULE_5_RECAP["docker-as-backend"]}),
+            ("OpenRouter and Your First Conversation", "openrouter-first-conversation", "interactive", 15, {"questions": MODULE_5_RECAP["openrouter-first-conversation"]}),
+            ("Sandbox Verification Lab", "sandbox-verification-lab", "sandbox", 12, {"questions": MODULE_5_RECAP["sandbox-verification-lab"]}),
         ],
     },
     {

@@ -13,6 +13,8 @@ Run each prompt and record what happens:
 5. **Install software** — "Install cowsay and run it." *(Expected: installs and runs fine — inside the box. Your machine doesn't have cowsay. This is the disposability lesson from Module 4.5 again: the agent can trash its own environment freely, and you reset it by deleting the container.)*
 6. **Fork bomb — instructor demo only, do NOT run this yourselves.** A fork bomb is a tiny command that endlessly spawns copies of itself until the machine locks up. The instructor runs it inside the sandbox to show the container's process limit (256 PIDs) catching it: the box freezes, the host doesn't even notice. Students watch — running it on an unsandboxed machine will freeze it.
 
+![Escape attempt failing — the container can't see your files](/images/lessons/hermes-lab/escape-attempt-fail.png)
+
 ## Discuss: what the agent CAN still do
 The box held — but notice attempt 3, and try: "Fetch https://example.com and summarize it." It works. Docker doesn't filter outbound network. The sandbox limits what the agent can *touch*, not what it can *say to the internet*. This is the bridge to Module 6's safety lesson.
 

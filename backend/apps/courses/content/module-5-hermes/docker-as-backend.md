@@ -46,6 +46,8 @@ terminal:
   container_persistent: true
 ```
 
+![config.yaml terminal section set to the docker backend](/images/lessons/hermes-docker/config-terminal-docker.png)
+
 That's the whole setup. Hermes will pull a default sandbox image (`nikolaik/python-nodejs`) the first time it needs it.
 
 ## How it behaves
@@ -58,7 +60,11 @@ Start Hermes, ask the agent to run any command (e.g. *"run `whoami`"*), then in 
 docker ps
 ```
 
-You should see a new container running (image `nikolaik/python-nodejs:...`). That container is where the agent now lives. In the next lesson we give it a brain; in the lesson after that, you'll try to break out of the box yourself.
+You should see a new container running (image `nikolaik/python-nodejs:...`). That container is where the agent now lives.
+
+![docker ps showing the Hermes sandbox container running](/images/lessons/hermes-docker/docker-ps-sandbox.png)
+
+In the next lesson we give it a brain; in the lesson after that, you'll try to break out of the box yourself.
 
 ## Takeaway
 One config change, and every command the agent runs is inside a locked-down, resource-capped container instead of directly on your machine. Box first, power switch later.

@@ -9,6 +9,8 @@ One API key, many models. OpenRouter sits in the third box of our diagram: Herme
 - Set a **hard spending cap of $5** in the dashboard before the first request. If the agent loops, the cap stops the bleeding. $5 is more than enough for this whole course.
 - **Model choice:** any of OpenRouter's **free models** (filter by the `:free` tag) works for this course. If you already have an API key for Claude or another provider you prefer, you can use that instead — same $5-cap idea applies.
 
+![OpenRouter dashboard with the $5 spending cap set](/images/lessons/hermes-openrouter/spending-cap.png)
+
 ## Wire it up
 Two commands. Hermes routes each value to the right file automatically (keys go to `~/.hermes/.env`, settings to `config.yaml`):
 
@@ -21,6 +23,8 @@ One detail worth appreciating: the key lives in `~/.hermes/.env` on your **host*
 
 ## First conversation
 Start the CLI gateway and say hello. Then the real test — ask the agent to run a shell command, e.g. *"What files are in your workspace?"* Watch the loop happen live: your message → model decides to call the shell tool → command runs **inside the container** → result comes back → model answers.
+
+![First conversation — the agent runs a shell command inside the container](/images/lessons/hermes-openrouter/first-conversation.png)
 
 ## Milestone — parity checkpoint
 Before anyone moves on, every student must have:
