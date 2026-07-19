@@ -481,6 +481,271 @@ MODULE_5_RECAP = {
 }
 
 
+# Module 7 recap questions — real questions written from the lesson content.
+MODULE_7_RECAP = {
+    "what-claude-code-is": [
+        {
+            "id": "m7-wc-1",
+            "prompt": "In the three-box diagram, what is Claude Code?",
+            "options": [
+                "The model provider",
+                "The agent loop + tools box — an orchestrator, not a model",
+                "A gateway like Telegram",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m7-wc-2",
+            "prompt": "What's different about Claude Code's boxes compared to Hermes?",
+            "options": [
+                "The agent loop runs in the cloud instead of your machine",
+                "There is no model provider box",
+                "The agent and the model come from the same company — no OpenRouter-style model swapping",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m7-wc-3",
+            "prompt": "How does Claude Code's safety approach differ from the Hermes build?",
+            "options": [
+                "It ships with a built-in permission system, instead of us adding a Docker sandbox before first run",
+                "It has no safety features, so Docker is mandatory",
+                "It refuses to run shell commands entirely",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-wc-4",
+            "prompt": "Which concept is genuinely NEW in build #3 (not in Hermes or OpenClaw)?",
+            "options": [
+                "Skills",
+                "Subagents — specialist agents the main agent delegates to",
+                "Persistent memory files",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m7-wc-5",
+            "prompt": "How do we customize Claude Code in this module?",
+            "options": [
+                "By writing Python with the Agent SDK",
+                "By editing markdown and config files — no code",
+                "Through a web dashboard",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "install-and-first-session": [
+        {
+            "id": "m7-if-1",
+            "prompt": "Why do we use prepaid Console credits with auto-reload OFF?",
+            "options": [
+                "Because subscriptions don't work with Claude Code",
+                "Prepaid credits ARE the spending cap — when they're gone, the agent stops",
+                "Auto-reload is a security vulnerability",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m7-if-2",
+            "prompt": "Where does the first session happen, and why?",
+            "options": [
+                "In an empty practice folder — same blank-slate discipline as the Hermes install",
+                "In your most important project, to test it properly",
+                "In the cloud, so nothing local is at risk",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-if-3",
+            "prompt": "What happens in default permission mode when the agent wants to write a file?",
+            "options": [
+                "It writes the file and reports afterwards",
+                "It asks for your approval first",
+                "It refuses to write files at all",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m7-if-4",
+            "prompt": "Why does the lesson have you DENY a request on purpose?",
+            "options": [
+                "To exercise the boundary: the agent acts on your machine, so you should see refusal work",
+                "Because the delete command would have escaped the folder",
+                "To trigger a refund of unused tokens",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-if-5",
+            "prompt": "What does the working directory shown at the prompt represent?",
+            "options": [
+                "Where Claude Code was installed",
+                "The agent's default territory for the session",
+                "A temporary cache that is deleted on exit",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "claudemd-and-skills": [
+        {
+            "id": "m7-cs-1",
+            "prompt": "What is CLAUDE.md?",
+            "options": [
+                "Standing instructions loaded automatically every session — prompt-writing you do once",
+                "A log of everything the agent has done",
+                "The agent's source code",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-cs-2",
+            "prompt": "What decides WHEN a skill gets used?",
+            "options": [
+                "The order skills appear in the folder",
+                "The description in its YAML frontmatter — the trigger",
+                "Skills only run when typed as /commands",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m7-cs-3",
+            "prompt": "Standing rule vs procedure — which file does each go in?",
+            "options": [
+                "Rules in a skill; procedures in CLAUDE.md",
+                "Both go in CLAUDE.md",
+                "Always-on rules in CLAUDE.md; triggered procedures in a skill",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m7-cs-4",
+            "prompt": "Your skill overwrites the log instead of appending. What's the fix?",
+            "options": [
+                "Edit the skill's prose to make the append step unambiguous, and rerun",
+                "Reinstall Claude Code",
+                "Switch the skill from markdown to Python",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-cs-5",
+            "prompt": "Where do the OpenClaw skills you wrote in Module 6 fit in?",
+            "options": [
+                "They're incompatible — Claude Code uses JSON skills",
+                "Same SKILL.md idea — the format transfers almost line for line",
+                "OpenClaw skills must be compiled first",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "custom-subagents": [
+        {
+            "id": "m7-su-1",
+            "prompt": "What is a subagent?",
+            "options": [
+                "A smaller, cheaper model",
+                "A specialist agent with its own instructions, tools, and context that the main agent delegates to",
+                "A backup copy of the main agent",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m7-su-2",
+            "prompt": "The reviewer has `tools: Read, Glob, Grep`. Why can't it damage your files?",
+            "options": [
+                "Its system prompt politely asks it not to",
+                "Subagents can never touch files",
+                "No Write, Edit, or Bash — it is physically unable to modify anything",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m7-su-3",
+            "prompt": "Which Module 4.5 principle do restricted subagent toolsets implement?",
+            "options": [
+                "Least privilege — minimum access needed for the job, now per-agent",
+                "Disposability — delete and rebuild",
+                "Port isolation",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-su-4",
+            "prompt": "What comes back to the main conversation after a delegation?",
+            "options": [
+                "The subagent's full reading and exploration history",
+                "Only the subagent's final report — its working context stays separate",
+                "Nothing; you must open the subagent's log file",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m7-su-5",
+            "prompt": "Where is a subagent defined?",
+            "options": [
+                "One markdown file in .claude/agents/ — YAML badge on top, job description below",
+                "In CLAUDE.md under a ## Subagents heading",
+                "In a Python class registered with the CLI",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "build-your-agent": [
+        {
+            "id": "m7-ba-1",
+            "prompt": "The research notebook agent is built from what?",
+            "options": [
+                "Four markdown/config files — CLAUDE.md, two skills, one subagent",
+                "A Python script using the Agent SDK",
+                "A Docker compose file",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-ba-2",
+            "prompt": "You ask for research and the research-note skill doesn't fire. First debugging move?",
+            "options": [
+                "Sharpen the skill's description: line — that's where the trigger lives",
+                "Reinstall the skill folder",
+                "Grant the skill more tools",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-ba-3",
+            "prompt": "Why must 'have the reviewer delete log.md' fail?",
+            "options": [
+                "log.md is write-protected by the OS",
+                "The reviewer's tools: line grants no Write/Edit/Bash — deletion is impossible for it",
+                "CLAUDE.md forbids the reviewer from reading logs",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m7-ba-4",
+            "prompt": "The agent happily saves a note to your Desktop. What does that tell you?",
+            "options": [
+                "Your CLAUDE.md boundary rule is too vague — fix the wording and retest",
+                "Claude Code ignores CLAUDE.md",
+                "The Desktop is inside the workspace",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-ba-5",
+            "prompt": "Across the three builds, what did the red-team checks have in common?",
+            "options": [
+                "They prove the model can't lie",
+                "You verify the safety boundary yourself instead of trusting that it works",
+                "They measure token spend",
+            ],
+            "answer_index": 1,
+        },
+    ],
+}
+
+
 # Module 4.5 recap questions — real questions written from the lesson content.
 MODULE_4_5_RECAP = {
     "why-docker": [
@@ -1083,12 +1348,15 @@ CURRICULUM = [
         "order": 9,
         "title": "Claude (Build #3)",
         "slug": "module-7-claude",
-        "description": "Claude agent build — curriculum details forthcoming.",
+        "description": "Build an agent with Claude Code — no code required: install it with a spending cap, teach it with CLAUDE.md and skills, create a least-privilege subagent, and assemble a working research notebook agent.",
         "published": False,
         "difficulty": 2,
         "lessons": [
-            ("Claude Build Overview", "claude-build-overview", "theory", 10),
-            ("Build with Claude", "build-with-claude", "agent_lab", 20),
+            ("What Claude Code Is", "what-claude-code-is", "theory", 8, {"questions": MODULE_7_RECAP["what-claude-code-is"]}),
+            ("Install and First Session", "install-and-first-session", "interactive", 12, {"questions": MODULE_7_RECAP["install-and-first-session"]}),
+            ("CLAUDE.md and Skills", "claudemd-and-skills", "sandbox", 15, {"questions": MODULE_7_RECAP["claudemd-and-skills"]}),
+            ("Custom Subagents", "custom-subagents", "sandbox", 15, {"questions": MODULE_7_RECAP["custom-subagents"]}),
+            ("Build Your Agent Lab", "build-your-agent", "agent_lab", 15, {"questions": MODULE_7_RECAP["build-your-agent"]}),
         ],
     },
     {
