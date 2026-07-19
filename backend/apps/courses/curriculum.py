@@ -305,8 +305,8 @@ MODULE_5_RECAP = {
             "id": "m5-or-4",
             "prompt": "What should you expect from a :free model?",
             "options": [
-                "Responses in under a second",
-                "Responses can take 2\u20133 minutes with lots of visible trial-and-error \u2014 normal, not broken",
+                "Identical performance to paid models",
+                "Simple requests are quick, but hard tasks can mean minutes of visible trial-and-error \u2014 normal, not broken",
                 "It only answers 10 questions per day",
             ],
             "answer_index": 1,
@@ -397,11 +397,11 @@ MODULE_5_RECAP = {
         },
         {
             "id": "m5-fc-3",
-            "prompt": "The agent takes 3 minutes and visibly retries commands before answering. What's happening?",
+            "prompt": "You give the agent a hard request and it works for minutes, visibly trying and retrying commands. What are you watching?",
             "options": [
-                "The container is throttling it \u2014 raise the CPU limit",
-                "Normal free-model behavior \u2014 you're watching the agent loop try, fail, and retry live",
-                "Your spending cap was hit",
+                "The container throttling it \u2014 raise the CPU limit",
+                "The agent loop running live: model picks a tool call, it runs in the container, the result feeds back, repeat",
+                "Your spending cap being hit",
             ],
             "answer_index": 1,
         },
@@ -459,13 +459,13 @@ MODULE_5_RECAP = {
         },
         {
             "id": "m5-sv-4",
-            "prompt": "Why is the fork bomb an instructor-only demo?",
+            "prompt": "The container caps processes at 256. What does that protect against?",
             "options": [
-                "It requires a paid Docker license",
-                "It's boring to watch twice",
-                "Run outside a sandbox it will freeze the machine \u2014 the demo shows the container's PID limit catching it",
+                "The model sending too many API requests",
+                "A runaway loop (like a fork bomb) taking down the machine \u2014 it hits the ceiling instead",
+                "Other students connecting to your container",
             ],
-            "answer_index": 2,
+            "answer_index": 1,
         },
         {
             "id": "m5-sv-6",

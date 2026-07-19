@@ -18,7 +18,7 @@ One API key, many models. OpenRouter sits in the third box of our diagram: Herme
 ## Pick your model (decide now, click later)
 The wizard will also ask which model to use. Free models are tagged `:free`. Course recommendation: **`openai/gpt-oss-20b:free`** — the NVIDIA Nemotron free models also work fine and behave similarly. Anything with the `:free` tag is acceptable; if you already have a paid key for Claude or another provider you prefer, that works too (same $5-cap idea applies).
 
-**Expectations check:** free models are slow and stubborn. A response can take **2–3 minutes** while the agent flails around trying commands — that's normal, not broken. You're trading patience for a $0 bill, which is the right trade while learning.
+**Expectations check:** free models are slower and less polished than paid ones. Simple requests come back quickly; hard ones can mean minutes of visible trial-and-error (you'll see this firsthand in the lab). You're trading patience for a $0 bill, which is the right trade while learning.
 
 ## Checkpoint
 Key created, cap set, model chosen — and **nothing installed yet**. Don't run any installer until the next lesson; we walk the wizard together.

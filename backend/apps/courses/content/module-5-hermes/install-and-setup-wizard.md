@@ -6,6 +6,8 @@ Install Hermes and walk its setup wizard end to end: blank slate, OpenRouter key
 This course was built and tested on **Hermes Agent v0.18.2** — newer versions will most likely work fine, but if a menu looks different from the screenshots, version drift is why.
 
 ## Step 0 — Install
+**Windows 10 users, one prerequisite:** install Windows Terminal first (`winget install Microsoft.WindowsTerminal`, then run PowerShell inside it). The Hermes wizard uses ANSI colors, and the legacy console renders them as garbage like `[32m(•)[0m` — everything still *works*, but you can't read the menus and your screen won't match our screenshots. Windows 11 has it by default.
+
 **Windows (PowerShell):**
 ```powershell
 iex (irm https://hermes-agent.nousresearch.com/install.ps1)

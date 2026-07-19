@@ -29,7 +29,10 @@ Here's the three-box diagram one more time — this lesson is about the wrapper 
 - **A process limit (256 PIDs)** — a runaway loop hits a ceiling instead of eating the machine.
 - **Keys stay outside the box** — your API key lives in the `.env` file on the *host* (AppData\Local\hermes on Windows, ~/.hermes on macOS/Linux), and model calls are made by the Hermes process — also on the host. Commands running inside the box never see the credential.
 
-Optional hardening for lab machines — open `config.yaml` and add resource caps to the `terminal` section:
+Optional hardening for lab machines — open `config.yaml` in a text editor and add resource caps to the `terminal` section. Where it lives (same place the install lesson showed):
+
+- **Windows:** `C:\Users\<you>\AppData\Local\hermes\config.yaml` — quickest open: `notepad $env:LOCALAPPDATA\hermes\config.yaml` in PowerShell
+- **macOS/Linux:** `~/.hermes/config.yaml`
 
 ```yaml
 terminal:
@@ -38,6 +41,15 @@ terminal:
   container_memory: 2048    # MB — a runaway process hits this ceiling
 ```
 
+**Or skip the editor entirely** — Hermes can change its own config from your terminal:
+
+```bash
+hermes config set terminal.container_cpu 1
+hermes config set terminal.container_memory 2048
+```
+
+`hermes config set <key> <value>` routes each value to the right file automatically: settings go to config.yaml (dotted keys reach nested sections), secrets like `OPENROUTER_API_KEY` go to `.env`. Two more to know: `hermes config` (no arguments) prints your whole configuration — paths, keys, model, backend — in one screen, and `hermes config edit` opens config.yaml in your editor without you hunting for the path. All routes end up in the same file; the full view is worth seeing at least once so you know everything your agent is configured to do.
+
 ![config.yaml terminal section with docker backend and resource caps](/images/lessons/hermes-docker/config-terminal-docker.png)
 
 ## First conversation
@@ -45,7 +57,7 @@ Start `hermes` and say hello. Then the real test — ask it to run a shell comma
 
 > run `whoami` and tell me what it says
 
-**Now wait. Really.** On a free model this can take **2–3 minutes**, and the progress line will show the agent trying things, failing, and retrying. That flailing is normal — you're watching the agent loop from the theory lesson happen live: your message → model decides on a tool call → command runs **inside the container** → result feeds back → repeat until it answers. (Tip: `/verbose` cycles how much of this you see.)
+A simple command like this usually comes back in seconds — but give a free model a minute without worrying. Watch the progress line while it works: that's the agent loop from the theory lesson happening live — your message → model decides on a tool call → command runs **inside the container** → result feeds back → repeat until it answers. (Tip: `/verbose` cycles how much of this you see.)
 
 The answer itself is a tell: `root` — inside the container the agent runs as the container's root user, not as you.
 
