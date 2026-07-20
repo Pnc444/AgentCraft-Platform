@@ -694,6 +694,167 @@ MODULE_4_5_RECAP = {
 }
 
 
+# Module 1.5 recap questions — context windows, tokens, training vs inference.
+MODULE_1_5_RECAP = {
+    "context-windows": [
+        {
+            "id": "m15-cw-rq1",
+            "prompt": "A context window is best described as:",
+            "options": [
+                "The maximum amount of text (in tokens) a model can use when generating a reply",
+                "The model's permanent memory of every conversation you ever had",
+                "The number of users who can chat at the same time",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-cw-rq2",
+            "prompt": "Which items typically compete for space inside the context window?",
+            "options": [
+                "System instructions, chat history, pasted documents, and your latest message",
+                "Only the last word you typed",
+                "Your computer's RAM and CPU usage meters",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-cw-rq3",
+            "prompt": "In a very long chat thread, why might the model seem to 'forget' what you said at the start?",
+            "options": [
+                "Older messages may fall outside the context window or get truncated",
+                "LLMs deliberately erase user messages after 10 minutes",
+                "The model saves early messages to a private database instead of using them",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-cw-rq4",
+            "prompt": "You need help with one bug in a huge codebase. What is usually the best context strategy?",
+            "options": [
+                "Paste the relevant file or function plus the error message, not the entire repo",
+                "Paste every file so the model sees everything at once",
+                "Send only the word 'bug' with no code",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-cw-rq5",
+            "prompt": "Context window size is measured in:",
+            "options": [
+                "Tokens",
+                "Pages of printed paper",
+                "Megabytes of GPU video memory only",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "tokens": [
+        {
+            "id": "m15-tk-rq1",
+            "prompt": "In LLMs, a token is:",
+            "options": [
+                "A small chunk of text the model processes — not always a whole word",
+                "Always exactly one English word",
+                "A type of cryptocurrency used to pay for GPUs",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-tk-rq2",
+            "prompt": "Why can you NOT assume 1 word equals 1 token?",
+            "options": [
+                "Tokenizers split text into pieces; words, subwords, and symbols vary in length",
+                "Models ignore all words longer than four letters",
+                "Only punctuation counts as tokens",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-tk-rq3",
+            "prompt": "Most API pricing for LLMs is based on:",
+            "options": [
+                "Input tokens and output tokens",
+                "The number of paragraphs you write",
+                "Your monitor's screen resolution",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-tk-rq4",
+            "prompt": "When a model generates a response one piece at a time, it is predicting:",
+            "options": [
+                "The next token, repeatedly, until the reply is complete",
+                "The entire answer in one lookup from a fixed database",
+                "Random words with no connection to the prompt",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-tk-rq5",
+            "prompt": "A rough rule of thumb for English prose is:",
+            "options": [
+                "About 1 token per 4 characters",
+                "Exactly 1 token per sentence",
+                "Tokens only exist for numbers, not letters",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "training-vs-inference": [
+        {
+            "id": "m15-tvi-rq1",
+            "prompt": "Training an LLM primarily means:",
+            "options": [
+                "Adjusting the model's weights on large datasets so it learns language patterns",
+                "Sending a long chat message so the model remembers you forever",
+                "Installing Docker on your laptop",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-tvi-rq2",
+            "prompt": "Inference is:",
+            "options": [
+                "Using an already-trained model to generate output from your prompt",
+                "The same thing as pre-training on the entire internet",
+                "Deleting old chat logs from a database",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-tvi-rq3",
+            "prompt": "During normal chat inference, the model's weights:",
+            "options": [
+                "Stay frozen — they do not update from your conversation",
+                "Rewrite themselves after every user message",
+                "Are copied from your keyboard input",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-tvi-rq4",
+            "prompt": "Which activity is inference, not training?",
+            "options": [
+                "Calling an API with 'Summarize this email' and reading the reply",
+                "A lab running a month-long GPU job to release a new base model",
+                "Fine-tuning an open model on a curated dataset of support tickets",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-tvi-rq5",
+            "prompt": "If an agent must remember facts across weeks, the usual solution is:",
+            "options": [
+                "Add memory, databases, or retrieval — not rely on one chat to retrain the model",
+                "Send the same paragraph 10,000 times to train weights at home",
+                "Assume the model automatically stores all user data in its parameters",
+            ],
+            "answer_index": 0,
+        },
+    ],
+}
+
+
 # Module 3 recap questions — real questions (ported from feat/module3).
 MODULE_3_RECAP = {
     "what-prompts-are": [
@@ -983,9 +1144,9 @@ CURRICULUM = [
         "published": True,
         "difficulty": 1,
         "lessons": [
-            ("Context Windows", "context-windows", "theory", 8),
-            ("Tokens", "tokens", "theory", 8),
-            ("Training vs Inference", "training-vs-inference", "theory", 10),
+            ("Context Windows", "context-windows", "theory", 8, {"questions": MODULE_1_5_RECAP["context-windows"]}),
+            ("Tokens", "tokens", "theory", 8, {"questions": MODULE_1_5_RECAP["tokens"]}),
+            ("Training vs Inference", "training-vs-inference", "theory", 10, {"questions": MODULE_1_5_RECAP["training-vs-inference"]}),
         ],
     },
     {
