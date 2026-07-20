@@ -32,15 +32,5 @@ There's no worksheet for this lab. You're done when you can honestly answer yes 
 
 If any answer is no, re-run that attempt and look again — the point of this lab is that *you* verified the containment, not that someone told you it works.
 
-## Don't want an agent anymore? Full removal
-An agent you can't cleanly remove is an agent you don't control. Whether you're done with the course, done with the machine, or just want a truly fresh start, teardown is four steps:
-
-1. **Run the built-in uninstaller** — `hermes uninstall`. Then verify it finished the job: the Hermes folder (`C:\Users\<you>\AppData\Local\hermes` on Windows, `~/.hermes` on macOS/Linux) should be gone — that one folder is the runtime, agent, config, skills, memory, AND the `.env` holding your API key. If anything survived, delete the folder yourself. *Trust but verify is the whole spirit of this lab.*
-2. **Delete the containers and image** — in Docker Desktop remove every `hermes-...` container, then the `nikolaik/python-nodejs` image under Images. (Or: `docker ps -a`, `docker rm -f <ids>`, `docker rmi nikolaik/python-nodejs`.)
-3. **Clean up PATH** — the installer added several entries (its bin, Node runtime, and Python venv dirs) so `hermes` worked as a command. Windows: Settings → "Edit environment variables for your account" → Path → remove **every** hermes entry (expect ~3). macOS/Linux: remove the hermes lines from your shell profile (`~/.bashrc` / `~/.zshrc`).
-4. **Revoke the API key** — at [openrouter.ai/settings/keys](https://openrouter.ai/settings/keys), delete the key. This is the real kill switch: even a leaked copy is now worthless. (Using a dedicated email back in lesson 2 pays off here — you can delete the whole account.)
-
-Do the steps in that order and nothing of the agent survives — which is exactly the property you want to have verified *before* you ever run one unsandboxed.
-
 ## Takeaway
-You just red-teamed your own agent. Every failed escape is a boundary you can now explain, and the ones that *didn't* fail tell you what to watch for when we build for real in the next lessons. And you know how to make the whole thing disappear — control at both ends of the lifecycle.
+You just red-teamed your own agent. Every failed escape is a boundary you can now explain, and the ones that *didn't* fail tell you what to watch for. The box holds — so in the final lesson we stop testing it and actually put the agent to work.

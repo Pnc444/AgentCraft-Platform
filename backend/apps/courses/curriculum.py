@@ -488,6 +488,58 @@ MODULE_5_RECAP = {
             "answer_index": 1,
         },
     ],
+    "put-it-to-work": [
+        {
+            "id": "m5-pw-1",
+            "prompt": "What's the core difference between a chatbot and an agent?",
+            "options": [
+                "An agent uses a bigger model",
+                "A chatbot goes text-in/text-out; an agent pursues a goal by acting, reading the result, and acting again in a loop",
+                "An agent always runs in the cloud",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-pw-2",
+            "prompt": "In Task 1, why can a chatbot NOT do what your agent did?",
+            "options": [
+                "A chatbot can't count that high",
+                "A chatbot can only produce text \u2014 it can't write a program and actually run it on a real machine",
+                "A chatbot isn't allowed to use Python",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-pw-3",
+            "prompt": "Where does the code the agent writes actually run?",
+            "options": [
+                "Directly on your Windows machine",
+                "On OpenRouter's servers",
+                "Inside the locked-down Docker container you built",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m5-pw-4",
+            "prompt": "You state a GOAL instead of a list of commands. What does the agent do with it?",
+            "options": [
+                "Asks you for the exact commands to run",
+                "Figures out the steps itself and executes them \u2014 that's the loop, and the autonomy",
+                "Refuses unless you enable admin mode",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-pw-5",
+            "prompt": "This is still the 'minimal' agent. What makes an agent MORE autonomous?",
+            "options": [
+                "Capabilities Blank Slate left off \u2014 skills, memory, gateways, cron, delegation",
+                "A faster internet connection",
+                "Turning off the Docker sandbox",
+            ],
+            "answer_index": 0,
+        },
+    ],
 }
 
 
@@ -1073,6 +1125,7 @@ CURRICULUM = [
             ("Install and the Setup Wizard", "install-and-setup-wizard", "interactive", 15, {"questions": MODULE_5_RECAP["install-and-setup-wizard"]}),
             ("First Conversation and the Container", "first-conversation-and-container", "sandbox", 15, {"questions": MODULE_5_RECAP["first-conversation-and-container"]}),
             ("Sandbox Verification Lab", "sandbox-verification-lab", "sandbox", 12, {"questions": MODULE_5_RECAP["sandbox-verification-lab"]}),
+            ("Put It to Work", "put-it-to-work", "agent_lab", 15, {"questions": MODULE_5_RECAP["put-it-to-work"]}),
         ],
     },
     {
