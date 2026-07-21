@@ -23,6 +23,7 @@ import { LessonCapstoneStudio } from "@/components/lessons/LessonCapstoneStudio"
 import { LessonContent } from "@/components/lessons/LessonContent";
 import { LessonSection } from "@/components/lessons/LessonSection";
 import { OpenClawFileExplorer } from "@/components/lessons/OpenClawFileExplorer";
+import { PaginatedLessonContent } from "@/components/lessons/PaginatedLessonContent";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 import { ProgressBar } from "@/components/shared/ProgressBar";
 import { Reveal } from "@/components/shared/Reveal";
@@ -93,6 +94,7 @@ export default function LessonContentPage() {
     slug,
     lessonSlug,
     lesson,
+    course,
     videoUrl,
     prev,
     checkpointQuestions,
@@ -241,6 +243,39 @@ export default function LessonContentPage() {
         details: { block_title: blockTitle, task },
       },
     });
+  }
+
+  const isPaginated =
+    blockLayouts.length > 0 ||
+    checkpointBlocks.length > 0 ||
+    artifactBundle.length > 0 ||
+    capstoneAssignment !== null;
+
+  if (isPaginated) {
+    return (
+      <PaginatedLessonContent
+        lesson={lesson}
+        slug={slug}
+        lessonSlug={lessonSlug}
+        videoUrl={videoUrl}
+        blockLayouts={blockLayouts}
+        checkpointBlocks={checkpointBlocks}
+        checkpointPct={checkpointPct}
+        optimisticCheckpointIds={optimisticCheckpointIds}
+        capstoneAssignment={capstoneAssignment}
+        hasInlineCapstoneStudio={hasInlineCapstoneStudio}
+        remainingArtifacts={remainingArtifacts}
+        checkpointQuestions={checkpointQuestions}
+        completedCheckpointSet={completedCheckpointSet}
+        completedTaskSet={completedTaskSet}
+        revealedPredictFirstSet={revealedPredictFirstSet}
+        revealPredictFirst={revealPredictFirst}
+        markCheckpointComplete={markCheckpointComplete}
+        reopenCheckpoint={reopenCheckpoint}
+        toggleGuidedTask={toggleGuidedTask}
+        recordArtifactInteraction={recordArtifactInteraction}
+      />
+    );
   }
 
   return (
@@ -466,21 +501,6 @@ export default function LessonContentPage() {
         >
           <LessonArtifactPack
             artifacts={remainingArtifacts}
-            interactionLog={lesson.interaction_log}
-            onRecordInteraction={recordArtifactInteraction}
-          />
-        </LessonSection>
-      ) : null}
-
-      {capstoneAssignment && !hasInlineCapstoneStudio ? (
-        <LessonSection
-          title={capstoneAssignment.title}
-          icon={<ClipboardCheck className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />}
-        >
-          <LessonCapstoneStudio
-            assignment={capstoneAssignment}
-            evaluationRubric={Array.isArray(lesson.sandbox_config.evaluation_rubric) ? (lesson.sandbox_config.evaluation_rubric as Array<{ criterion: string; weight: number; description: string }>) : []}
-            evaluationCases={Array.isArray(lesson.sandbox_config.evaluation_cases) ? (lesson.sandbox_config.evaluation_cases as Array<{ name: string; goal: string; expected: string }>) : []}
             interactionLog={lesson.interaction_log}
             onRecordInteraction={recordArtifactInteraction}
           />

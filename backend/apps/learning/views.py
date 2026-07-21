@@ -11,6 +11,10 @@ from .models import Progress, Recommendation
 from .serializers import ProgressSerializer, ProgressUpdateSerializer, RecommendationSerializer
 
 
+VIDEO_COMPLETION_BUFFER_SECONDS = 3.0
+VIDEO_COMPLETION_MIN_RATIO = 0.95
+
+
 def upsert_interaction_event(log: list[dict], event: dict) -> list[dict]:
     next_log = [entry for entry in log if isinstance(entry, dict)]
     normalized = {
@@ -32,6 +36,45 @@ def upsert_interaction_event(log: list[dict], event: dict) -> list[dict]:
     return next_log
 
 
+def _coerce_non_negative_float(value) -> float | None:
+    if isinstance(value, (int, float)):
+        parsed = float(value)
+    elif isinstance(value, str):
+        try:
+            parsed = float(value)
+        except ValueError:
+            return None
+    else:
+        return None
+
+    if parsed < 0:
+        return None
+    return parsed
+
+
+def _video_completion_verified(event: dict | None) -> bool:
+    if not isinstance(event, dict):
+        return False
+    if event.get("type") != "video_completion":
+        return False
+
+    details = event.get("details")
+    if not isinstance(details, dict):
+        return False
+
+    duration_seconds = _coerce_non_negative_float(details.get("duration_seconds"))
+    watched_seconds = _coerce_non_negative_float(details.get("watched_seconds"))
+
+    if not duration_seconds or watched_seconds is None:
+        return False
+
+    threshold = max(
+        duration_seconds - VIDEO_COMPLETION_BUFFER_SECONDS,
+        duration_seconds * VIDEO_COMPLETION_MIN_RATIO,
+    )
+    return watched_seconds >= threshold
+
+
 class LessonProgressView(APIView):
     """POST /lessons/{id}/progress/ — create or update the user's progress on a lesson."""
 
@@ -42,10 +85,24 @@ class LessonProgressView(APIView):
 
         progress, _ = Progress.objects.get_or_create(user=request.user, lesson=lesson)
         interaction_event = serializer.validated_data.pop("interaction_event", None)
+        requested_video_watched = serializer.validated_data.pop("video_watched", None)
         for field, value in serializer.validated_data.items():
             setattr(progress, field, value)
         if interaction_event:
             progress.interaction_log = upsert_interaction_event(progress.interaction_log, interaction_event)
+        completion_verified = _video_completion_verified(interaction_event)
+        if completion_verified:
+            progress.video_watched = True
+        elif requested_video_watched is True and (lesson.video_url or "").strip() and lesson.require_full_watch:
+            return Response(
+                {
+                    "detail": "Video completion could not be verified. Finish the lesson video in the built-in player before continuing.",
+                    "missing": "video",
+                },
+                status=400,
+            )
+        elif requested_video_watched is not None:
+            progress.video_watched = requested_video_watched
         progress.last_attempt_at = timezone.now()
         # Completing a lesson may require finishing the video first (admin toggle).
         if (

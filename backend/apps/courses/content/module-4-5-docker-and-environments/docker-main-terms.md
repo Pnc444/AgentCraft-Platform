@@ -1,0 +1,19 @@
+# The Main Terms
+
+You only need a handful of words to be dangerous with Docker. Here they are, introduced in the order you'll meet them.
+
+| Term | What it is | Analogy |
+|------|------------|---------|
+| **Image** | A frozen snapshot of an app + its environment. Read-only. | A recipe |
+| **Container** | A running (or stopped) instance of an image. | The dish you cooked from the recipe |
+| **Docker Hub / registry** | Where images are downloaded from. | The cookbook store |
+| **Volume** | Persistent storage a container can use, survives deletion. | Tupperware for leftovers |
+| **Port mapping** | Connecting a port on your machine to a port inside a container. | Forwarding your mail |
+| **Dockerfile** | The text file that defines how to build an image. | Writing your own recipe |
+
+## The two you'll use constantly
+- **Image → Container** is the core loop: `docker run <image>` downloads the image (if needed) and starts a container from it.
+- You can run **many containers from one image**, and deleting a container never touches the image.
+
+## Takeaway
+Images are recipes, containers are dishes. In the next lesson we install Docker Desktop so you can start cooking.

@@ -55,20 +55,16 @@ export default function CourseDetailPage() {
       </Reveal>
 
       <Reveal delay={80} variant="scale" className="mt-6">
-        <div className="rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-cyan-50 via-craft-surface to-sky-50 p-5 shadow-soft ring-1 ring-cyan-500/10 dark:border-cyan-400/25 dark:from-cyan-500/15 dark:via-craft-card dark:to-sky-500/10 dark:ring-cyan-400/10">
+        <div className="card p-5">
           <div className="mb-2 flex justify-between text-sm text-craft-muted">
             <span>
               {course.completed_lessons} of {course.total_lessons} complete
             </span>
-            <span className="font-semibold text-cyan-700 dark:text-cyan-300">
+            <span className="font-semibold text-craft-ink">
               {course.completion_pct}%
             </span>
           </div>
-          <ProgressBar
-            className="border-cyan-200/60 bg-white/70 dark:border-cyan-500/20 dark:bg-slate-900/50"
-            barClassName="bg-cyan-500 dark:bg-cyan-400"
-            value={course.completion_pct}
-          />
+          <ProgressBar value={course.completion_pct} />
         </div>
       </Reveal>
 
@@ -85,8 +81,8 @@ export default function CourseDetailPage() {
             <Reveal key={lesson.id} delay={Math.min(i * 50, 280)} as="div">
               <div
                 className={clsx(
-                  "card card-interactive flex items-center gap-4 p-4",
-                  completed && "border-emerald-200 bg-emerald-50/50 dark:border-emerald-500/30 dark:bg-emerald-500/10"
+                  "card flex items-center gap-4 p-4",
+                  completed && "border-emerald-300/40 bg-emerald-50/30 dark:border-emerald-500/20 dark:bg-emerald-500/5"
                 )}
               >
                 <span

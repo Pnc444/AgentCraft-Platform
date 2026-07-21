@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, ClipboardCheck } from "lucide-react";
@@ -20,6 +21,12 @@ export default function LessonQuizPage() {
     setNotice,
     updateProgress,
   } = useLessonWorkspace();
+
+  useEffect(() => {
+    if (!lesson || !needsVideo || videoDone) return;
+    setNotice("Watch the lesson video all the way through before taking the Recap Quiz.");
+    router.replace(lessonStepHref(slug, lessonSlug, "video"));
+  }, [lesson, needsVideo, videoDone, lessonSlug, router, setNotice, slug]);
 
   if (!lesson) return null;
 

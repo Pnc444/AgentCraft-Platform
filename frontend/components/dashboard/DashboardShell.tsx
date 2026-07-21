@@ -9,14 +9,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-craft-canvas">
+    <div className="flex h-screen overflow-hidden bg-craft-canvas">
       <Sidebar mobileOpen={sidebarOpen} onMobileClose={() => setSidebarOpen(false)} />
 
-      <div className="relative flex min-w-0 flex-1 flex-col">
+      <div className="relative flex min-h-0 min-w-0 flex-1 flex-col">
         <Topbar onOpenSidebar={() => setSidebarOpen(true)} />
-        <main className="relative min-w-0 flex-1 overflow-y-auto">
+        <main className="relative min-h-0 min-w-0 flex-1 overflow-y-auto">
           <AcademyBackdrop subtle />
-          <div className="relative z-10 p-6 lg:p-8">{children}</div>
+          <div className="relative z-10 p-5 lg:px-8 lg:py-6">{children}</div>
         </main>
       </div>
 

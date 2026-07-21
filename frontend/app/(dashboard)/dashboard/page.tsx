@@ -62,10 +62,10 @@ export default function StudentDashboardPage() {
         <p className="mt-1 text-craft-muted">Pick up where you left off</p>
       </Reveal>
 
-      <div className="mt-8 grid gap-4 lg:grid-cols-3">
+      <div className="mt-8 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.65fr)]">
         <Reveal className="lg:col-span-2" delay={60}>
-          <div className="card card-interactive p-6 h-full">
-            <p className="text-xs font-bold uppercase tracking-wide text-cyan-600 dark:text-cyan-400">
+          <div className="card h-full p-6">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-craft-faint">
               Continue learning
             </p>
             {!detailsReady && <p className="mt-4 animate-pulse text-sm text-craft-faint">Loading…</p>}
@@ -101,17 +101,14 @@ export default function StudentDashboardPage() {
         </Reveal>
 
         <Reveal delay={140} variant="scale">
-          <div className="rounded-2xl bg-craft-navy p-6 text-white shadow-navy ring-1 ring-white/10 h-full">
-            <p className="text-xs font-bold uppercase tracking-wide text-craft-faint">
+          <div className="card h-full p-6">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-craft-faint">
               Overall progress
             </p>
-            <p className="mt-3 text-4xl font-bold text-white">
+            <p className="mt-3 text-4xl font-bold text-craft-ink">
               {stats?.overall_progress_pct ?? 0}%
             </p>
-            <ProgressBar
-              className="mt-4 border-slate-500 bg-slate-800 shadow-none"
-              value={stats?.overall_progress_pct ?? 0}
-            />
+            <ProgressBar className="mt-4" value={stats?.overall_progress_pct ?? 0} />
             <p className="mt-3 text-sm text-craft-faint">
               {stats
                 ? `${stats.lessons_completed} completed · ${stats.lessons_in_progress} in progress`
@@ -123,8 +120,8 @@ export default function StudentDashboardPage() {
 
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         <Reveal delay={100}>
-          <div className="card card-interactive p-6 h-full">
-            <p className="text-xs font-bold uppercase tracking-wide text-cyan-600 dark:text-cyan-400">
+          <div className="card h-full p-6">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-craft-faint">
               Current module
             </p>
             {path?.currentModule ? (
@@ -152,8 +149,8 @@ export default function StudentDashboardPage() {
         </Reveal>
 
         <Reveal delay={180}>
-          <div className="card card-interactive p-6 h-full">
-            <p className="text-xs font-bold uppercase tracking-wide text-cyan-600 dark:text-cyan-400">
+          <div className="card h-full p-6">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-craft-faint">
               Recently completed
             </p>
             {detailsReady && path && path.recentCompleted.length > 0 ? (
@@ -183,8 +180,8 @@ export default function StudentDashboardPage() {
       </div>
 
       <Reveal delay={120} className="mt-4">
-        <div className="card card-interactive p-6">
-          <p className="text-xs font-bold uppercase tracking-wide text-cyan-600 dark:text-cyan-400">
+        <div className="card p-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-craft-faint">
             Upcoming lessons
           </p>
           {detailsReady && path && path.upcoming.length > 0 ? (
@@ -219,13 +216,13 @@ export default function StudentDashboardPage() {
           type="button"
           onClick={() => setPathOpen((open) => !open)}
           aria-expanded={pathOpen}
-          className="flex w-full items-center justify-between gap-3 text-left"
+          className="flex w-full items-center justify-between gap-3 rounded-2xl border border-craft-border bg-craft-surface/60 px-4 py-3 text-left transition hover:bg-craft-soft/70"
         >
           <h2 className="flex items-center gap-2 text-lg font-bold text-craft-ink">
             <BookOpen className="h-5 w-5 text-cyan-600 dark:text-cyan-400" /> Create an AI Agent
           </h2>
           <span className="flex shrink-0 items-center gap-1.5 text-sm font-medium text-craft-muted">
-            {pathOpen ? "View less" : "View more"}
+            {courses?.length ?? 0} modules
             <ChevronDown
               className={`h-5 w-5 text-craft-faint transition-transform ${
                 pathOpen ? "rotate-180" : ""
@@ -237,14 +234,14 @@ export default function StudentDashboardPage() {
 
         {pathOpen && (
           <div className="mt-1">
-            <p className="text-sm text-craft-muted">Modules 1–8 in this learning path</p>
+            <p className="text-sm text-craft-muted">Modules in this learning path</p>
 
             {isLoading && <p className="mt-6 animate-pulse text-craft-faint">Loading courses…</p>}
 
             <div className="mt-4 space-y-3">
               {courses?.map((course, i) => (
                 <Reveal key={course.slug} delay={i * 60}>
-                  <div className="card card-interactive flex flex-col gap-4 p-5 sm:flex-row sm:items-center">
+                  <div className="card flex flex-col gap-4 p-5 sm:flex-row sm:items-center">
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-3">
                         <h3 className="font-bold text-craft-ink">{course.title}</h3>

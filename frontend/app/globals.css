@@ -374,3 +374,29 @@ body {
   position: absolute;
   inset: 0;
 }
+
+/* Paginated lesson slide transitions */
+.slide-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 320ms ease-out, transform 320ms ease-out;
+}
+
+.slide-enter {
+  opacity: 0;
+  transform: translateX(32px);
+  transition: opacity 320ms ease-out, transform 320ms ease-out;
+}
+
+.slide-enter-back {
+  opacity: 0;
+  transform: translateX(-32px);
+  transition: opacity 320ms ease-out, transform 320ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide-enter,
+  .slide-enter-back {
+    transform: none;
+  }
+}

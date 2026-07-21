@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, ClipboardCheck, ShieldAlert, Sparkles } from "lucide-react";
 import clsx from "clsx";
 import { findInteraction } from "@/lib/lesson-interactions";
@@ -73,6 +73,11 @@ export function LessonCapstoneStudio({
   );
   const savedStatus = findInteraction(interactionLog, "capstone:result")?.status;
 
+  useEffect(() => {
+    setSubmission(initializeSubmission(assignment, interactionLog));
+    setReviewChecks(initializeReview(assignment, interactionLog));
+  }, [assignment, interactionLog]);
+
   const verifier = useMemo(() => {
     const riskyPhrases = assignment.risky_phrases || [];
     const checks = assignment.sections.map((section) => {
@@ -116,6 +121,7 @@ export function LessonCapstoneStudio({
 
     return { checks, riskyHits, reviewComplete, status, rubricScores };
   }, [assignment, evaluationRubric, reviewChecks, submission]);
+  const finalStatus = savedStatus ?? verifier.status;
 
   function saveDraft() {
     onRecordInteraction({
@@ -270,20 +276,20 @@ export function LessonCapstoneStudio({
           <div
             className={clsx(
               "rounded-xl border px-4 py-4 text-sm",
-              verifier.status === "pass"
+              finalStatus === "pass"
                 ? "border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-200"
-                : verifier.status === "stop"
+                : finalStatus === "stop"
                   ? "border-rose-300 bg-rose-50 text-rose-800 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-200"
                   : "border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200"
             )}
           >
             <p className="font-semibold">
-              Final result: {savedStatus || verifier.status}
+              Final result: {finalStatus}
             </p>
             <p className="mt-2">
-              {verifier.status === "pass"
+              {finalStatus === "pass"
                 ? "This capstone plan is complete enough to pass the lesson verifier."
-                : verifier.status === "stop"
+                : finalStatus === "stop"
                   ? "This plan contains risky language that should stop release until rewritten."
                   : "This plan needs revision before it is ready to pass."}
             </p>

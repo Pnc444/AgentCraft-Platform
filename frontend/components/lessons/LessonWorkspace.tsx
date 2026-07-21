@@ -10,13 +10,14 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCourse, getLesson, updateLessonProgress } from "@/lib/api/courses";
 import {
   invalidateLearningProgress,
   patchLessonStatusInCache,
 } from "@/lib/learning-progress";
+import type { VideoCompletionDetails } from "@/components/lessons/LessonVideo";
 import {
   getCheckpointQuestions,
   getGuidedLessonBlocks,
@@ -63,7 +64,7 @@ type LessonWorkspaceValue = {
   next: { slug: string; title: string } | null;
   progressPending: boolean;
   updateProgress: (data: ProgressPayload) => void;
-  markVideoWatched: () => void;
+  markVideoWatched: (details: VideoCompletionDetails) => void;
   openTutor: () => void;
 };
 
@@ -71,10 +72,18 @@ const LessonWorkspaceContext = createContext<LessonWorkspaceValue | null>(null);
 
 export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
   const { slug, lessonSlug } = useParams<{ slug: string; lessonSlug: string }>();
+  const pathname = usePathname();
   const queryClient = useQueryClient();
   const [tutorOpen, setTutorOpen] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const autoStartedId = useRef<number | null>(null);
+
+  // The dashboard scrolls inside <main>, so reset both document and panel scroll
+  // whenever the lesson route changes.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.querySelector("main")?.scrollTo(0, 0);
+  }, [pathname]);
 
   const { data: lesson, isLoading } = useQuery({
     queryKey: ["lesson", slug, lessonSlug],
@@ -175,9 +184,21 @@ export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
     [progressMutation]
   );
 
-  const markVideoWatched = useCallback(() => {
+  const markVideoWatched = useCallback((details: VideoCompletionDetails) => {
     if (!lesson || lesson.video_watched) return;
-    progressMutation.mutate({ video_watched: true });
+    progressMutation.mutate({
+      video_watched: true,
+      interaction_event: {
+        type: "video_completion",
+        key: `video:${lesson.id}:completion`,
+        status: "done",
+        details: {
+          source: details.source,
+          duration_seconds: Number(details.durationSeconds.toFixed(2)),
+          watched_seconds: Number(details.watchedSeconds.toFixed(2)),
+        },
+      },
+    });
     setNotice(null);
   }, [lesson, progressMutation]);
 
@@ -247,7 +268,6 @@ export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
       {lesson && (
         <LessonTutor
           open={tutorOpen}
-          onOpen={openTutor}
           onClose={() => setTutorOpen(false)}
           lessonTitle={lesson.title}
           courseTitle={lesson.course_title}

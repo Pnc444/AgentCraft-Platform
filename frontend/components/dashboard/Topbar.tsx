@@ -17,7 +17,7 @@ export function Topbar({ onOpenSidebar }: TopbarProps) {
   const pathname = usePathname();
 
   return (
-    <header className="relative z-20 flex h-16 shrink-0 items-center gap-4 border-b border-craft-border bg-craft-surface/95 px-6 shadow-soft backdrop-blur-sm">
+    <header className="relative z-20 flex h-14 shrink-0 items-center gap-3 border-b border-craft-border/80 bg-craft-surface/88 px-4 backdrop-blur-sm lg:px-6">
       <button
         type="button"
         onClick={onOpenSidebar}
@@ -34,15 +34,15 @@ export function Topbar({ onOpenSidebar }: TopbarProps) {
       <Link
         href="/dashboard/profile"
         className={clsx(
-          "flex items-center gap-2 rounded-full border px-2 py-1.5 pr-3 text-sm font-medium shadow-soft transition duration-300 hover:shadow-card",
+          "flex items-center gap-2 rounded-full px-1.5 py-1 text-sm font-medium transition",
           pathname === "/dashboard/profile"
-            ? "border-cyan-300 bg-cyan-50 text-cyan-800 dark:border-cyan-500/40 dark:bg-cyan-500/10 dark:text-cyan-200"
-            : "border-craft-border text-craft-muted hover:border-craft-faint hover:text-craft-ink"
+            ? "bg-craft-soft text-craft-ink"
+            : "text-craft-muted hover:bg-craft-soft hover:text-craft-ink"
         )}
         title="View your profile"
       >
         <UserAvatar size="sm" />
-        {user?.username ?? "Profile"}
+        <span className="hidden sm:inline">{user?.username ?? "Profile"}</span>
       </Link>
     </header>
   );

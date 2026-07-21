@@ -11,7 +11,18 @@ import { lessonStepHref } from "@/lib/lesson-steps";
 
 export default function LessonVideoPage() {
   const router = useRouter();
-  const { slug, lessonSlug, lesson, videoUrl, markVideoWatched } = useLessonWorkspace();
+  const {
+    slug,
+    lessonSlug,
+    lesson,
+    videoUrl,
+    needsVideo,
+    videoDone,
+    markVideoWatched,
+    setNotice,
+  } = useLessonWorkspace();
+
+  const quizLocked = needsVideo && !videoDone;
 
   useEffect(() => {
     if (lesson && !videoUrl) {
@@ -28,13 +39,14 @@ export default function LessonVideoPage() {
           url={videoUrl}
           title={lesson.title}
           watched={lesson.video_watched}
+          requireFullWatch={lesson.require_full_watch}
           onWatched={markVideoWatched}
         />
         {lesson.video_watched ? (
-          <p className="mt-3 text-sm text-emerald-700">Video watched. You can take the Recap Quiz.</p>
+          <p className="mt-4 text-sm text-emerald-700">Video watched. The Recap Quiz is unlocked.</p>
         ) : lesson.require_full_watch ? (
           <p className="mt-3 text-sm text-craft-muted">
-            Watch all the way through to unlock the Recap Quiz.
+            Finish the video to unlock the Recap Quiz.
           </p>
         ) : (
           <p className="mt-3 text-sm text-craft-muted">
@@ -48,10 +60,22 @@ export default function LessonVideoPage() {
           <ChevronLeft className="h-4 w-4" />
           Back to Content
         </Link>
-        <Link href={lessonStepHref(slug, lessonSlug, "quiz")} className="btn-primary">
-          Continue to Recap Quiz
+        <button
+          type="button"
+          onClick={() => {
+            if (quizLocked) {
+              setNotice("Watch the lesson video all the way through before taking the Recap Quiz.");
+              return;
+            }
+            setNotice(null);
+            router.push(lessonStepHref(slug, lessonSlug, "quiz"));
+          }}
+          className={quizLocked ? "btn-secondary" : "btn-primary"}
+          aria-disabled={quizLocked}
+        >
+          {quizLocked ? "Finish Video to Unlock Quiz" : "Continue to Recap Quiz"}
           <ChevronRight className="h-4 w-4" />
-        </Link>
+        </button>
       </div>
     </div>
   );

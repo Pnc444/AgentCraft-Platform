@@ -31,7 +31,7 @@ export default function ProfilePage() {
             <h1 className="text-2xl font-bold tracking-tight text-craft-ink">Profile</h1>
             <p className="mt-0.5 text-sm text-craft-muted">Account and progress</p>
           </div>
-          <div className="flex rounded-full border border-craft-border bg-craft-surface p-0.5 text-sm font-semibold">
+          <div className="flex rounded-full border border-craft-border bg-craft-surface p-0.5 text-sm font-medium">
             {(["profile", "settings"] as Tab[]).map((t) => (
               <button
                 key={t}
@@ -40,7 +40,7 @@ export default function ProfilePage() {
                 className={clsx(
                   "rounded-full px-3.5 py-1.5 capitalize transition",
                   tab === t
-                    ? "bg-cyan-500 text-white"
+                    ? "bg-craft-soft text-craft-ink"
                     : "text-craft-muted hover:text-craft-ink"
                 )}
               >
@@ -54,7 +54,7 @@ export default function ProfilePage() {
       {tab === "profile" && (
         <div className="mt-5 space-y-4">
           <Reveal delay={60} variant="scale">
-            <div className="card card-interactive flex flex-wrap items-center gap-4 p-4">
+            <div className="card flex flex-wrap items-center gap-4 p-4">
               {user?.avatar ? (
                 <UserAvatar size="lg" />
               ) : equippedBadge ? (
@@ -157,7 +157,7 @@ function BadgesGrid({ badges }: { badges: Badge[] }) {
           <Reveal key={badge.id} delay={Math.min(i * 50, 200)} variant="scale">
             <div
               className={clsx(
-                "card card-interactive p-4 text-center",
+                "card p-4 text-center",
                 badge.unlocked ? "border-cyan-400/30" : "opacity-50"
               )}
               title={badge.description}

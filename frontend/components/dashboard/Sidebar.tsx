@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   BookOpen,
@@ -19,10 +19,23 @@ import clsx from "clsx";
 import { getCourse, getCourses, getLesson } from "@/lib/api/courses";
 import { useAuthStore } from "@/stores/authStore";
 import { Logo, LogoIcon } from "@/components/shared/Logo";
-import { ProgressBar } from "@/components/shared/ProgressBar";
 import type { CourseDetail, Skill } from "@/types";
 
 const COLLAPSED_KEY = "agentcraft-sidebar-collapsed";
+const SIDEBAR_WIDTH_KEY = "agentcraft-sidebar-width";
+const COLLAPSED_WIDTH_PX = 64;
+const DEFAULT_SIDEBAR_WIDTH_PX = 272;
+const MIN_SIDEBAR_WIDTH_PX = 224;
+const MAX_SIDEBAR_WIDTH_PX = 360;
+
+function clampSidebarWidth(width: number) {
+  if (typeof window === "undefined") {
+    return Math.min(MAX_SIDEBAR_WIDTH_PX, Math.max(MIN_SIDEBAR_WIDTH_PX, width));
+  }
+
+  const maxWidth = Math.min(MAX_SIDEBAR_WIDTH_PX, Math.max(MIN_SIDEBAR_WIDTH_PX, window.innerWidth - 160));
+  return Math.min(maxWidth, Math.max(MIN_SIDEBAR_WIDTH_PX, width));
+}
 
 interface LearningPath {
   skill: Skill;
@@ -83,6 +96,8 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
 
   const queryClient = useQueryClient();
   const [collapsed, setCollapsed] = useState(false);
+  const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH_PX);
+  const [isResizing, setIsResizing] = useState(false);
   const [lessonsOpen, setLessonsOpen] = useState(pathname.includes("/courses/"));
   const [openPaths, setOpenPaths] = useState<Record<string, boolean>>({});
 
@@ -103,7 +118,23 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
 
   useEffect(() => {
     setCollapsed(localStorage.getItem(COLLAPSED_KEY) === "1");
+    const storedWidth = Number(localStorage.getItem(SIDEBAR_WIDTH_KEY));
+    if (Number.isFinite(storedWidth) && storedWidth > 0) {
+      setSidebarWidth(clampSidebarWidth(storedWidth));
+    }
   }, []);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--sidebar-w",
+      collapsed ? `${COLLAPSED_WIDTH_PX}px` : `${sidebarWidth}px`
+    );
+  }, [collapsed, sidebarWidth]);
+
+  useEffect(() => {
+    if (collapsed) return;
+    localStorage.setItem(SIDEBAR_WIDTH_KEY, String(sidebarWidth));
+  }, [collapsed, sidebarWidth]);
 
   useEffect(() => {
     if (!pathname.includes("/courses/") || !learningPaths.length) return;
@@ -120,6 +151,56 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
       localStorage.setItem(COLLAPSED_KEY, prev ? "0" : "1");
       return !prev;
     });
+  }
+
+  function startResizing(event: React.MouseEvent<HTMLDivElement>) {
+    if (collapsed) return;
+
+    function handleMouseMove(moveEvent: MouseEvent) {
+      setSidebarWidth(clampSidebarWidth(moveEvent.clientX));
+    }
+
+    function stopResizing() {
+      setIsResizing(false);
+      document.body.style.removeProperty("cursor");
+      document.body.style.removeProperty("user-select");
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", stopResizing);
+    }
+
+    setIsResizing(true);
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", stopResizing);
+  }
+
+  function nudgeSidebarWidth(delta: number) {
+    setSidebarWidth((current) => clampSidebarWidth(current + delta));
+  }
+
+  function handleResizeKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (collapsed) return;
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      nudgeSidebarWidth(-16);
+      return;
+    }
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      nudgeSidebarWidth(16);
+      return;
+    }
+    if (event.key === "Home") {
+      event.preventDefault();
+      setSidebarWidth(MIN_SIDEBAR_WIDTH_PX);
+      return;
+    }
+    if (event.key === "End") {
+      event.preventDefault();
+      setSidebarWidth(clampSidebarWidth(MAX_SIDEBAR_WIDTH_PX));
+    }
   }
 
   function togglePath(slug: string) {
@@ -149,13 +230,18 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         : "text-craft-muted hover:bg-craft-soft hover:text-craft-ink"
     );
 
+  const sidebarStyle = {
+    "--sidebar-live-w": `${sidebarWidth}px`,
+  } as CSSProperties;
+
   return (
     <aside
       className={clsx(
-        "fixed inset-y-0 left-0 z-40 flex flex-col border-r border-craft-border bg-craft-surface shadow-soft transition-all lg:static lg:translate-x-0 lg:shadow-[4px_0_24px_rgba(15,23,42,0.04)] dark:lg:shadow-[4px_0_24px_rgba(0,0,0,0.35)]",
-        collapsed ? "w-16" : "w-72",
+        "fixed inset-y-0 left-0 z-40 flex min-h-0 flex-col overflow-hidden border-r border-craft-border bg-craft-surface shadow-soft transition-[width,transform] lg:relative lg:static lg:h-screen lg:translate-x-0 lg:shadow-[4px_0_24px_rgba(15,23,42,0.04)] dark:lg:shadow-[4px_0_24px_rgba(0,0,0,0.35)]",
+        collapsed ? "w-16 lg:w-16" : "w-72 lg:w-[var(--sidebar-live-w)]",
         mobileOpen ? "translate-x-0" : "-translate-x-full"
       )}
+      style={sidebarStyle}
       aria-label="Main navigation"
     >
       <div
@@ -194,7 +280,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         </button>
       )}
 
-      <nav className={clsx("flex-1 space-y-1 overflow-y-auto py-2", collapsed ? "px-2" : "px-3")}>
+      <nav className={clsx("min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain py-2", collapsed ? "px-2" : "px-3")}>
         <Link href="/?landing=1" onClick={onMobileClose} className={navItemCls(false)} title="Home">
           <Home className="h-4 w-4 shrink-0" />
           {!collapsed && "Home"}
@@ -223,7 +309,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
               setLessonsOpen((v) => !v);
             }
           }}
-          className={navItemCls(pathname.includes("/courses/"))}
+          className={navItemCls(lessonsOpen || pathname.includes("/courses/"))}
           aria-expanded={lessonsOpen}
           title="Lessons"
         >
@@ -245,21 +331,25 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           <div className="ml-2 space-y-2 border-l border-craft-border pl-2">
             {learningPaths.map((path) => {
               const isOpen = !!openPaths[path.skill.slug];
-              const pathActive = path.courses.some((c) => pathname.includes(`/courses/${c.slug}`));
               return (
                 <div key={path.skill.slug} className="space-y-1.5">
                   <div
                     className={clsx(
-                      "flex items-center rounded-lg transition",
-                      isOpen || pathActive
+                      "flex items-center rounded-lg px-1 transition",
+                      isOpen
                         ? "text-craft-ink"
-                        : "text-craft-muted hover:text-craft-ink"
+                        : "text-craft-muted hover:bg-craft-soft hover:text-craft-ink"
                     )}
                   >
                     <button
                       type="button"
                       onClick={() => togglePath(path.skill.slug)}
-                      className="p-1.5 text-craft-faint hover:text-craft-ink"
+                      className={clsx(
+                        "rounded-md p-1.5 transition",
+                        isOpen
+                          ? "text-craft-ink"
+                          : "text-craft-faint hover:text-craft-ink"
+                      )}
                       aria-expanded={isOpen}
                       aria-label={`${isOpen ? "Collapse" : "Expand"} ${path.skill.name}`}
                     >
@@ -273,17 +363,15 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
                     <button
                       type="button"
                       onClick={() => openPathCourse(path)}
-                      className="min-w-0 flex-1 truncate py-1.5 pr-2 text-left text-sm font-medium hover:underline"
+                      className="min-w-0 flex-1 truncate rounded-md py-1.5 pr-2 text-left text-sm font-medium"
+                      title={path.skill.name}
                     >
                       {path.skill.name}
                     </button>
+                    <span className="pr-2 text-xs tabular-nums text-craft-faint">
+                      {path.completed}/{path.total}
+                    </span>
                   </div>
-
-                  <PathProgressCard
-                    completed={path.completed}
-                    total={path.total}
-                    progressPct={path.progressPct}
-                  />
 
                   {isOpen && (
                     <div className="ml-3 space-y-1 border-l border-craft-border pl-2">
@@ -315,31 +403,25 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           {!collapsed && "Log out"}
         </button>
       </div>
-    </aside>
-  );
-}
 
-function PathProgressCard({
-  completed,
-  total,
-  progressPct,
-}: {
-  completed: number;
-  total: number;
-  progressPct: number;
-}) {
-  return (
-    <div className="mx-1 mb-0.5 rounded-lg bg-craft-soft px-2.5 py-2 ring-1 ring-craft-border">
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-[11px] font-medium text-craft-muted">Progress</p>
-        <p className="text-[11px] tabular-nums text-craft-faint">
-          {completed}/{total}
-          <span className="ml-1 text-craft-faint">·</span>
-          <span className="ml-1 text-cyan-700 dark:text-cyan-400">{progressPct}%</span>
-        </p>
-      </div>
-      <ProgressBar className="mt-1.5 h-1 border-craft-border" value={progressPct} />
-    </div>
+      {!collapsed && (
+        <div
+          role="separator"
+          tabIndex={0}
+          aria-orientation="vertical"
+          aria-label="Resize sidebar"
+          onMouseDown={(event) => {
+            event.preventDefault();
+            startResizing(event);
+          }}
+          onKeyDown={handleResizeKeyDown}
+          className={clsx(
+            "absolute inset-y-0 right-0 hidden w-3 cursor-col-resize lg:flex",
+            isResizing ? "bg-cyan-500/20" : "hover:bg-cyan-500/10"
+          )}
+        />
+      )}
+    </aside>
   );
 }
 
@@ -352,12 +434,14 @@ function CourseTreeItem({ course, onNavigate }: CourseTreeItemProps) {
   const params = useParams();
   const pathname = usePathname();
   const queryClient = useQueryClient();
-  const isActiveCourse = params.slug === course.slug;
+  const courseHref = `/dashboard/courses/${course.slug}`;
+  const isActiveCourse = pathname === courseHref;
+  const hasActiveLesson = pathname.startsWith(`${courseHref}/lessons/`);
   const [open, setOpen] = useState(isActiveCourse);
 
   useEffect(() => {
-    if (isActiveCourse) setOpen(true);
-  }, [isActiveCourse]);
+    if (isActiveCourse || hasActiveLesson) setOpen(true);
+  }, [hasActiveLesson, isActiveCourse]);
 
   // Prefer lessons already embedded in the curriculum list; only fetch if missing.
   const needsFetch = open && !(course.lessons && course.lessons.length);
@@ -386,20 +470,31 @@ function CourseTreeItem({ course, onNavigate }: CourseTreeItemProps) {
       <div
         className={clsx(
           "flex items-center rounded-lg transition",
-          isActiveCourse ? "text-craft-ink" : "text-craft-muted hover:text-craft-ink"
+          isActiveCourse
+            ? "bg-craft-accent-soft text-cyan-800 shadow-soft ring-1 ring-cyan-500/20 dark:text-cyan-200"
+            : open || hasActiveLesson
+              ? "text-craft-ink"
+              : "text-craft-muted hover:bg-craft-soft hover:text-craft-ink"
         )}
       >
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="p-1.5 text-craft-faint hover:text-craft-ink"
+          className={clsx(
+            "rounded-md p-1.5 transition",
+            isActiveCourse
+              ? "text-cyan-700 dark:text-cyan-300"
+              : open || hasActiveLesson
+                ? "text-craft-ink"
+                : "text-craft-faint hover:text-craft-ink"
+          )}
           aria-expanded={open}
           aria-label={`${open ? "Collapse" : "Expand"} ${course.title}`}
         >
           <ChevronRight className={clsx("h-3.5 w-3.5 transition-transform", open && "rotate-90")} />
         </button>
         <Link
-          href={`/dashboard/courses/${course.slug}`}
+          href={courseHref}
           onClick={onNavigate}
           onMouseEnter={() => {
             void queryClient.prefetchQuery({
@@ -408,7 +503,8 @@ function CourseTreeItem({ course, onNavigate }: CourseTreeItemProps) {
               staleTime: 5 * 60_000,
             });
           }}
-          className="min-w-0 flex-1 truncate py-1.5 pr-2 text-sm font-medium hover:underline"
+          className="min-w-0 flex-1 truncate rounded-md py-1.5 pr-2 text-sm font-medium"
+          title={course.title}
         >
           {course.title}
         </Link>
@@ -439,6 +535,7 @@ function CourseTreeItem({ course, onNavigate }: CourseTreeItemProps) {
                     ? "bg-craft-accent-soft font-medium text-cyan-800 dark:text-cyan-200"
                     : "text-craft-muted hover:bg-craft-soft hover:text-craft-ink"
                 )}
+                title={lesson.title}
               >
                 {completed ? (
                   <Check className="h-3.5 w-3.5 shrink-0 text-emerald-600" />

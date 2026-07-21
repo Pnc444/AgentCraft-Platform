@@ -82,11 +82,43 @@ POST   /api/v1/auth/password/change/
 GET    /api/v1/courses/               with per-user progress annotations
 GET    /api/v1/courses/{slug}/
 GET    /api/v1/courses/{course_slug}/lessons/{lesson_slug}/
-POST   /api/v1/lessons/{id}/progress/ { "status": "in_progress" | "completed" }
+POST   /api/v1/lessons/{id}/progress/ { "status"?, "score"?, "video_watched"?, "interaction_event"? }
 
 GET    /api/v1/recommendations/
 GET    /api/v1/dashboard/stats/       profile stats + badges
 ```
+
+## Adding Lesson Content
+
+Lesson content is plain Markdown, synced into the database by slug.
+
+1. **Write the lesson file.** Drop a `.md` file at
+   `backend/apps/courses/content/<course-slug>/<lesson-slug>.md`
+   (e.g. `content/module-5-hermes/what-hermes-is.md`). Standard Markdown works;
+   code blocks get a copy-to-clipboard button automatically.
+
+2. **Register it in the curriculum.** In `backend/apps/courses/curriculum.py`, find (or add)
+   the module entry and make sure the lesson is listed:
+   `("Lesson Title", "lesson-slug", "theory" | "interactive" | "sandbox" | "agent_lab", minutes)`.
+   The lesson slug must match the filename. A course only shows in the app when its
+   `"published"` flag is `True`.
+
+3. **Load it into the app.** This syncs all modules under `courses/` into the database:
+
+   ```bash
+   docker compose exec backend python manage.py sync_content
+   ```
+
+   To sync just one course, add `--course <course-slug>`. Add `--prune` to delete DB lessons
+   that are no longer in the curriculum spec (warning: student progress on pruned lessons is lost).
+   `sync_content` is production-safe: it upserts by slug and never touches users, badges,
+   progress, admin-set video URLs, or admin-edited quiz questions.
+
+4. **Quiz questions** live in the lesson's sandbox config. Every lesson gets filler recap
+   questions by default; write real ones in Django admin (lesson → quiz/sandbox config) or
+   in the lesson spec in `curriculum.py`.
+
+For a full dev reset with demo data instead, use `seed_demo` (destructive, dev only).
 
 ## Conventions
 
