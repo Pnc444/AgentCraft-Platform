@@ -65,6 +65,11 @@ vi.mock("@/components/lessons/RecapQuiz", () => ({
     createElement("div", null, locked ? "quiz-locked" : "quiz-open"),
 }));
 
+vi.mock("@/components/lessons/PaginatedExam", () => ({
+  PaginatedExam: ({ locked }: { locked: boolean }) =>
+    createElement("div", null, locked ? "quiz-locked" : "quiz-open"),
+}));
+
 import LessonVideoPage from "@/app/(dashboard)/dashboard/courses/[slug]/lessons/[lessonSlug]/video/page";
 import LessonQuizPage from "@/app/(dashboard)/dashboard/courses/[slug]/lessons/[lessonSlug]/quiz/page";
 import { LessonShell } from "@/components/lessons/LessonShell";

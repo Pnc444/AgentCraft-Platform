@@ -13,6 +13,7 @@ interface RecapQuizProps {
   locked?: boolean;
   lockedReason?: string;
   onLockedAction?: () => void;
+  label?: string;
 }
 
 const PASS_SCORE = 80;
@@ -28,6 +29,7 @@ export function RecapQuiz({
   locked = false,
   lockedReason,
   onLockedAction,
+  label = "Recap Quiz",
 }: RecapQuizProps) {
   const bank = useMemo(
     () => questions.filter((q) => q.options?.length && typeof q.answer_index === "number"),
@@ -78,7 +80,7 @@ export function RecapQuiz({
   if (!bank.length) {
     return (
       <p className="text-sm text-craft-muted">
-        No recap quiz questions are configured for this lesson yet. Add them in the admin panel
+        No {label.toLowerCase()} questions are configured for this lesson yet. Add them in the admin panel
         under the lesson’s quiz / sandbox config.
       </p>
     );
@@ -87,7 +89,7 @@ export function RecapQuiz({
   if (locked) {
     return (
       <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
-        <p>{lockedReason || "Finish the required steps before taking the Recap Quiz."}</p>
+        <p>{lockedReason || `Finish the required steps before taking the ${label}.`}</p>
         {onLockedAction && (
           <button type="button" onClick={onLockedAction} className="btn-secondary mt-3 text-xs">
             Take me there
@@ -209,7 +211,7 @@ export function RecapQuiz({
             onClick={submit}
             className="btn-primary"
           >
-            Submit Recap Quiz
+            {`Submit ${label}`}
           </button>
         )}
         {showResult && !passed && (

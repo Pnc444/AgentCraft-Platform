@@ -9,7 +9,11 @@ import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 import { ProgressBar } from "@/components/shared/ProgressBar";
 import { Reveal } from "@/components/shared/Reveal";
 import { completedCheckpointIds, completedInteractionKeys } from "@/lib/lesson-interactions";
-import { lessonStepHref } from "@/lib/lesson-steps";
+import {
+  assessmentLabelForLessonType,
+  isExamLessonType,
+  lessonStepHref,
+} from "@/lib/lesson-steps";
 
 export default function LessonProgressPage() {
   const router = useRouter();
@@ -28,6 +32,9 @@ export default function LessonProgressPage() {
   } = useLessonWorkspace();
 
   if (!lesson) return null;
+
+  const isExamLesson = isExamLessonType(lesson.lesson_type);
+  const assessmentLabel = assessmentLabelForLessonType(lesson.lesson_type);
 
   const checkpointBlocks = useMemo(
     () =>
@@ -81,10 +88,10 @@ export default function LessonProgressPage() {
           <h2 className="text-base font-semibold text-craft-ink">Your progress</h2>
           <p className="mt-1 text-sm text-craft-muted">
             {lesson.status === "completed"
-              ? `Completed${lesson.score != null ? ` · Recap Quiz ${lesson.score}%` : ""}`
+              ? `Completed${lesson.score != null ? ` · ${assessmentLabel} ${lesson.score}%` : ""}`
               : needsVideo && !videoDone
-                ? "Watch the video, then pass the Recap Quiz (80%+) to finish."
-                : "Pass the Recap Quiz with 80% or higher to complete this lesson."}
+                ? `Watch the video, then pass the ${assessmentLabel} (80%+) to finish.`
+                : `Pass the ${assessmentLabel} with 80% or higher to complete this lesson.`}
           </p>
 
           <dl
@@ -111,7 +118,7 @@ export default function LessonProgressPage() {
             )}
             <div className="rounded-xl bg-craft-soft px-3 py-3 ring-1 ring-craft-border">
               <dt className="text-[11px] font-medium uppercase tracking-wide text-craft-faint">
-                Recap Quiz
+                {assessmentLabel}
               </dt>
               <dd className="mt-1 text-sm font-semibold text-craft-ink">
                 {lesson.score != null ? `${lesson.score}%` : "Not taken"}
@@ -210,7 +217,7 @@ export default function LessonProgressPage() {
                 className="btn-primary"
               >
                 <ClipboardCheck className="h-4 w-4" />
-                Take Recap Quiz
+                {`Take ${assessmentLabel}`}
               </button>
             )}
             {lesson.status === "completed" && (
@@ -220,13 +227,15 @@ export default function LessonProgressPage() {
                   Lesson complete
                 </span>
                 <Link href={lessonStepHref(slug, lessonSlug, "quiz")} className="btn-secondary">
-                  Review Recap Quiz
+                  {`Review ${assessmentLabel}`}
                 </Link>
               </>
             )}
-            <Link href={lessonStepHref(slug, lessonSlug, "content")} className="btn-secondary">
-              Review content
-            </Link>
+            {!isExamLesson && (
+              <Link href={lessonStepHref(slug, lessonSlug, "content")} className="btn-secondary">
+                Review content
+              </Link>
+            )}
             {videoUrl && (
               <Link href={lessonStepHref(slug, lessonSlug, "video")} className="btn-secondary">
                 {lesson.video_watched

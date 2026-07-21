@@ -3,6 +3,7 @@ import type {
   CapstoneAssignment,
   GuidedLessonBlock,
   LessonArtifact,
+  LessonType,
   LessonStatus,
 } from "@/types";
 
@@ -77,6 +78,19 @@ export function lessonStepHref(
   step: LessonStep = "content"
 ) {
   return `/dashboard/courses/${courseSlug}/lessons/${lessonSlug}/${step}`;
+}
+
+/** First step a lesson should open on when launched from course/dashboard navigation. */
+export function entryStepForLessonType(lessonType: LessonType | string): LessonStep {
+  return lessonType === "quiz" ? "quiz" : "content";
+}
+
+export function isExamLessonType(lessonType: LessonType | string): boolean {
+  return lessonType === "quiz";
+}
+
+export function assessmentLabelForLessonType(lessonType: LessonType | string): string {
+  return isExamLessonType(lessonType) ? "Exam" : "Recap Quiz";
 }
 
 /** Coarse status label — prefer `lessonStepProgress` in the lesson shell. */

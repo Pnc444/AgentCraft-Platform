@@ -4,7 +4,12 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { BookOpen, Bot, ClipboardCheck, Gauge, MonitorPlay, Timer } from "lucide-react";
 import clsx from "clsx";
-import { lessonStepHref, type LessonStep } from "@/lib/lesson-steps";
+import {
+  assessmentLabelForLessonType,
+  isExamLessonType,
+  lessonStepHref,
+  type LessonStep,
+} from "@/lib/lesson-steps";
 import { Reveal } from "@/components/shared/Reveal";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 
@@ -29,16 +34,19 @@ export function LessonShell({ children }: { children: React.ReactNode }) {
   if (!lesson) return <p className="text-craft-muted">Lesson not found.</p>;
 
   const hasVideo = !!videoUrl;
+  const isExamLesson = isExamLessonType(lesson.lesson_type);
+  const assessmentLabel = assessmentLabelForLessonType(lesson.lesson_type);
 
   const steps: { id: LessonStep; label: string; icon: typeof BookOpen }[] = [
-    { id: "content", label: "Content", icon: BookOpen },
+    ...(isExamLesson ? [] : [{ id: "content" as const, label: "Content", icon: BookOpen }]),
     ...(hasVideo ? [{ id: "video" as const, label: "Video", icon: MonitorPlay }] : []),
-    { id: "quiz", label: "Recap Quiz", icon: ClipboardCheck },
+    { id: "quiz", label: assessmentLabel, icon: ClipboardCheck },
     { id: "progress", label: "Progress", icon: Gauge },
   ];
 
   const active =
-    steps.find((step) => pathname.endsWith(`/${step.id}`))?.id ?? ("content" as LessonStep);
+    steps.find((step) => pathname.endsWith(`/${step.id}`))?.id ??
+    (isExamLesson ? "quiz" : ("content" as LessonStep));
 
   return (
     <div className="mx-auto w-full max-w-6xl lg:ml-[clamp(0px,calc(50vw-36rem-var(--sidebar-w,18rem)),calc(100%-72rem))] lg:mr-0">

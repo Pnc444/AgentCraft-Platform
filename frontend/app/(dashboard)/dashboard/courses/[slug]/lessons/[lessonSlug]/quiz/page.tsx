@@ -3,11 +3,14 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, ClipboardCheck } from "lucide-react";
-import { LessonSection } from "@/components/lessons/LessonSection";
-import { RecapQuiz } from "@/components/lessons/RecapQuiz";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { PaginatedExam } from "@/components/lessons/PaginatedExam";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
-import { lessonStepHref } from "@/lib/lesson-steps";
+import {
+  assessmentLabelForLessonType,
+  isExamLessonType,
+  lessonStepHref,
+} from "@/lib/lesson-steps";
 
 export default function LessonQuizPage() {
   const router = useRouter();
@@ -15,6 +18,7 @@ export default function LessonQuizPage() {
     slug,
     lessonSlug,
     lesson,
+    prev,
     recapQuestions,
     needsVideo,
     videoDone,
@@ -30,36 +34,67 @@ export default function LessonQuizPage() {
 
   if (!lesson) return null;
 
-  return (
-    <div className="space-y-4">
-      <LessonSection
-        title="Recap Quiz"
-        icon={<ClipboardCheck className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />}
-      >
-        <RecapQuiz
-          questions={recapQuestions}
-          locked={needsVideo && !videoDone}
-          lockedReason="Watch the lesson video to the end before taking the Recap Quiz."
-          onLockedAction={() => {
-            setNotice("Watch the lesson video all the way through before taking the Recap Quiz.");
-            router.push(lessonStepHref(slug, lessonSlug, "video"));
-          }}
-          onPassed={(score) => {
-            if (lesson.status !== "completed") {
-              updateProgress({ status: "completed", score });
-            }
-            setNotice(null);
-            router.push(lessonStepHref(slug, lessonSlug, "progress"));
-          }}
-        />
-      </LessonSection>
+  const isExamLesson = isExamLessonType(lesson.lesson_type);
+  const assessmentLabel = assessmentLabelForLessonType(lesson.lesson_type);
 
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-        <Link href={lessonStepHref(slug, lessonSlug, "content")} className="btn-secondary">
-          <ChevronLeft className="h-4 w-4" />
-          Back to Content
-        </Link>
-        <Link href={lessonStepHref(slug, lessonSlug, "progress")} className="btn-secondary">
+  return (
+    <div className="space-y-3">
+      {/*
+        Paginated one-question-per-slide UI — content-sized card (same as
+        Modules 4 / 6 / 8). One focused question, no full-screen empty space.
+      */}
+      <PaginatedExam
+        questions={recapQuestions}
+        label={assessmentLabel}
+        locked={needsVideo && !videoDone}
+        lockedReason={`Watch the lesson video to the end before taking the ${assessmentLabel}.`}
+        onLockedAction={() => {
+          setNotice(
+            `Watch the lesson video all the way through before taking the ${assessmentLabel}.`
+          );
+          router.push(lessonStepHref(slug, lessonSlug, "video"));
+        }}
+        onPassed={(score) => {
+          if (lesson.status !== "completed") {
+            updateProgress({ status: "completed", score });
+          }
+          setNotice(null);
+          router.push(lessonStepHref(slug, lessonSlug, "progress"));
+        }}
+      />
+
+      <div className="flex flex-wrap items-center justify-between gap-2 pt-0.5">
+        {isExamLesson ? (
+          prev ? (
+            <Link
+              href={lessonStepHref(slug, prev.slug, "content")}
+              className="inline-flex items-center gap-1 text-sm text-craft-muted transition hover:text-craft-ink"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              {prev.title}
+            </Link>
+          ) : (
+            <Link
+              href={`/dashboard/courses/${slug}`}
+              className="inline-flex items-center gap-1 text-sm text-craft-muted transition hover:text-craft-ink"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Back to Module
+            </Link>
+          )
+        ) : (
+          <Link
+            href={lessonStepHref(slug, lessonSlug, "content")}
+            className="inline-flex items-center gap-1 text-sm text-craft-muted transition hover:text-craft-ink"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Back to Content
+          </Link>
+        )}
+        <Link
+          href={lessonStepHref(slug, lessonSlug, "progress")}
+          className="inline-flex items-center gap-1 text-sm text-craft-muted transition hover:text-craft-ink"
+        >
           Progress
           <ChevronRight className="h-4 w-4" />
         </Link>

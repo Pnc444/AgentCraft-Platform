@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import clsx from "clsx";
 import {
   CheckCircle2,
@@ -90,6 +91,7 @@ function getAdaptiveCheckpointQuestions(
 }
 
 export default function LessonContentPage() {
+  const router = useRouter();
   const {
     slug,
     lessonSlug,
@@ -103,7 +105,14 @@ export default function LessonContentPage() {
     updateProgress,
   } = useLessonWorkspace();
 
+  useEffect(() => {
+    if (!lesson || lesson.lesson_type !== "quiz") return;
+    router.replace(lessonStepHref(slug, lessonSlug, "quiz"));
+  }, [lesson, lessonSlug, router, slug]);
+
   if (!lesson) return null;
+
+  if (lesson.lesson_type === "quiz") return null;
 
   const nextStep = stepAfterContent(!!videoUrl);
   const nextLabel = nextStep === "video" ? "Continue to Video" : "Continue to Recap Quiz";

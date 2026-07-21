@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import clsx from "clsx";
 import { getCourse, getCourses, getLesson } from "@/lib/api/courses";
+import { entryStepForLessonType, lessonStepHref } from "@/lib/lesson-steps";
 import { useAuthStore } from "@/stores/authStore";
 import { Logo, LogoIcon } from "@/components/shared/Logo";
 import type { CourseDetail, Skill } from "@/types";
@@ -516,7 +517,11 @@ function CourseTreeItem({ course, onNavigate }: CourseTreeItemProps) {
       {open && (
         <div className="ml-4 space-y-0.5 border-l border-craft-border pl-2">
           {lessons.map((lesson) => {
-            const href = `/dashboard/courses/${course.slug}/lessons/${lesson.slug}/content`;
+            const href = lessonStepHref(
+              course.slug,
+              lesson.slug,
+              entryStepForLessonType(lesson.lesson_type)
+            );
             const active =
               pathname === href ||
               pathname.startsWith(`/dashboard/courses/${course.slug}/lessons/${lesson.slug}/`);

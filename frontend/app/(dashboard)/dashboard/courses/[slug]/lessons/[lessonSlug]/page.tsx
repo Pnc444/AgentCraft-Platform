@@ -1,9 +1,23 @@
-import { redirect } from "next/navigation";
+"use client";
 
-export default function LessonIndexPage({
-  params,
-}: {
-  params: { slug: string; lessonSlug: string };
-}) {
-  redirect(`/dashboard/courses/${params.slug}/lessons/${params.lessonSlug}/content`);
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
+import { entryStepForLessonType, lessonStepHref } from "@/lib/lesson-steps";
+
+export default function LessonIndexPage() {
+  const router = useRouter();
+  const { slug, lessonSlug, lesson, isLoading } = useLessonWorkspace();
+
+  useEffect(() => {
+    if (!lesson) return;
+    router.replace(
+      lessonStepHref(slug, lessonSlug, entryStepForLessonType(lesson.lesson_type))
+    );
+  }, [lesson, lessonSlug, router, slug]);
+
+  if (isLoading || !lesson) return null;
+
+  return null;
 }

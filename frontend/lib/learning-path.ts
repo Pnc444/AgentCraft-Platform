@@ -1,4 +1,5 @@
 import type { Course, CourseDetail, LessonSummary } from "@/types";
+import { entryStepForLessonType, lessonStepHref } from "@/lib/lesson-steps";
 
 export interface LessonRef {
   courseSlug: string;
@@ -50,5 +51,9 @@ export function deriveLearningPath(courses: Course[], details: CourseDetail[]) {
 }
 
 export function lessonHref(ref: LessonRef) {
-  return `/dashboard/courses/${ref.courseSlug}/lessons/${ref.lesson.slug}/content`;
+  return lessonStepHref(
+    ref.courseSlug,
+    ref.lesson.slug,
+    entryStepForLessonType(ref.lesson.lesson_type)
+  );
 }

@@ -7,6 +7,7 @@ import { Check, CircleDashed, FileText } from "lucide-react";
 import clsx from "clsx";
 import { getCourse } from "@/lib/api/courses";
 import type { CourseDetail } from "@/types";
+import { entryStepForLessonType, lessonStepHref } from "@/lib/lesson-steps";
 import { DifficultyBadge } from "@/components/dashboard/DifficultyBadge";
 import { ProgressBar } from "@/components/shared/ProgressBar";
 import { Reveal } from "@/components/shared/Reveal";
@@ -110,7 +111,11 @@ export default function CourseDetailPage() {
                   </p>
                 </div>
                 <Link
-                  href={`/dashboard/courses/${course.slug}/lessons/${lesson.slug}/content`}
+                  href={lessonStepHref(
+                    course.slug,
+                    lesson.slug,
+                    entryStepForLessonType(lesson.lesson_type)
+                  )}
                   className="btn-secondary shrink-0 px-4 py-2"
                 >
                   {cta}
