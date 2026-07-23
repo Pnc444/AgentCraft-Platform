@@ -1573,7 +1573,7 @@ CURRICULUM = [
         "title": "Claude (Build #3)",
         "slug": "module-7-claude",
         "description": "Build an agent with Claude Code — no code required: install it with a spending cap, teach it with CLAUDE.md and skills, create a least-privilege subagent, and assemble a working research notebook agent.",
-        "published": True,  # TEMP: local preview only — revert to False before merge, or keep if ready to publish
+        "published": True,
         "difficulty": 2,
         "lessons": [
             ("What Claude Code Is", "what-claude-code-is", "theory", 8, {"questions": MODULE_7_RECAP["what-claude-code-is"]}),
