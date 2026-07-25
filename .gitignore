@@ -5,6 +5,8 @@ __pycache__/
 db.sqlite3
 staticfiles/
 media/
+.pytest_cache/
+.mypy_cache/
 
 # Node
 node_modules/
@@ -18,8 +20,9 @@ node_modules/
 .vscode/
 .idea/
 .DS_Store
+.fuse_hidden*
 
 # Local planning / working notes (not for commit)
 AgentCraft.md
 Untitled Document 7
-.env
+CONTENT-TODO.md

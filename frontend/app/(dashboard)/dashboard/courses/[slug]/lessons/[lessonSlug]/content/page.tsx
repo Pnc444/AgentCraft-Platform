@@ -14,6 +14,7 @@ import {
   FileText,
   GraduationCap,
   Lightbulb,
+  MonitorPlay,
   Sparkles,
   Wrench,
 } from "lucide-react";
@@ -99,6 +100,7 @@ export default function LessonContentPage() {
     course,
     videoUrl,
     prev,
+    next,
     checkpointQuestions,
     guidedBlocks,
     artifactBundle,
@@ -115,7 +117,7 @@ export default function LessonContentPage() {
   if (lesson.lesson_type === "quiz") return null;
 
   const nextStep = stepAfterContent(!!videoUrl);
-  const nextLabel = nextStep === "video" ? "Continue to Video" : "Continue to Recap Quiz";
+  const hasVideo = nextStep === "video";
   const checkpointBlocks = useMemo(
     () =>
       guidedBlocks
@@ -544,20 +546,49 @@ export default function LessonContentPage() {
         </LessonSection>
       )}
 
+      {/* End-of-lesson: quiz prompt + navigation */}
       <Reveal delay={80}>
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-          {prev ? (
-            <Link href={lessonStepHref(slug, prev.slug, "content")} className="btn-secondary">
-              <ChevronLeft className="h-4 w-4" />
-              {prev.title}
+        <div className="border-t border-craft-border pt-8">
+          <div className="flex flex-col items-center gap-3 text-center">
+            <h2 className="text-lg font-bold text-craft-ink">
+              {hasVideo ? "Up next: the lesson video" : "Ready to check your understanding?"}
+            </h2>
+            <p className="max-w-md text-sm text-craft-muted">
+              {hasVideo
+                ? "Watch the video, then take the recap quiz to finish this lesson."
+                : "Pass the recap quiz (80%+) to complete this lesson and move on."}
+            </p>
+            <Link href={lessonStepHref(slug, lessonSlug, nextStep)} className="btn-primary mt-1">
+              {hasVideo ? (
+                <>
+                  <MonitorPlay className="h-4 w-4" />
+                  Watch Video
+                </>
+              ) : (
+                <>
+                  <ClipboardCheck className="h-4 w-4" />
+                  Start Recap Quiz
+                </>
+              )}
             </Link>
-          ) : (
-            <span />
-          )}
-          <Link href={lessonStepHref(slug, lessonSlug, nextStep)} className="btn-primary">
-            {nextLabel}
-            <ChevronRight className="h-4 w-4" />
-          </Link>
+          </div>
+
+          <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+            {prev ? (
+              <Link href={lessonStepHref(slug, prev.slug, "content")} className="btn-secondary">
+                <ChevronLeft className="h-4 w-4" />
+                {prev.title}
+              </Link>
+            ) : (
+              <span />
+            )}
+            {next && (
+              <Link href={lessonStepHref(slug, next.slug, "content")} className="btn-secondary">
+                {next.title}
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            )}
+          </div>
         </div>
       </Reveal>
     </div>

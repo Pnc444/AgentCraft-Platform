@@ -113,7 +113,7 @@ def load_content(course_slug: str, lesson_slug: str, title: str) -> str:
 
 
 def default_recap_questions(title: str, slug: str) -> list[dict]:
-    """Filler recap bank so every lesson can be completed (>=80%) until real questions are written."""
+    """Filler recap bank so every lesson can be completed (≥80%) until real questions are written."""
     return [
         {
             "id": f"{slug}-rq1",
@@ -427,12 +427,1244 @@ Answer every question. You can retry as many times as you need.
 }
 
 
+# Module 5 recap questions — real questions written from the lesson content.
+MODULE_5_RECAP = {
+    "what-hermes-is": [
+        {
+            "id": "m5-wh-1",
+            "prompt": "What is Hermes?",
+            "options": [
+                "An AI model that runs on your machine",
+                "An orchestrator that sits between you and a model provider, and executes actions",
+                "A chat website like ChatGPT",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-wh-2",
+            "prompt": "In the three-box diagram, which box runs on YOUR machine?",
+            "options": [
+                "The agent loop + tools (Hermes itself)",
+                "The model provider",
+                "None of them \u2014 everything runs in the cloud",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-wh-3",
+            "prompt": "Where does the \u201cheavy thinking\u201d happen?",
+            "options": [
+                "On your machine, inside the container",
+                "In the gateway (e.g. Telegram)",
+                "On the model provider's servers",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m5-wh-4",
+            "prompt": "What is a gateway in the Hermes architecture?",
+            "options": [
+                "How tasks get in \u2014 the CLI now, chat apps later",
+                "The firewall between the agent and the internet",
+                "The database where memories are stored",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-wh-5",
+            "prompt": "Why does this module care so much about safety?",
+            "options": [
+                "Because the model might become self-aware",
+                "Because the *doing* \u2014 shell commands, file access \u2014 happens on your machine",
+                "Because OpenRouter requires it",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "openrouter-and-your-api-key": [
+        {
+            "id": "m5-or-1",
+            "prompt": "Why does OpenRouter setup happen BEFORE installing Hermes?",
+            "options": [
+                "OpenRouter must approve your machine first",
+                "The v0.18.2 installer launches a setup wizard that asks for your provider and API key mid-install",
+                "Hermes refuses to install without a key on disk",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-or-2",
+            "prompt": "Why create the OpenRouter account with a dedicated email?",
+            "options": [
+                "One identity for the agent means one kill switch if anything goes wrong",
+                "OpenRouter bans personal email domains",
+                "It gets you more free credits",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-or-3",
+            "prompt": "What must you set in the OpenRouter dashboard before anything else?",
+            "options": [
+                "A profile picture for the agent",
+                "Two-factor authentication",
+                "A hard spending cap (the course uses $5)",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m5-or-4",
+            "prompt": "What should you expect from a :free model?",
+            "options": [
+                "Identical performance to paid models",
+                "Simple requests are quick, but hard tasks can mean minutes of visible trial-and-error \u2014 normal, not broken",
+                "It only answers 10 questions per day",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-or-5",
+            "prompt": "Why does the course use OpenRouter?",
+            "options": [
+                "It's the only provider Hermes supports",
+                "One API key, many models \u2014 swapping models is a config change, not a rebuild",
+                "It's the fastest provider",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "install-and-setup-wizard": [
+        {
+            "id": "m5-iw-1",
+            "prompt": "What does choosing Blank Slate in the wizard mean?",
+            "options": [
+                "Everything off except Provider & Model, File Operations, and Terminal \u2014 you opt in to each capability deliberately",
+                "The agent starts with no model configured",
+                "All 73 bundled skills are enabled",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-iw-2",
+            "prompt": "Which terminal backend must you NEVER use for a running agent?",
+            "options": [
+                "Docker",
+                "Local \u2014 no isolation at all: the agent runs as you, with your files and network",
+                "SSH",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-iw-3",
+            "prompt": "You chose Docker in the wizard, but Docker Desktop shows no Hermes container. Why?",
+            "options": [
+                "The wizard only wrote config \u2014 the container is created the first time the agent runs a command",
+                "The install failed silently",
+                "Containers are invisible until you sign in to Docker Hub",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-iw-4",
+            "prompt": "What state should everyone be in at this lesson's checkpoint?",
+            "options": [
+                "First conversation completed",
+                "Wizard done, /config verified (docker backend, :free model, file+terminal toolsets), no conversation yet",
+                "Agent connected to Telegram",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-iw-5",
+            "prompt": "The course pins Hermes v0.18.2. What should you do if your wizard looks slightly different?",
+            "options": [
+                "Uninstall Docker and try again",
+                "Expect version drift \u2014 newer versions likely work, minor differences are normal",
+                "Stop the course and wait for an update",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "first-conversation-and-container": [
+        {
+            "id": "m5-fc-1",
+            "prompt": "You ask the agent to run `whoami` and it answers `root`. What does that tell you?",
+            "options": [
+                "The agent has hacked your machine's admin account",
+                "The command ran as the container's root user \u2014 inside the box, not as you",
+                "Hermes always lies about usernames",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-fc-2",
+            "prompt": "Where does your API key live once the agent is running?",
+            "options": [
+                "In the .env file on the host \u2014 commands inside the container never see it",
+                "Copied into the container at /workspace/.env",
+                "Uploaded to the model provider for safekeeping",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-fc-3",
+            "prompt": "You give the agent a hard request and it works for minutes, visibly trying and retrying commands. What are you watching?",
+            "options": [
+                "The container throttling it \u2014 raise the CPU limit",
+                "The agent loop running live: model picks a tool call, it runs in the container, the result feeds back, repeat",
+                "Your spending cap being hit",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-fc-4",
+            "prompt": "How do you verify the sandbox container actually exists?",
+            "options": [
+                "Ask the agent \u2014 it always knows",
+                "Run `docker ps` in your own terminal and look for the hermes container",
+                "Check Task Manager for a process called hermes-box",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-fc-5",
+            "prompt": "After a week of sessions you have several stopped hermes containers. What do you do?",
+            "options": [
+                "Never touch them \u2014 the agent needs its history",
+                "Delete the old ones \u2014 each session gets its own container, and they're disposable by design",
+                "Merge them into one container",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "sandbox-verification-lab": [
+        {
+            "id": "m5-sv-1",
+            "prompt": "What's the point of the escape-attempt lab?",
+            "options": [
+                "You verify the containment yourself \u2014 failed escapes teach the isolation model",
+                "To find bugs in Docker and report them",
+                "To measure how fast the agent responds",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-sv-2",
+            "prompt": "You ask the agent to read a file on your Desktop. What happens?",
+            "options": [
+                "It reads it \u2014 the sandbox only blocks writes",
+                "The path doesn't exist \u2014 the container has its own filesystem",
+                "Docker shows a permission popup",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-sv-3",
+            "prompt": "The agent appends a line to /etc/hosts and it WORKS. Why is that still contained?",
+            "options": [
+                "It edited the container's copy \u2014 your machine's file is untouched and the change dies with the container",
+                "It isn't \u2014 that's a security hole you should report",
+                "Docker automatically reverts the change every minute",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-sv-4",
+            "prompt": "The container caps processes at 256. What does that protect against?",
+            "options": [
+                "The model sending too many API requests",
+                "A runaway loop (like a fork bomb) taking down the machine \u2014 it hits the ceiling instead",
+                "Other students connecting to your container",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-sv-6",
+            "prompt": "You ask the agent to list /mnt/c/Users/ and it's empty. What does that mean?",
+            "options": [
+                "The sandbox is holding \u2014 the container doesn't get WSL's mount of your C: drive. If your files DID show up, the setup is misconfigured",
+                "Windows is broken",
+                "The agent refused the command",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m5-sv-5",
+            "prompt": "\u201cFetch https://example.com and summarize it\u201d works from inside the sandbox. What's the lesson?",
+            "options": [
+                "The sandbox is broken and needs reconfiguring",
+                "Docker limits what the agent can *touch*, not what it can *say to the internet* \u2014 that's Module 6's problem",
+                "Websites can't tell the request came from a container",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "put-it-to-work": [
+        {
+            "id": "m5-pw-1",
+            "prompt": "What's the core difference between a chatbot and an agent?",
+            "options": [
+                "An agent uses a bigger model",
+                "A chatbot goes text-in/text-out; an agent pursues a goal by acting, reading the result, and acting again in a loop",
+                "An agent always runs in the cloud",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-pw-2",
+            "prompt": "In Task 1, why can a chatbot NOT do what your agent did?",
+            "options": [
+                "A chatbot can't count that high",
+                "A chatbot can only produce text \u2014 it can't write a program and actually run it on a real machine",
+                "A chatbot isn't allowed to use Python",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-pw-3",
+            "prompt": "Where does the code the agent writes actually run?",
+            "options": [
+                "Directly on your Windows machine",
+                "On OpenRouter's servers",
+                "Inside the locked-down Docker container you built",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m5-pw-4",
+            "prompt": "You state a GOAL instead of a list of commands. What does the agent do with it?",
+            "options": [
+                "Asks you for the exact commands to run",
+                "Figures out the steps itself and executes them \u2014 that's the loop, and the autonomy",
+                "Refuses unless you enable admin mode",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m5-pw-5",
+            "prompt": "This is still the 'minimal' agent. What makes an agent MORE autonomous?",
+            "options": [
+                "Capabilities Blank Slate left off \u2014 skills, memory, gateways, cron, delegation",
+                "A faster internet connection",
+                "Turning off the Docker sandbox",
+            ],
+            "answer_index": 0,
+        },
+    ],
+}
+
+
+# Module 7 recap questions — real questions written from the lesson content.
+MODULE_7_RECAP = {
+    "what-claude-code-is": [
+        {
+            "id": "m7-wc-1",
+            "prompt": "In the three-box diagram, what is Claude Code?",
+            "options": [
+                "The model provider",
+                "The agent loop + tools box — an orchestrator, not a model",
+                "A gateway like Telegram",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m7-wc-2",
+            "prompt": "What's different about Claude Code's boxes compared to Hermes?",
+            "options": [
+                "The agent loop runs in the cloud instead of your machine",
+                "There is no model provider box",
+                "The agent and the model come from the same company — no OpenRouter-style model swapping",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m7-wc-3",
+            "prompt": "How does Claude Code's safety approach differ from the Hermes build?",
+            "options": [
+                "It ships with a built-in permission system, instead of us adding a Docker sandbox before first run",
+                "It has no safety features, so Docker is mandatory",
+                "It refuses to run shell commands entirely",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-wc-4",
+            "prompt": "Which concept is genuinely NEW in build #3 (not in Hermes or OpenClaw)?",
+            "options": [
+                "Skills",
+                "Subagents — specialist agents the main agent delegates to",
+                "Persistent memory files",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m7-wc-5",
+            "prompt": "How do we customize Claude Code in this module?",
+            "options": [
+                "By writing Python with the Agent SDK",
+                "By editing markdown and config files — no code",
+                "Through a web dashboard",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "install-and-first-session": [
+        {
+            "id": "m7-if-1",
+            "prompt": "Why do we use prepaid Console credits with auto-reload OFF?",
+            "options": [
+                "Because subscriptions don't work with Claude Code",
+                "Prepaid credits ARE the spending cap — when they're gone, the agent stops",
+                "Auto-reload is a security vulnerability",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m7-if-2",
+            "prompt": "Where does the first session happen, and why?",
+            "options": [
+                "In an empty practice folder — same blank-slate discipline as the Hermes install",
+                "In your most important project, to test it properly",
+                "In the cloud, so nothing local is at risk",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-if-3",
+            "prompt": "What happens in default permission mode when the agent wants to write a file?",
+            "options": [
+                "It writes the file and reports afterwards",
+                "It asks for your approval first",
+                "It refuses to write files at all",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m7-if-4",
+            "prompt": "Why does the lesson have you DENY a request on purpose?",
+            "options": [
+                "To exercise the boundary: the agent acts on your machine, so you should see refusal work",
+                "Because the delete command would have escaped the folder",
+                "To trigger a refund of unused tokens",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-if-5",
+            "prompt": "What does the working directory shown at the prompt represent?",
+            "options": [
+                "Where Claude Code was installed",
+                "The agent's default territory for the session",
+                "A temporary cache that is deleted on exit",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "claudemd-and-skills": [
+        {
+            "id": "m7-cs-1",
+            "prompt": "What is CLAUDE.md?",
+            "options": [
+                "Standing instructions loaded automatically every session — prompt-writing you do once",
+                "A log of everything the agent has done",
+                "The agent's source code",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-cs-2",
+            "prompt": "What decides WHEN a skill gets used?",
+            "options": [
+                "The order skills appear in the folder",
+                "The description in its YAML frontmatter — the trigger",
+                "Skills only run when typed as /commands",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m7-cs-3",
+            "prompt": "Standing rule vs procedure — which file does each go in?",
+            "options": [
+                "Rules in a skill; procedures in CLAUDE.md",
+                "Both go in CLAUDE.md",
+                "Always-on rules in CLAUDE.md; triggered procedures in a skill",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m7-cs-4",
+            "prompt": "Your skill overwrites the log instead of appending. What's the fix?",
+            "options": [
+                "Edit the skill's prose to make the append step unambiguous, and rerun",
+                "Reinstall Claude Code",
+                "Switch the skill from markdown to Python",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-cs-5",
+            "prompt": "Where do the OpenClaw skills you wrote in Module 6 fit in?",
+            "options": [
+                "They're incompatible — Claude Code uses JSON skills",
+                "Same SKILL.md idea — the format transfers almost line for line",
+                "OpenClaw skills must be compiled first",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "custom-subagents": [
+        {
+            "id": "m7-su-1",
+            "prompt": "What is a subagent?",
+            "options": [
+                "A smaller, cheaper model",
+                "A specialist agent with its own instructions, tools, and context that the main agent delegates to",
+                "A backup copy of the main agent",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m7-su-2",
+            "prompt": "The reviewer has `tools: Read, Glob, Grep`. Why can't it damage your files?",
+            "options": [
+                "Its system prompt politely asks it not to",
+                "Subagents can never touch files",
+                "No Write, Edit, or Bash — it is physically unable to modify anything",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m7-su-3",
+            "prompt": "Which Module 4.5 principle do restricted subagent toolsets implement?",
+            "options": [
+                "Least privilege — minimum access needed for the job, now per-agent",
+                "Disposability — delete and rebuild",
+                "Port isolation",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-su-4",
+            "prompt": "What comes back to the main conversation after a delegation?",
+            "options": [
+                "The subagent's full reading and exploration history",
+                "Only the subagent's final report — its working context stays separate",
+                "Nothing; you must open the subagent's log file",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m7-su-5",
+            "prompt": "Where is a subagent defined?",
+            "options": [
+                "One markdown file in .claude/agents/ — YAML badge on top, job description below",
+                "In CLAUDE.md under a ## Subagents heading",
+                "In a Python class registered with the CLI",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "build-your-agent": [
+        {
+            "id": "m7-ba-1",
+            "prompt": "The research notebook agent is built from what?",
+            "options": [
+                "Four markdown/config files — CLAUDE.md, two skills, one subagent",
+                "A Python script using the Agent SDK",
+                "A Docker compose file",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-ba-2",
+            "prompt": "You ask for research and the research-note skill doesn't fire. First debugging move?",
+            "options": [
+                "Sharpen the skill's description: line — that's where the trigger lives",
+                "Reinstall the skill folder",
+                "Grant the skill more tools",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-ba-3",
+            "prompt": "Why must 'have the reviewer delete log.md' fail?",
+            "options": [
+                "log.md is write-protected by the OS",
+                "The reviewer's tools: line grants no Write/Edit/Bash — deletion is impossible for it",
+                "CLAUDE.md forbids the reviewer from reading logs",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m7-ba-4",
+            "prompt": "The agent happily saves a note to your Desktop. What does that tell you?",
+            "options": [
+                "Your CLAUDE.md boundary rule is too vague — fix the wording and retest",
+                "Claude Code ignores CLAUDE.md",
+                "The Desktop is inside the workspace",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m7-ba-5",
+            "prompt": "Across the three builds, what did the red-team checks have in common?",
+            "options": [
+                "They prove the model can't lie",
+                "You verify the safety boundary yourself instead of trusting that it works",
+                "They measure token spend",
+            ],
+            "answer_index": 1,
+        },
+    ],
+}
+
+
+# Module 4.5 recap questions — real questions written from the lesson content.
+MODULE_4_5_RECAP = {
+    "why-docker": [
+        {
+            "id": "m45-wd-1",
+            "prompt": "What problem is Docker primarily built to solve?",
+            "options": [
+                "Computers not having enough storage for big apps",
+                "\u201cIt works on my machine\u201d \u2014 code breaking on other computers due to environment differences",
+                "Slow internet connections when downloading software",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m45-wd-2",
+            "prompt": "What does a Docker container package together?",
+            "options": [
+                "The app plus everything it needs to run \u2014 code, runtime, libraries, settings",
+                "Only the app's source code",
+                "Just the operating system, with no application code",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m45-wd-3",
+            "prompt": "Why does isolation matter when running AI agents?",
+            "options": [
+                "It makes the agent respond faster",
+                "It hides the agent from other students",
+                "An agent in a container can't wreck the rest of your computer",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m45-wd-4",
+            "prompt": "Why does the course run every student's agent in the same container environment?",
+            "options": [
+                "Reproducibility \u2014 the builds behave the same for everyone",
+                "Because Docker is the only way to run Python",
+                "So students can't modify their own code",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m45-wd-5",
+            "prompt": "In the shipping-container analogy, what is your computer?",
+            "options": [
+                "The crane",
+                "The ship \u2014 it carries containers without caring what's inside",
+                "The cargo inside the container",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "docker-main-terms": [
+        {
+            "id": "m45-mt-1",
+            "prompt": "What's the difference between an image and a container?",
+            "options": [
+                "An image is a read-only snapshot; a container is a running instance of it",
+                "They're two names for the same thing",
+                "A container is the recipe; an image is the dish",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m45-mt-2",
+            "prompt": "Where does `docker run` download images from if they're not on your machine?",
+            "options": [
+                "Your operating system's app store",
+                "GitHub",
+                "Docker Hub (a registry)",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m45-mt-3",
+            "prompt": "What is a volume for?",
+            "options": [
+                "Persistent storage that survives even when the container is deleted",
+                "Making containers run louder",
+                "Limiting how much CPU a container can use",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m45-mt-4",
+            "prompt": "What does port mapping do?",
+            "options": [
+                "Deletes unused network ports",
+                "Connects a port on your machine to a port inside a container",
+                "Encrypts traffic between containers",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m45-mt-5",
+            "prompt": "If you delete a container, what happens to the image it was made from?",
+            "options": [
+                "The image is deleted too",
+                "The image becomes read-only",
+                "Nothing \u2014 deleting a container never touches the image",
+            ],
+            "answer_index": 2,
+        },
+    ],
+    "installing-docker-desktop": [
+        {
+            "id": "m45-id-1",
+            "prompt": "On Windows, what should you do with the \u201cUse WSL 2\u201d option during install?",
+            "options": [
+                "Keep it checked \u2014 Docker Desktop on Windows runs on WSL 2",
+                "Uncheck it to save disk space",
+                "It doesn't matter either way",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m45-id-2",
+            "prompt": "Do you need to create a Docker account for this course?",
+            "options": [
+                "Yes, containers won't run without one",
+                "No \u2014 you can skip sign-in; it's not required",
+                "Only on Mac",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m45-id-3",
+            "prompt": "How do you know Docker is ready to use?",
+            "options": [
+                "The installer window closes",
+                "Your computer restarts automatically",
+                "The whale icon stops animating and the dashboard shows \u201cEngine running\u201d",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m45-id-4",
+            "prompt": "Which command verifies Docker is installed from a terminal?",
+            "options": [
+                "docker --version",
+                "docker install --check",
+                "wsl --status",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m45-id-5",
+            "prompt": "The installer says \u201cVirtualization is not enabled.\u201d Where do you fix that?",
+            "options": [
+                "In Docker Desktop's settings menu",
+                "In your BIOS/UEFI settings (Intel VT-x / AMD-V)",
+                "By reinstalling Windows",
+            ],
+            "answer_index": 1,
+        },
+    ],
+    "first-containers": [
+        {
+            "id": "m45-fc-1",
+            "prompt": "You run `docker run hello-world` and the image isn't on your machine. What happens?",
+            "options": [
+                "Docker pulls the image from Docker Hub, creates a container, and runs it",
+                "You get an error and must download the image manually",
+                "Docker builds the image from a Dockerfile on your desktop",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m45-fc-2",
+            "prompt": "In `docker run -d -p 8080:80 nginx`, what does `-p 8080:80` mean?",
+            "options": [
+                "Run 8,080 copies on 80 CPUs",
+                "Limit the container to 8080 MB of memory",
+                "Map port 8080 on your machine to port 80 inside the container",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m45-fc-3",
+            "prompt": "What does the `-d` flag do?",
+            "options": [
+                "Deletes the container when it stops",
+                "Runs the container detached, in the background",
+                "Downloads the image without running it",
+            ],
+            "answer_index": 1,
+        },
+        {
+            "id": "m45-fc-4",
+            "prompt": "After you stop and delete the nginx container, what's left on your machine?",
+            "options": [
+                "Leftover nginx config files you must clean up",
+                "A background service that keeps running",
+                "Just the cached image \u2014 your machine is otherwise unchanged",
+            ],
+            "answer_index": 2,
+        },
+        {
+            "id": "m45-fc-5",
+            "prompt": "You get \u201cport is already allocated\u201d on 8080. What's the fix?",
+            "options": [
+                "Use a different host port, e.g. `-p 8081:80`",
+                "Restart your computer",
+                "Delete the nginx image and re-pull it",
+            ],
+            "answer_index": 0,
+        },
+    ],
+}
+
+
+# Module 1.5 recap questions — context windows, tokens, training vs inference.
+MODULE_1_5_RECAP = {
+    "context-windows": [
+        {
+            "id": "m15-cw-rq1",
+            "prompt": "A context window is best described as:",
+            "options": [
+                "The maximum amount of text (in tokens) a model can use when generating a reply",
+                "The model's permanent memory of every conversation you ever had",
+                "The number of users who can chat at the same time",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-cw-rq2",
+            "prompt": "Which items typically compete for space inside the context window?",
+            "options": [
+                "System instructions, chat history, pasted documents, and your latest message",
+                "Only the last word you typed",
+                "Your computer's RAM and CPU usage meters",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-cw-rq3",
+            "prompt": "In a very long chat thread, why might the model seem to 'forget' what you said at the start?",
+            "options": [
+                "Older messages may fall outside the context window or get truncated",
+                "LLMs deliberately erase user messages after 10 minutes",
+                "The model saves early messages to a private database instead of using them",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-cw-rq4",
+            "prompt": "You need help with one bug in a huge codebase. What is usually the best context strategy?",
+            "options": [
+                "Paste the relevant file or function plus the error message, not the entire repo",
+                "Paste every file so the model sees everything at once",
+                "Send only the word 'bug' with no code",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-cw-rq5",
+            "prompt": "Context window size is measured in:",
+            "options": [
+                "Tokens",
+                "Pages of printed paper",
+                "Megabytes of GPU video memory only",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "tokens": [
+        {
+            "id": "m15-tk-rq1",
+            "prompt": "In LLMs, a token is:",
+            "options": [
+                "A small chunk of text the model processes — not always a whole word",
+                "Always exactly one English word",
+                "A type of cryptocurrency used to pay for GPUs",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-tk-rq2",
+            "prompt": "Why can you NOT assume 1 word equals 1 token?",
+            "options": [
+                "Tokenizers split text into pieces; words, subwords, and symbols vary in length",
+                "Models ignore all words longer than four letters",
+                "Only punctuation counts as tokens",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-tk-rq3",
+            "prompt": "Most API pricing for LLMs is based on:",
+            "options": [
+                "Input tokens and output tokens",
+                "The number of paragraphs you write",
+                "Your monitor's screen resolution",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-tk-rq4",
+            "prompt": "When a model generates a response one piece at a time, it is predicting:",
+            "options": [
+                "The next token, repeatedly, until the reply is complete",
+                "The entire answer in one lookup from a fixed database",
+                "Random words with no connection to the prompt",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-tk-rq5",
+            "prompt": "A rough rule of thumb for English prose is:",
+            "options": [
+                "About 1 token per 4 characters",
+                "Exactly 1 token per sentence",
+                "Tokens only exist for numbers, not letters",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "training-vs-inference": [
+        {
+            "id": "m15-tvi-rq1",
+            "prompt": "Training an LLM primarily means:",
+            "options": [
+                "Adjusting the model's weights on large datasets so it learns language patterns",
+                "Sending a long chat message so the model remembers you forever",
+                "Installing Docker on your laptop",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-tvi-rq2",
+            "prompt": "Inference is:",
+            "options": [
+                "Using an already-trained model to generate output from your prompt",
+                "The same thing as pre-training on the entire internet",
+                "Deleting old chat logs from a database",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-tvi-rq3",
+            "prompt": "During normal chat inference, the model's weights:",
+            "options": [
+                "Stay frozen — they do not update from your conversation",
+                "Rewrite themselves after every user message",
+                "Are copied from your keyboard input",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-tvi-rq4",
+            "prompt": "Which activity is inference, not training?",
+            "options": [
+                "Calling an API with 'Summarize this email' and reading the reply",
+                "A lab running a month-long GPU job to release a new base model",
+                "Fine-tuning an open model on a curated dataset of support tickets",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m15-tvi-rq5",
+            "prompt": "If an agent must remember facts across weeks, the usual solution is:",
+            "options": [
+                "Add memory, databases, or retrieval — not rely on one chat to retrain the model",
+                "Send the same paragraph 10,000 times to train weights at home",
+                "Assume the model automatically stores all user data in its parameters",
+            ],
+            "answer_index": 0,
+        },
+    ],
+}
+
+
+# Module 3 recap questions — real questions (ported from feat/module3).
+MODULE_3_RECAP = {
+    "what-prompts-are": [
+        {
+            "id": "m3-wpa-rq1",
+            "prompt": "In this course, a prompt is best described as:",
+            "options": [
+                "The text and instructions you send to an LLM to shape its response",
+                "A password that unlocks the model's training data",
+                "The model's reply after it finishes generating",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-wpa-rq2",
+            "prompt": "Which is NOT typically part of a well-formed prompt?",
+            "options": [
+                "Your router's MAC address",
+                "The task you want done",
+                "Relevant background context",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-wpa-rq3",
+            "prompt": "Why do prompts matter for agents you'll build later?",
+            "options": [
+                "They are the main way you tell the model what to do, how to behave, and what context to use",
+                "They replace the need for any tools or code",
+                "They only affect spelling and grammar, not behavior",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-wpa-rq4",
+            "prompt": "An LLM generates a response by:",
+            "options": [
+                "Predicting likely next tokens based on everything in the prompt (and prior conversation)",
+                "Looking up a single pre-written answer in a fixed database",
+                "Running only on keywords you bold in the prompt",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-wpa-rq5",
+            "prompt": "If you change your prompt but keep the same model, you should expect:",
+            "options": [
+                "Different outputs, because the model conditions on the new instructions and context",
+                "Exactly the same output every time",
+                "The model to refuse all requests",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "how-context-affects-responses": [
+        {
+            "id": "m3-hcar-rq1",
+            "prompt": "Context in prompting refers to:",
+            "options": [
+                "All the information the model can see when generating (history, docs, examples, etc.)",
+                "Only the font size of your message",
+                "The physical location of the data center",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-hcar-rq2",
+            "prompt": "Two people send the identical question but with different prior messages in the chat. The answers may differ because:",
+            "options": [
+                "The model uses conversation history as part of its context",
+                "Models randomly ignore earlier messages",
+                "User prompts cannot include more than one sentence",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-hcar-rq3",
+            "prompt": "You paste a 50-page document above your question. What is a realistic trade-off?",
+            "options": [
+                "Richer answers from that material, but you use more of the context window and may hit limits",
+                "The model automatically summarizes all 50 pages with zero token cost",
+                "Longer context always makes answers shorter",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-hcar-rq4",
+            "prompt": "Which change is most likely to alter the model's answer?",
+            "options": [
+                "Adding a paragraph that defines key terms and constraints before your question",
+                "Sending the same text with an extra space at the end",
+                "Using a different browser tab color",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-hcar-rq5",
+            "prompt": "If important facts are missing from the context, the model may:",
+            "options": [
+                "Guess or fill gaps plausibly (hallucinate) instead of admitting ignorance",
+                "Always stop and ask a clarifying question",
+                "Access private files on your computer without permission",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "system-vs-user-prompts": [
+        {
+            "id": "m3-svup-rq1",
+            "prompt": "A system prompt is usually:",
+            "options": [
+                "Hidden instructions that set behavior, role, and rules for the assistant",
+                "The same thing as the user's latest chat message",
+                "Only used when the model is offline",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-svup-rq2",
+            "prompt": "A user prompt is:",
+            "options": [
+                "What the end user (or your app on their behalf) sends as the request",
+                "A secret key stored in the GPU",
+                "The model's internal weight file",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-svup-rq3",
+            "prompt": "Why separate system and user prompts when building an agent?",
+            "options": [
+                "So stable rules and persona stay in system instructions while each request stays in user messages",
+                "Because models cannot read user messages at all",
+                "To make every response identical regardless of the question",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-svup-rq4",
+            "prompt": "In a chat API, message roles often include:",
+            "options": [
+                "system, user, and assistant",
+                "only user and printer",
+                "admin, guest, and firewall",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-svup-rq5",
+            "prompt": "Putting 'Always reply in JSON' in the system prompt is useful because:",
+            "options": [
+                "It applies consistently to every turn without repeating it in each user message",
+                "It hides the rule from the model entirely",
+                "It disables the model's ability to follow instructions",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "good-and-bad-prompts": [
+        {
+            "id": "m3-gabp-rq1",
+            "prompt": "Which prompt is stronger for getting useful output?",
+            "options": [
+                "'Summarize the text below in 3 bullet points for a busy manager; use plain language.'",
+                "'Do something with this.'",
+                "'Write stuff.'",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-gabp-rq2",
+            "prompt": "A common problem with vague prompts is:",
+            "options": [
+                "The model has to guess your goal, audience, and format",
+                "The model runs out of electricity",
+                "The context window doubles in size",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-gabp-rq3",
+            "prompt": "Which pair of instructions is worst for the model?",
+            "options": [
+                "'Be extremely brief' and 'Write at least 800 words' in the same prompt",
+                "'Use bullet points' and 'Keep it under 5 bullets'",
+                "'Explain for a beginner' and 'Avoid jargon'",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-gabp-rq4",
+            "prompt": "The CRAFT-style checklist includes:",
+            "options": [
+                "Context, Role, Action, Format, and constraints/Tone",
+                "CPU, RAM, ASCII, FTP, and TLS only",
+                "Copy, Rename, Archive, File, and Trash",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-gabp-rq5",
+            "prompt": "Good prompts often specify:",
+            "options": [
+                "Who the answer is for, what to do, and how the output should look",
+                "Only a single emoji",
+                "Nothing — shorter is always better",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "hands-on-prompt-exercises": [
+        {
+            "id": "m3-hope-rq1",
+            "prompt": "When judging two prompts, you should prioritize:",
+            "options": [
+                "Clarity, relevant context, and explicit output format",
+                "Which one is shorter, even if vague",
+                "Which one uses the most technical buzzwords",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-hope-rq2",
+            "prompt": "Prompt A: 'Fix my code.' Prompt B: 'Find the bug in this Python function, explain it in 2 sentences, then show a corrected version.' Which is better for a coding assistant?",
+            "options": [
+                "Prompt B — it states the language, task, and output shape",
+                "Prompt A — less text always wins",
+                "They are equally good because both mention code",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-hope-rq3",
+            "prompt": "After trying a weak prompt and a strong prompt on the same model, a good sign the strong prompt worked is:",
+            "options": [
+                "The answer matches your requested format, audience, and constraints more closely",
+                "The model returns a random Wikipedia article",
+                "Both outputs are identical every time",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-hope-rq4",
+            "prompt": "If a prompt omits the audience ('for executives' vs 'for new hires'), you should expect:",
+            "options": [
+                "A generic answer that may not fit the reader",
+                "The model to refuse to answer",
+                "Automatic translation into another language",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m3-hope-rq5",
+            "prompt": "The best next step when a prompt gives poor results is usually to:",
+            "options": [
+                "Add missing context, clarify the task, and specify format — then test again",
+                "Assume the model is broken and never use AI again",
+                "Remove all details until the prompt is one word",
+            ],
+            "answer_index": 0,
+        },
+    ],
+}
+
+
 CURRICULUM = [
     {
         "order": 1,
         "title": "Module 1: Introduction to AI",
         "slug": "module-1-introduction-to-ai",
-        "description": "What AI and LLMs are, other major AI categories, a brief history, and a checkpoint.",
+        "description": "What AI and LLMs are, other major AI categories, a brief history, and an exam.",
+        "published": True,
         "difficulty": 1,
         "lessons": [
             (
@@ -483,11 +1715,12 @@ CURRICULUM = [
         "title": "Module 1.5: How LLMs Work",
         "slug": "module-1-5-how-llms-work",
         "description": "Context windows, tokens, and training vs inference.",
+        "published": True,
         "difficulty": 1,
         "lessons": [
-            ("Context Windows", "context-windows", "theory", 8),
-            ("Tokens", "tokens", "theory", 8),
-            ("Training vs Inference", "training-vs-inference", "theory", 10),
+            ("Context Windows", "context-windows", "theory", 8, {"questions": MODULE_1_5_RECAP["context-windows"]}),
+            ("Tokens", "tokens", "theory", 8, {"questions": MODULE_1_5_RECAP["tokens"]}),
+            ("Training vs Inference", "training-vs-inference", "theory", 10, {"questions": MODULE_1_5_RECAP["training-vs-inference"]}),
         ],
     },
     {
@@ -495,6 +1728,7 @@ CURRICULUM = [
         "title": "Module 2: Exploring LLM Models",
         "slug": "module-2-exploring-llm-models",
         "description": "Compare Hermes, Claude, Gemini, OpenAI, and open-source models — strengths, weaknesses, and when to choose each.",
+        "published": True,
         "difficulty": 1,
         "lessons": [
             ("Introducing Different Models", "introducing-different-models", "theory", 12),
@@ -510,13 +1744,14 @@ CURRICULUM = [
         "title": "Module 3: Prompting",
         "slug": "module-3-prompting",
         "description": "What prompts are, how context shapes responses, system vs user prompts, and hands-on practice.",
+        "published": True,
         "difficulty": 1,
         "lessons": [
-            ("What Prompts Are", "what-prompts-are", "theory", 8),
-            ("How Context Affects Responses", "how-context-affects-responses", "theory", 10),
-            ("System Prompts vs User Prompts", "system-vs-user-prompts", "theory", 10),
-            ("Good and Bad Prompts", "good-and-bad-prompts", "theory", 10),
-            ("Hands-on Prompt Exercises", "hands-on-prompt-exercises", "interactive", 15),
+            ("What Prompts Are", "what-prompts-are", "theory", 8, {"questions": MODULE_3_RECAP["what-prompts-are"]}),
+            ("How Context Affects Responses", "how-context-affects-responses", "theory", 10, {"questions": MODULE_3_RECAP["how-context-affects-responses"]}),
+            ("System Prompts vs User Prompts", "system-vs-user-prompts", "theory", 10, {"questions": MODULE_3_RECAP["system-vs-user-prompts"]}),
+            ("Good and Bad Prompts", "good-and-bad-prompts", "theory", 10, {"questions": MODULE_3_RECAP["good-and-bad-prompts"]}),
+            ("Hands-on Prompt Exercises", "hands-on-prompt-exercises", "interactive", 15, {"questions": MODULE_3_RECAP["hands-on-prompt-exercises"]}),
         ],
     },
     _structured_course_entry("module-4-ai-agents"),
@@ -524,26 +1759,30 @@ CURRICULUM = [
         "order": 6,
         "title": "Module 4.5: Docker and Environments",
         "slug": "module-4-5-docker-and-environments",
-        "description": "A brief primer on containers, images, and volumes — enough to get Docker running for agent builds.",
+        "description": "Why Docker exists, the core terms, installing Docker Desktop, and running your first containers.",
+        "published": True,
         "difficulty": 2,
         "lessons": [
-            ("Containers, Images, Volumes", "containers-images-volumes", "theory", 8),
-            ("Why Agents Need Isolation", "why-agents-need-isolation", "theory", 6),
-            ("Getting Docker Running", "getting-docker-running", "sandbox", 10),
+            ("Why Docker?", "why-docker", "theory", 8, {"questions": MODULE_4_5_RECAP["why-docker"]}),
+            ("The Main Terms", "docker-main-terms", "theory", 8, {"questions": MODULE_4_5_RECAP["docker-main-terms"]}),
+            ("Installing Docker Desktop", "installing-docker-desktop", "interactive", 15, {"questions": MODULE_4_5_RECAP["installing-docker-desktop"]}),
+            ("Your First Containers", "first-containers", "sandbox", 12, {"questions": MODULE_4_5_RECAP["first-containers"]}),
         ],
     },
     {
         "order": 7,
         "title": "Module 5: Hermes (Build #1)",
         "slug": "module-5-hermes",
-        "description": "Create a Hermes agent with Telegram (or similar), Docker backend, blank-slate setup, and OpenRouter or local Ollama.",
+        "description": "Understand what Hermes is, set up OpenRouter with a spending cap, walk the install wizard into a Docker sandbox, hold your first conversation, and verify the isolation yourself.",
+        "published": True,
         "difficulty": 2,
         "lessons": [
-            ("Creating the Hermes Agent", "creating-the-hermes-agent", "agent_lab", 20),
-            ("Setting Up Telegram", "setting-up-telegram", "interactive", 15),
-            ("Docker as Backend", "docker-as-backend", "sandbox", 15),
-            ("Blank Slate Setup", "blank-slate-setup", "agent_lab", 15),
-            ("OpenRouter or Local Ollama", "openrouter-or-local-ollama", "interactive", 15),
+            ("What Hermes Is", "what-hermes-is", "theory", 8, {"questions": MODULE_5_RECAP["what-hermes-is"]}),
+            ("OpenRouter and Your API Key", "openrouter-and-your-api-key", "interactive", 10, {"questions": MODULE_5_RECAP["openrouter-and-your-api-key"]}),
+            ("Install and the Setup Wizard", "install-and-setup-wizard", "interactive", 15, {"questions": MODULE_5_RECAP["install-and-setup-wizard"]}),
+            ("First Conversation and the Container", "first-conversation-and-container", "sandbox", 15, {"questions": MODULE_5_RECAP["first-conversation-and-container"]}),
+            ("Sandbox Verification Lab", "sandbox-verification-lab", "sandbox", 12, {"questions": MODULE_5_RECAP["sandbox-verification-lab"]}),
+            ("Put It to Work", "put-it-to-work", "agent_lab", 15, {"questions": MODULE_5_RECAP["put-it-to-work"]}),
         ],
     },
     _structured_course_entry("module-6-openclaw"),
@@ -551,11 +1790,15 @@ CURRICULUM = [
         "order": 9,
         "title": "Module 7: Claude (Build #3)",
         "slug": "module-7-claude",
-        "description": "Claude agent build — curriculum details forthcoming.",
+        "description": "Build an agent with Claude Code — no code required: install it with a spending cap, teach it with CLAUDE.md and skills, create a least-privilege subagent, and assemble a working research notebook agent.",
+        "published": True,
         "difficulty": 2,
         "lessons": [
-            ("Claude Build Overview", "claude-build-overview", "theory", 10),
-            ("Build with Claude", "build-with-claude", "agent_lab", 20),
+            ("What Claude Code Is", "what-claude-code-is", "theory", 8, {"questions": MODULE_7_RECAP["what-claude-code-is"]}),
+            ("Install and First Session", "install-and-first-session", "interactive", 12, {"questions": MODULE_7_RECAP["install-and-first-session"]}),
+            ("CLAUDE.md and Skills", "claudemd-and-skills", "sandbox", 15, {"questions": MODULE_7_RECAP["claudemd-and-skills"]}),
+            ("Custom Subagents", "custom-subagents", "sandbox", 15, {"questions": MODULE_7_RECAP["custom-subagents"]}),
+            ("Build Your Agent Lab", "build-your-agent", "agent_lab", 15, {"questions": MODULE_7_RECAP["build-your-agent"]}),
         ],
     },
     _structured_course_entry("module-8-capstone-safety-evaluation"),

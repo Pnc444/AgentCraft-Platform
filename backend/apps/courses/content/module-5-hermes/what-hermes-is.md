@@ -28,4 +28,8 @@ Remember this picture — we reuse it in every lesson this module.
 - **Agent loop + tools** — Hermes itself: receives a task, asks the model what to do, runs the tool call, feeds the result back, repeats until done.
 - **Model provider** — where the intelligence lives. We use OpenRouter so we can swap models without changing anything else.
 
-## Why the t
+## Why the three-box split matters
+Because every safety decision in this module lives on a **boundary between boxes**. The spending cap lives on the arrow to the model provider — that's where money flows. The Docker sandbox wraps the middle box — that's where commands run. And the gateway is where tasks get in — which is why we keep it to just the CLI until you trust the setup. When something goes wrong with any agent, ever, your first question should be: *which box, or which arrow?*
+
+## Takeaway
+Hermes is an orchestrator, not a model: thinking happens on the provider's servers, doing happens on your machine. Keep the three boxes in your head — the rest of this module is just hardening them one at a time.

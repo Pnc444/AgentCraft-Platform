@@ -5,7 +5,7 @@ const nextConfig = {
   skipTrailingSlashRedirect: true,
   async rewrites() {
     // Proxy browser API calls through Next so remote devices don't resolve localhost to themselves.
-    const internalApiUrl = process.env.INTERNAL_API_URL || "http://localhost:8000";
+    const internalApiUrl = process.env.INTERNAL_API_URL || "http://localhost:8001";
     return [
       {
         source: "/api/v1/:path*",

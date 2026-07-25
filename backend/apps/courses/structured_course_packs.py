@@ -2010,6 +2010,7 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                     'requires_skill_templates',
                     'requires_channel_templates',
                     'requires_safety_checks'],
+  'published': False,
   'slug': 'module-6-openclaw',
   'title': 'Module 6: Build Your Assistant a Home (OpenClaw)'},
  {'description': 'The finishing module: let your assistant run one small job on its own, put '
@@ -2913,7 +2914,8 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                     'requires_permission_matrix',
                     'requires_evaluation_rubric',
                     'requires_evaluation_cases'],
+  'published': False,
   'slug': 'module-8-capstone-safety-evaluation',
-  'title': 'The Trust Capstone'}]
+  'title': 'Module 8: The Trust Capstone'}]
 
 STRUCTURED_COURSE_PACKS_BY_SLUG = {pack["slug"]: pack for pack in STRUCTURED_COURSE_PACKS}

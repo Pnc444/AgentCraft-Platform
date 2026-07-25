@@ -59,7 +59,7 @@ def test_sync_content_materializes_structured_module_6_payload():
 @pytest.mark.parametrize(
     ("course_slug", "lesson_slug", "expected_heading"),
     [
-        ("module-5-hermes", "docker-as-backend", "# Docker as Backend"),
+        ("module-5-hermes", "what-hermes-is", "# What Hermes Is"),
         ("module-1-introduction-to-ai", "what-is-ai", "# What is AI?"),
         ("module-1-introduction-to-ai", "what-are-llms", "# What are LLMs?"),
         ("module-1-introduction-to-ai", "what-is-an-llm-model", "# Other Types of AI"),

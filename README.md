@@ -27,7 +27,7 @@ agentcraft-platform/
 ## Quick Start (Docker)
 
 ```bash
-cp .env.example .env          # fill in SECRET_KEY at minimum
+cp .env.example .env         
 docker-compose up --build
 # CHECK BUG FIXES AT THE BOTTOM OF THE PAGE
 ```
@@ -103,7 +103,7 @@ Lesson content is plain Markdown, synced into the database by slug.
    The lesson slug must match the filename. A course only shows in the app when its
    `"published"` flag is `True`.
 
-3. **Load it into the app.** This syncs all modules under `courses/` into the database:
+3. **Load it into the app.** This syncs ALL modules under `courses/` into the database:
 
    ```bash
    docker compose exec backend python manage.py sync_content
@@ -130,7 +130,6 @@ For a full dev reset with demo data instead, use `seed_demo` (destructive, dev o
 ## Coming Soon
 
 - AI Tutor chat (Anthropic API) — panel UI is in place, backend integration pending
-- Sandbox lessons (Docker-in-Docker practice environments)
 
 ## Docker Bug Fixes
 
