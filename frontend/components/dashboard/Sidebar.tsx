@@ -9,7 +9,6 @@ import {
   Check,
   ChevronRight,
   CircleDashed,
-  Home,
   LayoutDashboard,
   LogOut,
   PanelLeftClose,
@@ -19,7 +18,7 @@ import clsx from "clsx";
 import { getCourse, getCourses, getLesson } from "@/lib/api/courses";
 import { entryStepForLessonType, lessonStepHref } from "@/lib/lesson-steps";
 import { useAuthStore } from "@/stores/authStore";
-import { Logo, LogoIcon } from "@/components/shared/Logo";
+import { Logo } from "@/components/shared/Logo";
 import type { CourseDetail, Skill } from "@/types";
 
 const COLLAPSED_KEY = "agentcraft-sidebar-collapsed";
@@ -251,42 +250,24 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
           collapsed ? "justify-center" : "justify-between px-5"
         )}
       >
-        {collapsed ? (
-          <Link href="/?landing=1" aria-label="Go to home" title="Home">
-            <LogoIcon className="transition-transform hover:scale-105" />
-          </Link>
-        ) : (
-          <Logo href="/?landing=1" />
-        )}
-        {!collapsed && (
-          <button
-            type="button"
-            onClick={toggleCollapsed}
-            className="hidden text-craft-faint transition hover:text-craft-ink lg:block"
-            aria-label="Collapse sidebar"
-          >
-            <PanelLeftClose className="h-5 w-5" />
-          </button>
-        )}
-      </div>
-
-      {collapsed && (
+        {/*
+          The logo shows only when expanded, and inside the app it goes to the
+          dashboard — never the marketing page. The collapse toggle keeps the
+          same header-row anchor in BOTH states; collapsing must not teleport
+          the control under a logo (audit A1/A2).
+        */}
+        {!collapsed && <Logo href="/dashboard" />}
         <button
           type="button"
           onClick={toggleCollapsed}
-          className="mx-auto mb-1 hidden text-craft-faint transition hover:text-craft-ink lg:block"
-          aria-label="Expand sidebar"
+          className="hidden text-craft-faint transition hover:text-craft-ink lg:block"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          <PanelLeftOpen className="h-5 w-5" />
+          {collapsed ? <PanelLeftOpen className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
         </button>
-      )}
+      </div>
 
       <nav className={clsx("min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-contain py-2", collapsed ? "px-2" : "px-3")}>
-        <Link href="/?landing=1" onClick={onMobileClose} className={navItemCls(false)} title="Home">
-          <Home className="h-4 w-4 shrink-0" />
-          {!collapsed && "Home"}
-        </Link>
-
         <Link
           href="/dashboard"
           onClick={onMobileClose}
