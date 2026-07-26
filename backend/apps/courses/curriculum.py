@@ -1636,6 +1636,130 @@ MODULE_4_5_RECAP = {
 
 
 # Module 1.5 recap questions — context windows, tokens, training vs inference.
+# Module 1.5 seam checks (plan §0.2). One question per gap between reading
+# beats, each answerable from the beat immediately before it, in the lesson's
+# own vocabulary. Distinct from MODULE_1_5_RECAP by construction — the recap
+# bank belongs to the recap quiz.
+MODULE_1_5_SEAM_CHECKS = {
+    "context-windows": [
+        {
+            "id": "m15-cw-seam1",
+            "prompt": "You attach a 50-page document to an already-long chat thread. What does the lesson say can happen to the earliest messages?",
+            "options": [
+                "They get pushed out — everything competes for the same limited space",
+                "They are saved permanently, because the model remembers all past chats",
+                "They move to a second context window reserved for older turns",
+            ],
+            "answer_index": 0,
+            "explanation": "System instructions, history, your message, and pasted material all compete for one window, so a big attachment plus a long thread can push out the earliest messages.",
+        },
+        {
+            "id": "m15-cw-seam2",
+            "prompt": "An app silently keeps the system prompt and your most recent turns, but drops the older middle of the conversation. Which overflow behaviour is that?",
+            "options": [
+                "Truncate from the start",
+                "Truncate from the middle",
+                "Summarize",
+            ],
+            "answer_index": 1,
+            "explanation": "Truncating from the middle keeps the system prompt plus recent turns. The lesson lists it alongside truncate-from-start, error, and summarize.",
+        },
+        {
+            "id": "m15-cw-seam3",
+            "prompt": "Halfway through a long chat the topic changes completely. Which strategy from this lesson fits best?",
+            "options": [
+                "Paste the whole project so nothing is missing",
+                "Reset the thread, so old noise stops eating tokens",
+                "Ask the model to remember the new topic permanently",
+            ],
+            "answer_index": 1,
+            "explanation": "Resetting the thread is one of the four strategies — a fresh chat when the topic changes keeps old noise from eating tokens.",
+        },
+    ],
+    "tokens": [
+        {
+            "id": "m15-tok-seam1",
+            "prompt": "Why do code and JSON often use more tokens than the same number of characters of ordinary English?",
+            "options": [
+                "Rare symbols split into extra pieces, so more tokens per visible character",
+                "Tokenizers refuse to process punctuation and skip it",
+                "Code is always sent twice, once as text and once as data",
+            ],
+            "answer_index": 0,
+            "explanation": "Code, JSON, and non-English text use more tokens per visible character because rare symbols split into extra pieces.",
+        },
+        {
+            "id": "m15-tok-seam2",
+            "prompt": "Why can an agent that loops — plan, act, observe, repeat — run up a bill quickly?",
+            "options": [
+                "Each pass through the loop sends and generates more tokens, and APIs bill per token",
+                "Looping switches the model to a more expensive premium tier",
+                "Loops are charged per minute of wall-clock time",
+            ],
+            "answer_index": 0,
+            "explanation": "Providers bill separately for input and output tokens, so an agent that loops burns tokens on every pass.",
+        },
+        {
+            "id": "m15-tok-seam3",
+            "prompt": "An app's answers keep stopping mid-sentence. Based on this lesson, what is the likely cause?",
+            "options": [
+                "The context window has been permanently used up",
+                "`max_tokens` is set too low, cutting the reply off as it generates",
+                "The tokenizer failed and dropped the rest of the text",
+            ],
+            "answer_index": 1,
+            "explanation": "Hitting `max_tokens` mid-sentence produces a cut-off answer — a common bug when app limits are set too low.",
+        },
+    ],
+    "training-vs-inference": [
+        {
+            "id": "m15-ti-seam1",
+            "prompt": "According to the two-phase table, who performs training and how often?",
+            "options": [
+                "You, every time you send a prompt",
+                "Labs with massive GPU clusters, once per model version",
+                "The app you are using, once per conversation",
+            ],
+            "answer_index": 1,
+            "explanation": "Training happens over weeks or months, once per model version, at labs with massive GPU clusters. You almost always work in inference.",
+        },
+        {
+            "id": "m15-ti-seam2",
+            "prompt": "You paste confidential notes into a chat for one session. Does that put them into the model's weights?",
+            "options": [
+                "No — pasting notes for one session is explicitly not training",
+                "Yes, anything you send is absorbed into the weights permanently",
+                "Only if the conversation lasts longer than the context window",
+            ],
+            "answer_index": 0,
+            "explanation": "The lesson is explicit: training is not what happens when you paste notes for one session, and one chat does not store your secrets inside the weights.",
+        },
+        {
+            "id": "m15-ti-seam3",
+            "prompt": "During inference the model outputs a probability distribution over the next token. What happens immediately after that?",
+            "options": [
+                "The weights are nudged so the model improves for next time",
+                "One token is chosen — with some randomness unless temperature is 0",
+                "The whole reply is written at once from the distribution",
+            ],
+            "answer_index": 1,
+            "explanation": "One token is chosen (with randomness unless temperature is 0), then the loop repeats until the reply is complete. No weights change.",
+        },
+        {
+            "id": "m15-ti-seam4",
+            "prompt": "Why does this lesson say hallucinations 'make sense'?",
+            "options": [
+                "Because inference predicts plausible text rather than retrieving verified facts",
+                "Because the model deliberately invents answers to seem confident",
+                "Because the context window is always too small to hold the truth",
+            ],
+            "answer_index": 0,
+            "explanation": "Inference predicts plausible text; it is not reading a verified fact table unless you give it one — which is why agents add memory, databases, or RAG.",
+        },
+    ],
+}
+
+
 MODULE_1_5_RECAP = {
     "context-windows": [
         {
@@ -2121,9 +2245,36 @@ CURRICULUM = [
         "published": True,
         "difficulty": 1,
         "lessons": [
-            ("Context Windows", "context-windows", "theory", 8, {"questions": MODULE_1_5_RECAP["context-windows"]}),
-            ("Tokens", "tokens", "theory", 8, {"questions": MODULE_1_5_RECAP["tokens"]}),
-            ("Training vs Inference", "training-vs-inference", "theory", 10, {"questions": MODULE_1_5_RECAP["training-vs-inference"]}),
+            (
+                "Context Windows",
+                "context-windows",
+                "theory",
+                8,
+                {
+                    "questions": MODULE_1_5_RECAP["context-windows"],
+                    "checkpoint_questions": MODULE_1_5_SEAM_CHECKS["context-windows"],
+                },
+            ),
+            (
+                "Tokens",
+                "tokens",
+                "theory",
+                8,
+                {
+                    "questions": MODULE_1_5_RECAP["tokens"],
+                    "checkpoint_questions": MODULE_1_5_SEAM_CHECKS["tokens"],
+                },
+            ),
+            (
+                "Training vs Inference",
+                "training-vs-inference",
+                "theory",
+                10,
+                {
+                    "questions": MODULE_1_5_RECAP["training-vs-inference"],
+                    "checkpoint_questions": MODULE_1_5_SEAM_CHECKS["training-vs-inference"],
+                },
+            ),
             ("Module 1.5 Exam", "module-1-5-exam", "quiz", 10, {"questions": MODULE_1_5_EXAM_QUESTIONS}),
         ],
     },

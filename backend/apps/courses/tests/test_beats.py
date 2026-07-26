@@ -295,3 +295,34 @@ def test_no_workbench_invented_when_lesson_has_no_artifacts():
     assert not any(b.get("action") == "workbench" for b in beats)
     # try_this stays where it was — there is no file to move it to.
     assert beats[0]["try_this"] == ["Say it out loud."]
+
+
+def test_module_1_5_seam_checks_close_every_gap_without_recycling():
+    """Plan §0.2, module 1.5: authored seam checks break every reading run, and
+    none of them repeats a recap-bank question."""
+    from apps.courses.curriculum import MODULE_1_5_RECAP, MODULE_1_5_SEAM_CHECKS
+    from apps.courses.beats import derive_beats
+    from apps.courses.curriculum import load_content
+
+    recap_prompts = {q["prompt"] for bank in MODULE_1_5_RECAP.values() for q in bank}
+    for slug, seams in MODULE_1_5_SEAM_CHECKS.items():
+        # every seam question is distinct from every recap question
+        for q in seams:
+            assert q["prompt"] not in recap_prompts, f"{slug}: recycles a recap question"
+            assert q.get("explanation"), f"{slug}: seam check needs an explanation"
+            assert 0 <= q["answer_index"] < len(q["options"])
+
+        beats = derive_beats(
+            content=load_content("module-1-5-how-llms-work", slug, slug),
+            sandbox_config={
+                "questions": MODULE_1_5_RECAP[slug],
+                "checkpoint_questions": seams,
+            },
+            title=slug,
+        )
+        run = worst = 0
+        for beat in beats:
+            run = run + 1 if beat["type"] == "explain" else 0
+            worst = max(worst, run)
+        assert worst == 1, f"{slug}: still has a reading run of {worst}"
+        assert 5 <= len(beats) <= 9, f"{slug}: {len(beats)} beats is outside the budget"

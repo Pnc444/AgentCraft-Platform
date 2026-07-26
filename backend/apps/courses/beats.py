@@ -239,6 +239,7 @@ def beats_from_markdown(
     video_url: str = "",
     questions: list[dict] | None = None,  # noqa: ARG001 - accepted for call-site symmetry; see below
     sandbox: dict | None = None,
+    seam_checks: list[dict] | None = None,
 ) -> list[dict]:
     """Mechanical markdown → beats conversion (the generic fallback, §3).
 
@@ -249,6 +250,10 @@ def beats_from_markdown(
     ``questions`` is deliberately unused: the recap bank belongs to the recap
     quiz. Appending it here made every fallback lesson ask the identical five
     questions in the content step and again in the quiz.
+
+    ``seam_checks`` are questions authored *for* the gaps between reading beats
+    (the lesson's ``checkpoint_questions``). They are distinct from the recap
+    bank by construction, and only these ever break a reading run.
     """
     body = _strip_leading_title(content or "", title or "")
     beats: list[dict] = []
@@ -293,7 +298,7 @@ def beats_from_markdown(
     # The recap bank is NOT appended here. It belongs to the recap quiz; adding
     # it to the content step made the learner answer the identical five
     # questions twice in a row (verified across 30+ lessons).
-    return merge_adjacent_explains(beats)
+    return distribute_checks(merge_adjacent_explains(beats), seam_checks or [])
 
 
 def beats_from_guided_blocks(
@@ -458,10 +463,12 @@ def derive_beats(
             return mapped
     questions = config.get("questions")
     sandbox = config.get("sandbox")
+    seam_checks = config.get("checkpoint_questions")
     return beats_from_markdown(
         content,
         title=title,
         video_url=(video_url or "").strip(),
         questions=questions if isinstance(questions, list) else None,
         sandbox=sandbox if isinstance(sandbox, dict) else None,
+        seam_checks=seam_checks if isinstance(seam_checks, list) else None,
     )
