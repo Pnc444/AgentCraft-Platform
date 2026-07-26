@@ -32,7 +32,9 @@ STRUCTURED_KEYS = (
     "guided_blocks",
     "checkpoint_questions",
     "capstone_assignment",
-    "publish_rules",
+    # "publish_rules" is gone: it shipped to the client as inert JSON that no
+    # code ever evaluated. Its job is now done for real by the content
+    # validator in sync_content (warn by default, hard-fail under --strict).
 )
 
 def placeholder(title: str) -> str:

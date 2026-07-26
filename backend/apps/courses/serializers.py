@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from apps.learning.models import Progress
 
+from .beats import derive_beats
 from .lesson_types import type_label, type_promise
 from .models import Course, Lesson, Skill
 
@@ -55,6 +56,7 @@ class LessonDetailSerializer(LessonListSerializer):
     video_watched = serializers.SerializerMethodField()
     score = serializers.SerializerMethodField()
     interaction_log = serializers.SerializerMethodField()
+    beats = serializers.SerializerMethodField()
 
     class Meta(LessonListSerializer.Meta):
         fields = LessonListSerializer.Meta.fields + [
@@ -67,7 +69,19 @@ class LessonDetailSerializer(LessonListSerializer):
             "sandbox_config",
             "course_slug",
             "course_title",
+            "beats",
         ]
+
+    def get_beats(self, obj):
+        """The lesson as the player consumes it: authored beats, else the
+        generic markdown fallback (plan §3). Derived at read time so content
+        stays the single source of truth — no migration, never stale."""
+        return derive_beats(
+            content=obj.content or "",
+            sandbox_config=obj.sandbox_config or {},
+            video_url=obj.video_url or "",
+            title=obj.title,
+        )
 
     def get_video_watched(self, obj):
         if not (obj.video_url or "").strip():

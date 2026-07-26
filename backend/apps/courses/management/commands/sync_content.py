@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from apps.courses.beats import validate_beats
 from apps.courses.curriculum import (
     CURRICULUM,
     SKILL,
@@ -9,6 +10,10 @@ from apps.courses.curriculum import (
 )
 from apps.courses.models import Course, Lesson, Skill
 from apps.courses.sandbox_specs import sandbox_spec_for
+
+# MODULE 2 OWNED BY DOUGLAS — exempted from content validation while its
+# lessons land. Do not extend this list. (docs/UI-OVERHAUL-PLAN.md §8)
+VALIDATION_EXEMPT_SLUGS = {"module-2-exploring-llm-models"}
 
 
 class Command(BaseCommand):
@@ -34,6 +39,17 @@ class Command(BaseCommand):
                 "for synced courses. WARNING: student progress on those lessons is lost."
             ),
         )
+        parser.add_argument(
+            "--strict",
+            action="store_true",
+            help=(
+                "Fail (and roll back the whole sync) on content-validation problems: "
+                "authored beats breaking the §2 rules, published modules without an "
+                "exam, exams recycling recap questions. Default is warn-only so the "
+                "container-startup sync keeps booting while content is migrated. "
+                "Use --strict in CI."
+            ),
+        )
 
     @transaction.atomic
     def handle(self, *args, **options):
@@ -57,10 +73,14 @@ class Command(BaseCommand):
 
         created_lessons = 0
         updated_lessons = 0
+        problems: list[str] = []
 
         for module in CURRICULUM:
             if only and module["slug"] not in only:
                 continue
+
+            if module["slug"] not in VALIDATION_EXEMPT_SLUGS:
+                problems += _module_assessment_problems(module)
 
             course, course_created = Course.objects.update_or_create(
                 slug=module["slug"],
@@ -94,6 +114,20 @@ class Command(BaseCommand):
                 sandbox_spec = sandbox_spec_for(module["slug"], slug)
                 if sandbox_spec:
                     spec_config["sandbox"] = sandbox_spec
+
+                # Authored beats are held to the §2 rules (fallback-derived
+                # lessons are exempt — they are the migration safety net).
+                if spec_config.get("beats") and module["slug"] not in VALIDATION_EXEMPT_SLUGS:
+                    artifact_paths = tuple(
+                        artifact.get("path")
+                        for artifact in spec_config.get("artifact_bundle") or []
+                        if isinstance(artifact, dict) and artifact.get("path")
+                    )
+                    problems += validate_beats(
+                        spec_config["beats"],
+                        artifact_paths=artifact_paths,
+                        lesson_label=f"{module['slug']}/{slug}",
+                    )
 
                 lesson = Lesson.objects.filter(course=course, slug=slug).first()
                 if lesson is None:
@@ -132,6 +166,12 @@ class Command(BaseCommand):
                     config = dict(lesson.sandbox_config or {})
                     config["questions"] = default_recap_questions(title, slug)
                     lesson.sandbox_config = config
+                # Merging never deletes: shed the retired publish_rules key from
+                # rows synced before it was removed from the spec.
+                if "publish_rules" in (lesson.sandbox_config or {}):
+                    config = dict(lesson.sandbox_config)
+                    config.pop("publish_rules", None)
+                    lesson.sandbox_config = config
                 # The sandbox spec is code-owned, not admin-editable, so it syncs
                 # regardless of whether this lesson also ships quiz questions.
                 if sandbox_spec:
@@ -158,8 +198,55 @@ class Command(BaseCommand):
                         )
                     )
 
+        if problems:
+            self.stdout.write(
+                self.style.WARNING(f"\nContent validation: {len(problems)} problem(s)")
+            )
+            for problem in problems:
+                self.stdout.write(self.style.WARNING(f"  ! {problem}"))
+            if options["strict"]:
+                raise CommandError(
+                    "Content validation failed under --strict. The transaction was "
+                    "rolled back — nothing was synced."
+                )
+
         self.stdout.write(
             self.style.SUCCESS(
                 f"Sync complete. Lessons created: {created_lessons}, updated: {updated_lessons}."
             )
         )
+
+
+def _module_assessment_problems(module: dict) -> list[str]:
+    """Plan §6: every published module ends with an exam, and exam items must
+    be new — never the recap bank replayed. This is the check that would have
+    caught Module 1's recycled exam automatically."""
+    problems: list[str] = []
+    lesson_specs = module["lessons"]
+    quiz_specs = [spec for spec in lesson_specs if spec[2] == "quiz"]
+
+    if module.get("published", False) and not quiz_specs:
+        problems.append(f"{module['slug']}: published module has no exam lesson (plan §6)")
+
+    recap_prompts = set()
+    for spec in lesson_specs:
+        if spec[2] == "quiz" or len(spec) < 5:
+            continue
+        for question in (spec[4].get("questions") or []):
+            prompt = (question.get("prompt") or "").strip().lower()
+            if prompt:
+                recap_prompts.add(prompt)
+
+    for spec in quiz_specs:
+        config = spec[4] if len(spec) > 4 else {}
+        recycled = sum(
+            1
+            for question in (config.get("questions") or [])
+            if (question.get("prompt") or "").strip().lower() in recap_prompts
+        )
+        if recycled:
+            problems.append(
+                f"{module['slug']}/{spec[1]}: exam recycles {recycled} recap "
+                "question(s) — exam items must be new (plan §6)"
+            )
+    return problems

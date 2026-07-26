@@ -1,0 +1,195 @@
+"""Beat model: the lesson player's unit of content.
+
+A lesson is a sequence of beats — one screen, one idea, one action each
+(docs/UI-OVERHAUL-PLAN.md §2). Five types, closed set:
+
+    explain  one idea, one analogy or visual
+    predict  ask before telling
+    check    one question, instant feedback
+    do       one real action (closed family: DO_ACTIONS)
+    recap    what you now know
+
+Two sources, in priority order:
+
+1. **Authored** — a ``beats`` list in the lesson's sandbox_config. Authored
+   beats are held to the §2 rules by :func:`validate_beats`; sync_content
+   reports violations (and fails under ``--strict``).
+2. **Fallback** — :func:`beats_from_markdown` converts any plain lesson
+   (markdown + optional video + recap bank) into beats mechanically. This is
+   the migration safety net: every lesson renders in the player from day one.
+   Fallback output is deliberately exempt from the authoring rules — it is
+   honest-but-ugly, not authored.
+"""
+
+from __future__ import annotations
+
+import re
+from typing import Any
+
+BEAT_TYPES = ("explain", "predict", "check", "do", "recap")
+
+# The do-beat family is closed (§2.1). A sixth action means deleting one.
+DO_ACTIONS = ("video", "terminal", "workbench", "studio", "tutor_try")
+
+MIN_BEATS = 5
+MAX_BEATS = 9
+
+_H2_SPLIT = re.compile(r"\n(?=##\s+)")
+_H_LINE = re.compile(r"^#{1,6}\s+(.*?)\s*$", re.MULTILINE)
+
+
+def validate_beats(
+    beats: list[dict],
+    *,
+    artifact_paths: tuple[str, ...] = (),
+    lesson_label: str = "lesson",
+) -> list[str]:
+    """Check authored beats against the §2 rules. Returns problem strings."""
+    problems: list[str] = []
+
+    def bad(index: int, message: str) -> None:
+        problems.append(f"{lesson_label}: beat {index + 1}: {message}")
+
+    if not isinstance(beats, list) or not all(isinstance(b, dict) for b in beats):
+        return [f"{lesson_label}: beats must be a list of objects"]
+
+    if not MIN_BEATS <= len(beats) <= MAX_BEATS:
+        problems.append(
+            f"{lesson_label}: {len(beats)} beats — a lesson is {MIN_BEATS}-{MAX_BEATS}; "
+            "under merges, over splits"
+        )
+
+    previous_type = None
+    for i, beat in enumerate(beats):
+        beat_type = beat.get("type")
+        if beat_type not in BEAT_TYPES:
+            bad(i, f"unknown type {beat_type!r} (allowed: {', '.join(BEAT_TYPES)})")
+            previous_type = None
+            continue
+
+        if beat_type == "explain" and previous_type == "explain":
+            bad(i, "two explain beats in a row — passive streaks are where attention dies")
+
+        if beat_type == "do":
+            action = beat.get("action")
+            if action not in DO_ACTIONS:
+                bad(i, f"do-beat action {action!r} does not exist (allowed: {', '.join(DO_ACTIONS)})")
+            if action == "workbench":
+                task_path = (beat.get("task") or {}).get("artifact_path")
+                if task_path and task_path not in artifact_paths:
+                    bad(i, f"workbench task references {task_path!r}, not in this lesson's artifact bundle")
+
+        if beat_type == "check":
+            question = beat.get("question") or {}
+            if not question.get("prompt") or not question.get("options"):
+                bad(i, "check beat needs a question with prompt and options")
+
+        previous_type = beat_type
+
+    if len(beats) >= 2 and beats[1].get("type") != "predict":
+        problems.append(
+            f"{lesson_label}: beat 2 must be a predict — learners act before they read"
+        )
+
+    return problems
+
+
+def _strip_leading_title(content: str, title: str) -> str:
+    """Drop a leading h1 that repeats the lesson title (mirrors the frontend)."""
+    lines = content.split("\n")
+    for i, line in enumerate(lines):
+        if not line.strip():
+            continue
+        match = re.match(r"^#\s+(.+?)\s*$", line)
+        if match:
+            norm = lambda s: re.sub(r"[^a-z0-9]+", " ", s.lower()).strip()  # noqa: E731
+            if norm(match.group(1)) == norm(title):
+                return "\n".join(lines[i + 1 :]).lstrip("\n")
+        break
+    return content
+
+
+def _section_title(section: str, fallback: str) -> tuple[str, str]:
+    """Pull the leading heading off a section; return (title, body)."""
+    match = _H_LINE.match(section.strip())
+    if match:
+        body = section.strip()[match.end() :].lstrip("\n")
+        return match.group(1), body
+    return fallback, section.strip()
+
+
+def beats_from_markdown(
+    content: str,
+    *,
+    title: str = "",
+    video_url: str = "",
+    questions: list[dict] | None = None,
+) -> list[dict]:
+    """Mechanical markdown → beats conversion (the generic fallback, §3).
+
+    ``##`` sections become explain beats; a video becomes a `do` beat right
+    after the first explain; the recap bank trails as check beats. No count
+    clamping — fallback is exempt from authoring rules by design.
+    """
+    body = _strip_leading_title(content or "", title or "")
+    beats: list[dict] = []
+
+    sections = [s for s in _H2_SPLIT.split(body) if s.strip()]
+    for index, section in enumerate(sections):
+        section_title, section_body = _section_title(section, "Read" if index else (title or "Read"))
+        if not section_body and not section_title:
+            continue
+        beats.append(
+            {
+                "type": "explain",
+                "title": section_title,
+                "body": section_body,
+                "source": "fallback",
+            }
+        )
+
+    if video_url:
+        video_beat = {
+            "type": "do",
+            "action": "video",
+            "title": "Watch the video",
+            "video_url": video_url,
+            "source": "fallback",
+        }
+        # After the first explain when there is one; otherwise the video leads.
+        beats.insert(1 if beats else 0, video_beat)
+
+    for question in questions or []:
+        if not isinstance(question, dict) or not question.get("prompt"):
+            continue
+        beats.append(
+            {
+                "type": "check",
+                "title": "Check yourself",
+                "question": question,
+                "source": "fallback",
+            }
+        )
+
+    return beats
+
+
+def derive_beats(
+    *,
+    content: str,
+    sandbox_config: dict[str, Any] | None,
+    video_url: str = "",
+    title: str = "",
+) -> list[dict]:
+    """The player's single entry point: authored beats, else fallback."""
+    config = sandbox_config or {}
+    authored = config.get("beats")
+    if isinstance(authored, list) and authored:
+        return authored
+    questions = config.get("questions")
+    return beats_from_markdown(
+        content,
+        title=title,
+        video_url=(video_url or "").strip(),
+        questions=questions if isinstance(questions, list) else None,
+    )
