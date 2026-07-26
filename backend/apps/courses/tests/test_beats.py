@@ -207,3 +207,18 @@ def test_fallback_emits_terminal_beat_for_sandbox_lessons():
     assert ("do", "terminal") in types
     # terminal sits after the prose, before the checks
     assert types.index(("do", "terminal")) < types.index(("check", None))
+
+
+def test_every_published_module_passes_assessment_validation():
+    """Plan §6 complete: every published module has an exam and no exam
+    recycles its recap bank. Module 2 is exempt by directive."""
+    from apps.courses.curriculum import CURRICULUM
+    from apps.courses.management.commands.sync_content import (
+        VALIDATION_EXEMPT_SLUGS,
+        _module_assessment_problems,
+    )
+
+    for module in CURRICULUM:
+        if module["slug"] in VALIDATION_EXEMPT_SLUGS:
+            continue
+        assert _module_assessment_problems(module) == [], module["slug"]

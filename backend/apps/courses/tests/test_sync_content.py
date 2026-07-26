@@ -42,6 +42,7 @@ def test_sync_content_materializes_structured_module_6_payload():
         "adding-skills",
         "channel",
         "agent-safety",
+        "module-6-exam",
     ]
     lesson = Lesson.objects.get(course=course, slug="configuration")
 

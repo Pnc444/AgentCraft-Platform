@@ -34,6 +34,8 @@ const PLAYER_COURSES = new Set([
   "module-3-prompting",
   "module-4-ai-agents",
   "module-4-5-docker-and-environments",
+  "module-5-hermes",
+  "module-7-claude",
   "module-6-openclaw",
   "module-8-capstone-safety-evaluation",
 ]);

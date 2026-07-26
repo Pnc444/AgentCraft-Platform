@@ -19,6 +19,7 @@ type WorkspaceValue = {
     score: number | null;
     interaction_log: [];
     sandbox_config: Record<string, unknown>;
+    beats?: Array<Record<string, unknown>>;
   } | null;
   course: null;
   videoUrl: string;
