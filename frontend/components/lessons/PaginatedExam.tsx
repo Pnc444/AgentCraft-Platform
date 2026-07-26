@@ -128,6 +128,13 @@ export function PaginatedExam({
   onPassedRef.current = onPassed;
 
   const showResult = phase === "result";
+  /*
+    Reviewing a result that already stands. A previously-passed exam stores no
+    answers, so every "did you answer this one?" gate must stand down — the
+    review is read-only paging, not an attempt. Without this, Review questions
+    opened on question 1 with Next disabled: a dead end.
+  */
+  const reviewing = showResult && passed;
   const isReviewSlide = currentIndex === reviewIndex;
   const currentQuestion = !isReviewSlide ? bank[currentIndex] : null;
   const currentAnswered =
@@ -138,8 +145,9 @@ export function PaginatedExam({
   function navigate(direction: "forward" | "back") {
     if (direction === "forward" && currentIndex >= totalSlides - 1) return;
     if (direction === "back" && currentIndex <= 0) return;
-    // Soft gate: must answer the current question before Next
-    if (direction === "forward" && !isReviewSlide && !currentAnswered) return;
+    // Soft gate: must answer the current question before Next — but never
+    // while reviewing a standing result (there are no answers to have given).
+    if (direction === "forward" && !isReviewSlide && !currentAnswered && !reviewing) return;
 
     const entering = direction === "forward" ? "slide-enter" : "slide-enter-back";
     setAnimClass(entering);
@@ -165,7 +173,8 @@ export function PaginatedExam({
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex, totalSlides, currentAnswered, isReviewSlide]);
+    // `reviewing` included so arrow keys page through a review too.
+  }, [currentIndex, totalSlides, currentAnswered, isReviewSlide, reviewing]);
 
   // Write the draft through; drop it the moment the attempt passes (F1).
   useEffect(() => {
@@ -346,7 +355,7 @@ export function PaginatedExam({
           </div>
           <div className="flex items-center gap-3">
             <span className="hidden text-xs text-craft-muted sm:inline">
-              {answeredCount}/{bank.length} answered
+              {reviewing ? "Reviewing — answers shown" : `${answeredCount}/${bank.length} answered`}
             </span>
             {/*
               Counts questions, not slides — "Step 1 / 6" on a 5-question quiz
@@ -556,9 +565,14 @@ export function PaginatedExam({
                   );
                 })}
               </ul>
-              {!currentAnswered && (
+              {!currentAnswered && !reviewing && (
                 <p className="text-xs text-craft-faint">
                   Select an answer to continue to the next question.
+                </p>
+              )}
+              {reviewing && (
+                <p className="text-xs text-craft-faint">
+                  The correct answer is highlighted. Use Next and Back to page through.
                 </p>
               )}
               {/* After submission, say WHY the right answer is right and which
@@ -632,7 +646,7 @@ export function PaginatedExam({
             <button
               type="button"
               onClick={() => navigate("forward")}
-              disabled={!currentAnswered}
+              disabled={!currentAnswered && !reviewing}
               className="btn-primary flex items-center gap-1.5 disabled:pointer-events-none disabled:opacity-40"
             >
               {nextLabel}

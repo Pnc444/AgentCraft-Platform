@@ -157,6 +157,51 @@ describe("PaginatedExam", () => {
     }
   });
 
+  it("lets you page through a review instead of trapping you on question 1", async () => {
+    const { container, root } = render(
+      createElement(PaginatedExam, {
+        questions,
+        label: "Exam",
+        previouslyPassed: true,
+        previousScore: 100,
+      })
+    );
+
+    try {
+      await act(async () => {
+        root.render(
+          createElement(PaginatedExam, {
+            questions,
+            label: "Exam",
+            previouslyPassed: true,
+            previousScore: 100,
+          })
+        );
+      });
+
+      const byText = (t: string) =>
+        Array.from(container.querySelectorAll("button")).find((b) =>
+          b.textContent?.includes(t)
+        );
+
+      await act(async () => {
+        byText("Review questions")!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      });
+
+      // A previously-passed exam has no stored answers, so the answer gate must
+      // stand down — otherwise Review is a dead end on question 1.
+      expect(container.textContent).toContain("What is AI?");
+      expect(container.textContent).toContain("Reviewing");
+      expect(container.textContent).not.toContain("Select an answer to continue");
+
+      const advance = byText("Review") ?? byText("Next");
+      expect((advance as HTMLButtonElement).disabled).toBe(false);
+    } finally {
+      root.unmount();
+      container.remove();
+    }
+  });
+
   it("shows one question at a time with step chrome", async () => {
     const { container, root } = render(
       createElement(PaginatedExam, { questions, label: "Exam" })
