@@ -16,8 +16,9 @@ import {
 import { LessonContent } from "@/components/lessons/LessonContent";
 import { LessonVideo } from "@/components/lessons/LessonVideo";
 import { LessonWorkbench } from "@/components/lessons/LessonWorkbench";
+import { LessonCapstoneStudio } from "@/components/lessons/LessonCapstoneStudio";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
-import { lessonStepHref } from "@/lib/lesson-steps";
+import { getCapstoneAssignment, lessonStepHref } from "@/lib/lesson-steps";
 import type { CheckpointQuestion } from "@/components/lessons/CheckpointQuiz";
 import type { Beat, LessonArtifact } from "@/types";
 
@@ -26,7 +27,11 @@ import type { Beat, LessonArtifact } from "@/types";
  * content page (plan step 1: Module 4 proves it; later steps widen the set,
  * step 7 deletes the flag and the old page together).
  */
-const PLAYER_COURSES = new Set(["module-4-ai-agents", "module-6-openclaw"]);
+const PLAYER_COURSES = new Set([
+  "module-4-ai-agents",
+  "module-6-openclaw",
+  "module-8-capstone-safety-evaluation",
+]);
 
 export function isPlayerCourse(courseSlug: string): boolean {
   return PLAYER_COURSES.has(courseSlug);
@@ -151,6 +156,14 @@ export function LessonPlayer() {
       {/* One beat. The pane may scroll internally; the page never does. */}
       <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-8 sm:py-6">
         <div className="mx-auto max-w-2xl">
+          {beat.type === "do" && beat.action === "studio" ? (
+            /*
+              The capstone studio is the lesson's spine (plan step 4). It has
+              its own verify machinery persisted via interaction_log, so the
+              beat itself is ungated — the recap quiz still gates completion.
+            */
+            <StudioBeat beat={beat} />
+          ) : (
           <BeatView
             beat={beat}
             revealed={!!revealed[index]}
@@ -162,6 +175,7 @@ export function LessonPlayer() {
             artifacts={artifactBundle}
             onWorkDone={() => setWorkDone((w) => ({ ...w, [index]: true }))}
           />
+          )}
         </div>
       </div>
 
@@ -357,6 +371,56 @@ function ExplainBody({ beat }: { beat: Beat }) {
           </ul>
         </div>
       ) : null}
+    </div>
+  );
+}
+
+
+function StudioBeat({ beat }: { beat: Beat }) {
+  const { lesson, updateProgress } = useLessonWorkspace();
+  if (!lesson) return null;
+  const assignment = getCapstoneAssignment(lesson.sandbox_config);
+  if (!assignment) {
+    return (
+      <p className="text-sm text-craft-muted">
+        The capstone assignment for this step is missing from the lesson config.
+      </p>
+    );
+  }
+  return (
+    <div className="space-y-3">
+      {beat.instructions?.length ? (
+        <ul className="space-y-1.5">
+          {beat.instructions.map((task, i) => (
+            <li key={i} className="text-sm text-craft-ink">
+              {task}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      <LessonCapstoneStudio
+        assignment={assignment}
+        evaluationRubric={
+          Array.isArray(lesson.sandbox_config.evaluation_rubric)
+            ? (lesson.sandbox_config.evaluation_rubric as Array<{
+                criterion: string;
+                weight: number;
+                description: string;
+              }>)
+            : []
+        }
+        evaluationCases={
+          Array.isArray(lesson.sandbox_config.evaluation_cases)
+            ? (lesson.sandbox_config.evaluation_cases as Array<{
+                name: string;
+                goal: string;
+                expected: string;
+              }>)
+            : []
+        }
+        interactionLog={lesson.interaction_log}
+        onRecordInteraction={(event) => updateProgress({ interaction_event: event })}
+      />
     </div>
   );
 }

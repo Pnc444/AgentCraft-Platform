@@ -238,6 +238,17 @@ def beats_from_guided_blocks(
                 }
             )
 
+        if block.get("interactive_widget") == "capstone_studio":
+            beats.append(
+                {
+                    "type": "do",
+                    "action": "studio",
+                    "title": block.get("title") or "Capstone studio",
+                    "instructions": block.get("try_this") or [],
+                    "source": "blocks",
+                }
+            )
+
         if block.get("checkpoint_after") and bank:
             question = bank[bank_cursor % len(bank)]
             bank_cursor += 1

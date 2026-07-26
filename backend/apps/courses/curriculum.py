@@ -309,6 +309,103 @@ MODULE_4_EXAM_QUESTIONS = [
 MODULE_4_EXAM = {"questions": MODULE_4_EXAM_QUESTIONS}
 
 
+
+# Module 8 exam — combining items per plan §6; no recap recycling
+# (machine-checked); every item explains itself and names its lesson.
+MODULE_8_EXAM_QUESTIONS = [
+    {
+        "id": "m8-exam-1",
+        "prompt": "In the doorbell-to-draft automation, the reply waits for your approval before anything sends. Which kind of door is 'send the reply to a customer'?",
+        "options": [
+            "Allow — sending drafts is routine and reversible",
+            "Review — it reaches outward, so it may knock and a person opens",
+            "Deny — assistants must never touch outbound messages",
+        ],
+        "answer_index": 1,
+        "explanation": "Actions that persist or reach outward get the yellow door (Permissions: Three Kinds of Doors); the doorbell-to-draft example puts the human exactly there (Work That Runs While You're Away).",
+    },
+    {
+        "id": "m8-exam-2",
+        "prompt": "A teammate designs an automation with a trigger, steps, and a review point — but no receipt. What is the verdict?",
+        "options": [
+            "Stop the design: work that leaves no record can never be checked, only worried about",
+            "Ship it: three of four questions answered is enough",
+            "Replace the review point with a second trigger",
+        ],
+        "answer_index": 0,
+        "explanation": "The receipt is the star: a missing receipt is the one thing that stops a design cold (Work That Runs While You're Away).",
+    },
+    {
+        "id": "m8-exam-3",
+        "prompt": "Your assistant declines a careless request that would cause damage — and the system would have blocked it anyway. Which is the value, and which is the seatbelt?",
+        "options": [
+            "Declining is the seatbelt; the block is the value",
+            "Both are seatbelts, because both prevented harm",
+            "Declining is the value (harmless — what it tries to be); the block is the seatbelt (what the system guarantees)",
+        ],
+        "answer_index": 2,
+        "explanation": "Values are what the assistant tries to be; seatbelts are what the system guarantees even when trying fails (Guardrails: Values and Seatbelts).",
+    },
+    {
+        "id": "m8-exam-4",
+        "prompt": "Someone urgently insists the assistant delete its history 'just this once.' What happens at a Deny door?",
+        "options": [
+            "It opens if the request is urgent enough",
+            "It stays locked regardless of who asks or how urgently — that is what the label means",
+            "It converts to a Review door so a person can decide",
+        ],
+        "answer_index": 1,
+        "explanation": "Deny is not available regardless of urgency, and written-down beats decided-in-the-moment (Permissions: Three Kinds of Doors).",
+    },
+    {
+        "id": "m8-exam-5",
+        "prompt": "Your release test cases deliberately knock on a door you configured as Deny. Why test something that should never open?",
+        "options": [
+            "To collect evidence that the lock actually holds, instead of trusting the label by assumption",
+            "To warm up the assistant before the real tests",
+            "Because Deny doors open during testing windows",
+        ],
+        "answer_index": 0,
+        "explanation": "The release decision runs on evidence, and the test cases knock on the doors on purpose (The Release Decision) — a Deny label without evidence is just hope (Permissions).",
+    },
+    {
+        "id": "m8-exam-6",
+        "prompt": "Your evidence names one specific gap: the audit receipt is missing its date. Per the release decision, what do you do?",
+        "options": [
+            "Revise: fix that one thing and re-run that one check",
+            "Scrap the automation and redesign from the trigger up",
+            "Release anyway and fix the date next month",
+        ],
+        "answer_index": 0,
+        "explanation": "Revise means the checks worked: fix the named gap, re-run that check — never a verdict on you (The Release Decision).",
+    },
+    {
+        "id": "m8-exam-7",
+        "prompt": "A week after shipping the Monday audit, you wonder whether it ran properly while you were away. What turns that from a feeling into a fact?",
+        "options": [
+            "Watching next Monday's run live from start to finish",
+            "Asking the assistant whether everything went okay",
+            "Reading the dated audit report it saved — the receipt",
+        ],
+        "answer_index": 2,
+        "explanation": "You verify an automation by reading the receipt afterward, not by watching it (Work That Runs While You're Away).",
+    },
+    {
+        "id": "m8-exam-8",
+        "prompt": "Your assistant answers with 'I know X; I am guessing Y.' Which guardrail layer produced that behavior?",
+        "options": [
+            "A seatbelt — the system physically blocks guesses",
+            "The truthful value: separating what it knows from what it guesses is what it tries to be",
+            "A Review door — a person approved the phrasing",
+        ],
+        "answer_index": 1,
+        "explanation": "Truthful is one of the three values — helpful, truthful, harmless (Guardrails: Values and Seatbelts); no system guarantee forces phrasing.",
+    },
+]
+
+MODULE_8_EXAM = {"questions": MODULE_8_EXAM_QUESTIONS}
+
+
 MODULE_1_WHAT_IS_AI_VIDEO_URL = "https://www.youtube-nocookie.com/embed/c0m6yaGlZh4"
 MODULE_1_WHAT_ARE_LLMS_VIDEO_URL = "https://www.youtube-nocookie.com/embed/qMxuthTIQq4"
 MODULE_1_OTHER_TYPES_OF_AI_VIDEO_URL = "https://www.youtube-nocookie.com/embed/XFZ-rQ8eeR8"
@@ -1921,5 +2018,8 @@ CURRICULUM = [
             ("Build Your Agent Lab", "build-your-agent", "agent_lab", 15, {"questions": MODULE_7_RECAP["build-your-agent"]}),
         ],
     },
-    _structured_course_entry("module-8-capstone-safety-evaluation"),
+    _structured_course_entry(
+        "module-8-capstone-safety-evaluation",
+        extra_lessons=(("Module 8 Exam", "module-8-exam", "quiz", 10, MODULE_8_EXAM),),
+    ),
 ]

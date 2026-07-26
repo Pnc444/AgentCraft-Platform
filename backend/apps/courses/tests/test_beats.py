@@ -179,3 +179,23 @@ def test_blocks_with_artifacts_emit_workbench_beats():
     assert beats[1]["try_this"] == []
     # the explorer-widget block gets the whole bundle (empty = all)
     assert beats[4]["artifact_paths"] == []
+
+
+def test_capstone_studio_block_emits_studio_beat():
+    from apps.courses.beats import beats_from_guided_blocks
+
+    blocks = [{"title": "Run it", "body": "Apply.", "interactive_widget": "capstone_studio", "try_this": ["Verify one case"]}]
+    beats = beats_from_guided_blocks(blocks, title="T")
+    assert [(b["type"], b.get("action")) for b in beats] == [("explain", None), ("do", "studio")]
+    assert beats[1]["instructions"] == ["Verify one case"]
+
+
+def test_module_8_exam_meets_the_authoring_standard():
+    from apps.courses.curriculum import CURRICULUM, MODULE_8_EXAM_QUESTIONS
+    from apps.courses.management.commands.sync_content import _module_assessment_problems
+
+    assert len(MODULE_8_EXAM_QUESTIONS) == 8
+    assert all(q.get("explanation") for q in MODULE_8_EXAM_QUESTIONS)
+    module = next(m for m in CURRICULUM if m["slug"] == "module-8-capstone-safety-evaluation")
+    assert module["lessons"][-1][2] == "quiz"
+    assert _module_assessment_problems(module) == []
