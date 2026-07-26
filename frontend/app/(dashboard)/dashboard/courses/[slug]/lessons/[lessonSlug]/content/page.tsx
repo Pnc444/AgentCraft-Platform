@@ -24,13 +24,14 @@ import { LessonArtifactPack } from "@/components/lessons/LessonArtifactPack";
 import { LessonCapstoneStudio } from "@/components/lessons/LessonCapstoneStudio";
 import { LessonContent } from "@/components/lessons/LessonContent";
 import { LessonSection } from "@/components/lessons/LessonSection";
+import { LessonVideo } from "@/components/lessons/LessonVideo";
 import { OpenClawFileExplorer } from "@/components/lessons/OpenClawFileExplorer";
 import { PaginatedLessonContent } from "@/components/lessons/PaginatedLessonContent";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 import { ProgressBar } from "@/components/shared/ProgressBar";
 import { Reveal } from "@/components/shared/Reveal";
 import { completedCheckpointIds, completedInteractionKeys } from "@/lib/lesson-interactions";
-import { getCapstoneAssignment, lessonStepHref, stepAfterContent } from "@/lib/lesson-steps";
+import { getCapstoneAssignment, lessonStepHref, STEP_AFTER_LESSON } from "@/lib/lesson-steps";
 
 function inferBlockKind(title: string) {
   const normalized = title.trim().toLowerCase();
@@ -105,6 +106,10 @@ export default function LessonContentPage() {
     guidedBlocks,
     artifactBundle,
     updateProgress,
+    needsVideo,
+    videoDone,
+    markVideoWatched,
+    setNotice,
   } = useLessonWorkspace();
 
   useEffect(() => {
@@ -116,8 +121,8 @@ export default function LessonContentPage() {
 
   if (lesson.lesson_type === "quiz") return null;
 
-  const nextStep = stepAfterContent(!!videoUrl);
-  const hasVideo = nextStep === "video";
+  const hasVideo = !!videoUrl;
+  const quizLocked = needsVideo && !videoDone;
   const checkpointBlocks = useMemo(
     () =>
       guidedBlocks
@@ -262,30 +267,67 @@ export default function LessonContentPage() {
     artifactBundle.length > 0 ||
     capstoneAssignment !== null;
 
+  /*
+    The video renders inside the lesson step instead of behind its own tab, so
+    it must appear on BOTH render paths. Guided/paginated lessons have no video
+    today, but /video now redirects here — without this the video would be
+    silently unreachable the moment anyone adds one to a guided lesson.
+  */
+  const videoSection = hasVideo ? (
+    <LessonSection
+      title="Video"
+      icon={<MonitorPlay className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />}
+    >
+      <LessonVideo
+        url={videoUrl}
+        title={lesson.title}
+        watched={lesson.video_watched}
+        requireFullWatch={lesson.require_full_watch}
+        onWatched={markVideoWatched}
+      />
+      {lesson.video_watched ? (
+        <p className="mt-4 text-sm text-emerald-700 dark:text-emerald-300">
+          Video watched — the Recap Quiz is unlocked.
+        </p>
+      ) : lesson.require_full_watch ? (
+        <p className="mt-3 text-sm text-craft-muted">
+          Finish the video to unlock the Recap Quiz.
+        </p>
+      ) : (
+        <p className="mt-3 text-sm text-craft-muted">
+          This video is optional — you can go straight to the Recap Quiz.
+        </p>
+      )}
+    </LessonSection>
+  ) : null;
+
   if (isPaginated) {
     return (
-      <PaginatedLessonContent
-        lesson={lesson}
-        slug={slug}
-        lessonSlug={lessonSlug}
-        videoUrl={videoUrl}
-        blockLayouts={blockLayouts}
-        checkpointBlocks={checkpointBlocks}
-        checkpointPct={checkpointPct}
-        optimisticCheckpointIds={optimisticCheckpointIds}
-        capstoneAssignment={capstoneAssignment}
-        hasInlineCapstoneStudio={hasInlineCapstoneStudio}
-        remainingArtifacts={remainingArtifacts}
-        checkpointQuestions={checkpointQuestions}
-        completedCheckpointSet={completedCheckpointSet}
-        completedTaskSet={completedTaskSet}
-        revealedPredictFirstSet={revealedPredictFirstSet}
-        revealPredictFirst={revealPredictFirst}
-        markCheckpointComplete={markCheckpointComplete}
-        reopenCheckpoint={reopenCheckpoint}
-        toggleGuidedTask={toggleGuidedTask}
-        recordArtifactInteraction={recordArtifactInteraction}
-      />
+      <div className="space-y-4">
+        {videoSection}
+        <PaginatedLessonContent
+          lesson={lesson}
+          slug={slug}
+          lessonSlug={lessonSlug}
+          videoUrl={videoUrl}
+          blockLayouts={blockLayouts}
+          checkpointBlocks={checkpointBlocks}
+          checkpointPct={checkpointPct}
+          optimisticCheckpointIds={optimisticCheckpointIds}
+          capstoneAssignment={capstoneAssignment}
+          hasInlineCapstoneStudio={hasInlineCapstoneStudio}
+          remainingArtifacts={remainingArtifacts}
+          checkpointQuestions={checkpointQuestions}
+          completedCheckpointSet={completedCheckpointSet}
+          completedTaskSet={completedTaskSet}
+          revealedPredictFirstSet={revealedPredictFirstSet}
+          revealPredictFirst={revealPredictFirst}
+          markCheckpointComplete={markCheckpointComplete}
+          reopenCheckpoint={reopenCheckpoint}
+          toggleGuidedTask={toggleGuidedTask}
+          recordArtifactInteraction={recordArtifactInteraction}
+        />
+      </div>
     );
   }
 
@@ -546,31 +588,43 @@ export default function LessonContentPage() {
         </LessonSection>
       )}
 
+      {videoSection}
+
       {/* End-of-lesson: quiz prompt + navigation */}
       <Reveal delay={80}>
         <div className="border-t border-craft-border pt-8">
           <div className="flex flex-col items-center gap-3 text-center">
             <h2 className="text-lg font-bold text-craft-ink">
-              {hasVideo ? "Up next: the lesson video" : "Ready to check your understanding?"}
+              {quizLocked ? "Finish the video to continue" : "Ready to check your understanding?"}
             </h2>
             <p className="max-w-md text-sm text-craft-muted">
-              {hasVideo
-                ? "Watch the video, then take the recap quiz to finish this lesson."
+              {quizLocked
+                ? "The Recap Quiz unlocks once the video has played through."
                 : "Pass the recap quiz (80%+) to complete this lesson and move on."}
             </p>
-            <Link href={lessonStepHref(slug, lessonSlug, nextStep)} className="btn-primary mt-1">
-              {hasVideo ? (
-                <>
-                  <MonitorPlay className="h-4 w-4" />
-                  Watch Video
-                </>
-              ) : (
-                <>
-                  <ClipboardCheck className="h-4 w-4" />
-                  Start Recap Quiz
-                </>
-              )}
-            </Link>
+            {quizLocked ? (
+              <button
+                type="button"
+                onClick={() =>
+                  setNotice(
+                    "Watch the lesson video all the way through before taking the Recap Quiz."
+                  )
+                }
+                className="btn-secondary mt-1"
+                aria-disabled="true"
+              >
+                <ClipboardCheck className="h-4 w-4" />
+                Finish Video to Unlock Quiz
+              </button>
+            ) : (
+              <Link
+                href={lessonStepHref(slug, lessonSlug, STEP_AFTER_LESSON)}
+                className="btn-primary mt-1"
+              >
+                <ClipboardCheck className="h-4 w-4" />
+                Start Recap Quiz
+              </Link>
+            )}
           </div>
 
           <div className="mt-8 flex flex-wrap items-center justify-between gap-3">

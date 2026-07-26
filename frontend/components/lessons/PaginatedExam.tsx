@@ -400,7 +400,7 @@ export function PaginatedExam({
         </div>
 
         {/* Footer navigation — same chrome as PaginatedLessonContent */}
-        <div className="flex shrink-0 items-center justify-between gap-3 border-t border-craft-border bg-craft-surface/92 px-5 py-2.5 backdrop-blur-sm sm:px-6">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-t border-craft-border bg-craft-surface/90 px-5 py-2.5 backdrop-blur-sm sm:px-6">
           <button
             type="button"
             onClick={() => navigate("back")}

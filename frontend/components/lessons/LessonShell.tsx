@@ -1,52 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { BookOpen, Bot, ClipboardCheck, Gauge, MonitorPlay, Timer } from "lucide-react";
-import clsx from "clsx";
-import {
-  assessmentLabelForLessonType,
-  isExamLessonType,
-  lessonStepHref,
-  type LessonStep,
-} from "@/lib/lesson-steps";
+import { usePathname } from "next/navigation";
+import { Bot, Timer } from "lucide-react";
+import { isExamLessonType, lessonStepPosition } from "@/lib/lesson-steps";
 import { Reveal } from "@/components/shared/Reveal";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 
+/**
+ * Lesson page frame.
+ *
+ * There is deliberately no step-tab strip here. Tabs let a learner jump between
+ * Content / Video / Quiz / Progress in any direction, which combined with the
+ * per-page prev/next buttons formed a navigation loop — four primary
+ * destinations for what is often a single video. Movement is now linear and
+ * driven by the call-to-action at the end of each step; this header carries
+ * orientation ("Step 2 of 3") but is not navigation.
+ */
 export function LessonShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const router = useRouter();
-  const {
-    lesson,
-    isLoading,
-    notice,
-    slug,
-    lessonSlug,
-    videoUrl,
-    needsVideo,
-    videoDone,
-    setNotice,
-    openTutor,
-  } =
-    useLessonWorkspace();
+  const { lesson, isLoading, notice, openTutor } = useLessonWorkspace();
 
   if (isLoading) return <p className="animate-pulse text-craft-faint">Loading lesson…</p>;
   if (!lesson) return <p className="text-craft-muted">Lesson not found.</p>;
 
-  const hasVideo = !!videoUrl;
-  const isExamLesson = isExamLessonType(lesson.lesson_type);
-  const assessmentLabel = assessmentLabelForLessonType(lesson.lesson_type);
-
-  const steps: { id: LessonStep; label: string; icon: typeof BookOpen }[] = [
-    ...(isExamLesson ? [] : [{ id: "content" as const, label: "Content", icon: BookOpen }]),
-    ...(hasVideo ? [{ id: "video" as const, label: "Video", icon: MonitorPlay }] : []),
-    { id: "quiz", label: assessmentLabel, icon: ClipboardCheck },
-    { id: "progress", label: "Progress", icon: Gauge },
-  ];
-
-  const active =
-    steps.find((step) => pathname.endsWith(`/${step.id}`))?.id ??
-    (isExamLesson ? "quiz" : ("content" as LessonStep));
+  const step = lessonStepPosition(pathname, {
+    isExam: isExamLessonType(lesson.lesson_type),
+  });
 
   return (
     <div className="mx-auto w-full max-w-6xl lg:ml-[clamp(0px,calc(50vw-36rem-var(--sidebar-w,18rem)),calc(100%-72rem))] lg:mr-0">
@@ -70,7 +50,9 @@ export function LessonShell({ children }: { children: React.ReactNode }) {
               <span aria-hidden className="text-craft-faint">
                 ·
               </span>
-              <span className="capitalize">{lesson.lesson_type.replace("_", " ")}</span>
+              <span>
+                {step.label} · step {step.current} of {step.total}
+              </span>
             </p>
 
             <h1 className="mt-3 text-3xl font-bold tracking-tight text-craft-ink">{lesson.title}</h1>
@@ -85,57 +67,6 @@ export function LessonShell({ children }: { children: React.ReactNode }) {
             Ask tutor
           </button>
         </div>
-      </Reveal>
-
-      <Reveal delay={80} variant="scale">
-        <nav
-          className="mt-6 flex gap-1 rounded-2xl border border-craft-border bg-craft-surface p-1 shadow-soft"
-          aria-label="Lesson steps"
-        >
-          {steps.map(({ id, label, icon: Icon }) => {
-            const href = lessonStepHref(slug, lessonSlug, id);
-            const isActive = active === id;
-            const quizLocked = id === "quiz" && needsVideo && !videoDone;
-            const className = clsx(
-              "flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium transition",
-              isActive
-                ? "bg-craft-accent-soft text-cyan-800 shadow-soft ring-1 ring-cyan-500/20 dark:text-cyan-200"
-                : quizLocked
-                  ? "bg-craft-soft/60 text-craft-faint"
-                  : "text-craft-muted hover:bg-craft-soft hover:text-craft-ink"
-            );
-
-            if (quizLocked) {
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => {
-                    setNotice("Watch the lesson video all the way through before taking the Recap Quiz.");
-                    router.push(lessonStepHref(slug, lessonSlug, "video"));
-                  }}
-                  className={className}
-                  aria-disabled="true"
-                >
-                  <Icon className="h-4 w-4 shrink-0" />
-                  <span className="hidden sm:inline">{label}</span>
-                </button>
-              );
-            }
-
-            return (
-              <Link
-                key={id}
-                href={href}
-                className={className}
-                aria-current={isActive ? "page" : undefined}
-              >
-                <Icon className="h-4 w-4 shrink-0" />
-                <span className="hidden sm:inline">{label}</span>
-              </Link>
-            );
-          })}
-        </nav>
       </Reveal>
 
       {notice && (

@@ -74,7 +74,7 @@ export default function LessonProgressPage() {
   function goToQuiz() {
     if (needsVideo && !videoDone) {
       setNotice("Watch the lesson video all the way through before taking the Recap Quiz.");
-      router.push(lessonStepHref(slug, lessonSlug, "video"));
+      router.push(lessonStepHref(slug, lessonSlug, "content"));
       return;
     }
     setNotice(null);
@@ -231,18 +231,15 @@ export default function LessonProgressPage() {
                 </Link>
               </>
             )}
+            {/*
+              One link, not two. The video plays inside the lesson step now, so
+              "Review content" and "Watch video" were the same destination.
+            */}
             {!isExamLesson && (
               <Link href={lessonStepHref(slug, lessonSlug, "content")} className="btn-secondary">
-                Review content
-              </Link>
-            )}
-            {videoUrl && (
-              <Link href={lessonStepHref(slug, lessonSlug, "video")} className="btn-secondary">
-                {lesson.video_watched
-                  ? "Review video"
-                  : needsVideo
-                    ? "Watch video"
-                    : "Watch video (optional)"}
+                {videoUrl && !lesson.video_watched && needsVideo
+                  ? "Watch video"
+                  : "Review lesson"}
               </Link>
             )}
           </div>

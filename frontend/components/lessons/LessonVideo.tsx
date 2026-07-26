@@ -258,8 +258,13 @@ export function LessonVideo({
     if (!showCompletionOverlay) return null;
 
     return (
-      <div className="absolute inset-0 flex items-center justify-center bg-craft-navy/70 p-4 text-center">
-        <div className="max-w-sm rounded-2xl border border-craft-border bg-craft-surface/95 px-5 py-4 shadow-elevated backdrop-blur-sm">
+      // z-10 is load-bearing: the YouTube <iframe> sibling creates its own
+      // compositing layer, so without an explicit stacking order this overlay
+      // rendered *behind* the video and was only visible over dark frames.
+      // The scrim is near-opaque and blurred so the card reads against any
+      // frame, bright or busy, in both light and dark themes.
+      <div className="absolute inset-0 z-10 flex items-center justify-center bg-craft-navy/90 p-4 text-center backdrop-blur-md">
+        <div className="max-w-sm rounded-2xl bg-craft-surface px-5 py-4 shadow-elevated ring-1 ring-craft-border">
           <p className="text-base font-semibold text-craft-ink">{completionMessage}</p>
           <p className="mt-2 text-sm text-craft-muted">
             Review the video again if you want, or continue to the quiz.

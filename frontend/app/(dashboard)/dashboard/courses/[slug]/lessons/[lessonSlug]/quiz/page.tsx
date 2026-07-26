@@ -29,7 +29,8 @@ export default function LessonQuizPage() {
   useEffect(() => {
     if (!lesson || !needsVideo || videoDone) return;
     setNotice("Watch the lesson video all the way through before taking the Recap Quiz.");
-    router.replace(lessonStepHref(slug, lessonSlug, "video"));
+    // Back to the lesson step — that is where the video now lives.
+    router.replace(lessonStepHref(slug, lessonSlug, "content"));
   }, [lesson, needsVideo, videoDone, lessonSlug, router, setNotice, slug]);
 
   if (!lesson) return null;
@@ -52,7 +53,7 @@ export default function LessonQuizPage() {
           setNotice(
             `Watch the lesson video all the way through before taking the ${assessmentLabel}.`
           );
-          router.push(lessonStepHref(slug, lessonSlug, "video"));
+          router.push(lessonStepHref(slug, lessonSlug, "content"));
         }}
         onPassed={(score) => {
           if (lesson.status !== "completed") {
@@ -88,7 +89,7 @@ export default function LessonQuizPage() {
             className="inline-flex items-center gap-1 text-sm text-craft-muted transition hover:text-craft-ink"
           >
             <ChevronLeft className="h-4 w-4" />
-            Back to Content
+            Back to Lesson
           </Link>
         )}
         <Link

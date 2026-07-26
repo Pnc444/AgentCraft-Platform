@@ -103,13 +103,13 @@ def _structured_course_entry(course_slug: str) -> dict:
 
 
 def load_content(course_slug: str, lesson_slug: str, title: str) -> str:
-    """Prefer a non-empty content/*.md file; fall back to in-file dicts, then placeholder."""
+    """Prefer a non-empty content/*.md file; otherwise a visible placeholder."""
     path = CONTENT_DIR / course_slug / f"{lesson_slug}.md"
     if path.is_file():
         text = path.read_text(encoding="utf-8")
         if text.strip():
             return text
-    return MODULE_1_CONTENT.get(lesson_slug, placeholder(title))
+    return placeholder(title)
 
 
 def default_recap_questions(title: str, slug: str) -> list[dict]:
@@ -393,38 +393,10 @@ MODULE_1_CHECKPOINT = {
 }
 
 
-MODULE_1_CONTENT = {
-    "what-is-ai": """# What is AI?
-
-This lesson is delivered as a video.
-
-Open the Video tab to watch the introduction, then continue to the Recap Quiz when you finish.
-""",
-    "what-are-llms": """# What are LLMs?
-
-This lesson is delivered as a video.
-
-Open the Video tab to watch how LLMs learn from huge text datasets and predict language patterns, then continue to the Recap Quiz when you finish.
-""",
-    "what-is-an-llm-model": """# Other Types of AI
-
-This lesson is delivered as a video.
-
-Open the Video tab to watch how AI can be grouped by capabilities and functionalities, then continue to the Recap Quiz when you finish.
-""",
-    "brief-history": """# Brief History
-
-This lesson is delivered as a video.
-
-Open the Video tab to watch how AI rose, crashed into two winters, and returned through better compute and more data, then continue to the Recap Quiz when you finish.
-""",
-    "checkpoint": """# Module 1 Exam
-
-This exam covers the full Module 1 lesson set: What is AI, What are LLMs, Other Types of AI, and Brief History.
-
-Answer every question. You can retry as many times as you need.
-""",
-}
+# Module 1's lesson bodies finished migrating to content/module-1-introduction-to-ai/*.md.
+# The old in-file copies told learners to "open the Video tab", which no longer
+# exists — the player renders inside the lesson step — so they are gone rather
+# than kept as a fallback that would serve wrong instructions.
 
 
 # Module 5 recap questions — real questions written from the lesson content.

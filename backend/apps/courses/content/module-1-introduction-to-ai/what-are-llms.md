@@ -1,5 +1,11 @@
 # What are LLMs?
 
-This lesson is delivered as a video.
+What a large language model actually is, underneath the humanlike output.
 
-Open the Video tab to watch how LLMs learn from huge text datasets and predict language patterns, then continue to the Recap Quiz when you finish.
+**Watch for three things:**
+
+- Why it is called both a *language* model and a *large* one
+- What parameters are — the internal dials the model adjusts to predict better
+- The "the cat sat on the ___" example, and what it shows about next-word prediction
+
+When an LLM feels humanlike, that is powerful pattern recognition over a lot of training text. Hold onto that distinction — it explains most of what agents can and cannot do later in this course.

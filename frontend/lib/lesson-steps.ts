@@ -98,9 +98,57 @@ export function statusUiFor(status: LessonStatus | string) {
   return LESSON_STATUS_UI[status as LessonStatusKey] ?? LESSON_STATUS_UI.not_started;
 }
 
-/** Next step after Content — Video when present, otherwise Recap Quiz. */
-export function stepAfterContent(hasVideo: boolean): LessonStep {
-  return hasVideo ? "video" : "quiz";
+/**
+ * The destination after the lesson body.
+ *
+ * Video is deliberately NOT a step: it renders inline inside the lesson step.
+ * A video lesson used to be four destinations (Content → Video → Quiz →
+ * Progress) where the Content screen's only job was to tell you to go to the
+ * Video screen. Now the lesson is one place, and the next place is the
+ * assessment.
+ */
+export const STEP_AFTER_LESSON: LessonStep = "quiz";
+
+/** Labels used by the "Step N of M" indicator. */
+export const LESSON_STEP_LABELS: Record<LessonStep, string> = {
+  content: "Lesson",
+  video: "Lesson",
+  quiz: "Quiz",
+  progress: "Summary",
+};
+
+/**
+ * Ordered destinations a learner actually moves through, for orientation only.
+ * `video` never appears — it is part of the lesson step.
+ */
+export function lessonStepSequence(opts: { isExam: boolean }): LessonStep[] {
+  return opts.isExam ? ["quiz", "progress"] : ["content", "quiz", "progress"];
+}
+
+/** Which step a pathname is on. `/video` is treated as the lesson step. */
+export function activeLessonStep(
+  pathname: string,
+  opts: { isExam: boolean }
+): LessonStep {
+  if (pathname.endsWith("/progress")) return "progress";
+  if (pathname.endsWith("/quiz")) return "quiz";
+  if (opts.isExam) return "quiz";
+  return "content";
+}
+
+/** 1-based position of the active step, for "Step 2 of 3". */
+export function lessonStepPosition(
+  pathname: string,
+  opts: { isExam: boolean }
+): { current: number; total: number; label: string } {
+  const sequence = lessonStepSequence(opts);
+  const active = activeLessonStep(pathname, opts);
+  const index = sequence.indexOf(active);
+  return {
+    current: index < 0 ? 1 : index + 1,
+    total: sequence.length,
+    label: LESSON_STEP_LABELS[active],
+  };
 }
 
 type StepProgressInput = {

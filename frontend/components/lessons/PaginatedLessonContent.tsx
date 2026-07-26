@@ -22,7 +22,7 @@ import { LessonArtifactPack } from "@/components/lessons/LessonArtifactPack";
 import { LessonCapstoneStudio } from "@/components/lessons/LessonCapstoneStudio";
 import { LessonContent } from "@/components/lessons/LessonContent";
 import { OpenClawFileExplorer } from "@/components/lessons/OpenClawFileExplorer";
-import { lessonStepHref, stepAfterContent } from "@/lib/lesson-steps";
+import { lessonStepHref, STEP_AFTER_LESSON } from "@/lib/lesson-steps";
 import type { CapstoneAssignment, LessonArtifact, LessonDetail } from "@/types";
 
 type BlockLayout = {
@@ -329,8 +329,10 @@ export function PaginatedLessonContent({
   const [animClass, setAnimClass] = useState<"slide-active" | "slide-enter" | "slide-enter-back">("slide-active");
   const slideRef = useRef<HTMLDivElement>(null);
 
-  const nextStep = stepAfterContent(!!videoUrl);
-  const nextLabel = nextStep === "video" ? "Continue to Video" : "Continue to Recap Quiz";
+  // Video plays inline in the lesson step, so the deck always hands off to the
+  // assessment. Pointing at "video" here would bounce straight back to content.
+  const nextStep = STEP_AFTER_LESSON;
+  const nextLabel = "Continue to Recap Quiz";
 
   // Determine if the current block has an unpassed checkpoint (soft gate)
   const currentBlock = currentIndex < blockLayouts.length ? blockLayouts[currentIndex] : null;
@@ -492,7 +494,7 @@ export function PaginatedLessonContent({
           )}
         </div>
 
-        <div className="flex shrink-0 items-center justify-between gap-3 border-t border-craft-border bg-craft-surface/92 px-5 py-2.5 backdrop-blur-sm sm:px-6">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-t border-craft-border bg-craft-surface/90 px-5 py-2.5 backdrop-blur-sm sm:px-6">
           <button
             type="button"
             onClick={() => navigate("back")}

@@ -17,7 +17,7 @@ export function Topbar({ onOpenSidebar }: TopbarProps) {
   const pathname = usePathname();
 
   return (
-    <header className="relative z-20 flex h-14 shrink-0 items-center gap-3 border-b border-craft-border/80 bg-craft-surface/88 px-4 backdrop-blur-sm lg:px-6">
+    <header className="relative z-20 flex h-14 shrink-0 items-center gap-3 border-b border-craft-border/80 bg-craft-surface/90 px-4 backdrop-blur-sm lg:px-6">
       <button
         type="button"
         onClick={onOpenSidebar}

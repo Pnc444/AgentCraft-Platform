@@ -6,7 +6,9 @@ type WorkspaceValue = {
   slug: string;
   lessonSlug: string;
   lesson: {
+    id: number;
     title: string;
+    content: string;
     course_slug: string;
     course_title: string;
     estimated_minutes: number;
@@ -14,14 +16,26 @@ type WorkspaceValue = {
     video_watched: boolean;
     require_full_watch: boolean;
     status: "not_started" | "in_progress" | "completed" | "stuck";
+    score: number | null;
+    interaction_log: [];
+    sandbox_config: Record<string, unknown>;
   } | null;
+  course: null;
   videoUrl: string;
   needsVideo: boolean;
   videoDone: boolean;
+  isLoading: boolean;
+  notice: string | null;
+  prev: null;
+  next: null;
   recapQuestions: [];
+  checkpointQuestions: [];
+  guidedBlocks: [];
+  artifactBundle: [];
   markVideoWatched: () => void;
   setNotice: (value: string | null) => void;
   updateProgress: (payload: { status?: string; score?: number }) => void;
+  openTutor: () => void;
 };
 
 const pushMock = vi.fn();
@@ -29,7 +43,10 @@ const replaceMock = vi.fn();
 const setNoticeMock = vi.fn();
 const markVideoWatchedMock = vi.fn();
 const updateProgressMock = vi.fn();
-let pathnameValue = "/dashboard/courses/module-1-introduction-to-ai/lessons/what-is-ai/video";
+const openTutorMock = vi.fn();
+
+const LESSON_BASE = "/dashboard/courses/module-1-introduction-to-ai/lessons/what-is-ai";
+let pathnameValue = `${LESSON_BASE}/content`;
 
 let workspaceValue: WorkspaceValue;
 
@@ -56,13 +73,36 @@ vi.mock("@/components/lessons/LessonVideo", () => ({
   LessonVideo: () => createElement("div", null, "video-player"),
 }));
 
-vi.mock("@/components/shared/Reveal", () => ({
-  Reveal: ({ children }: { children: React.ReactNode }) => createElement("div", null, children),
+vi.mock("@/components/lessons/LessonContent", () => ({
+  LessonContent: ({ content }: { content: string }) => createElement("div", null, content),
 }));
 
-vi.mock("@/components/lessons/RecapQuiz", () => ({
-  RecapQuiz: ({ locked }: { locked: boolean }) =>
-    createElement("div", null, locked ? "quiz-locked" : "quiz-open"),
+vi.mock("@/components/lessons/CheckpointQuiz", () => ({
+  CheckpointQuiz: () => createElement("div", null, "checkpoint"),
+}));
+
+vi.mock("@/components/lessons/LessonArtifactPack", () => ({
+  LessonArtifactPack: () => createElement("div", null, "artifacts"),
+}));
+
+vi.mock("@/components/lessons/LessonCapstoneStudio", () => ({
+  LessonCapstoneStudio: () => createElement("div", null, "capstone"),
+}));
+
+vi.mock("@/components/lessons/OpenClawFileExplorer", () => ({
+  OpenClawFileExplorer: () => createElement("div", null, "explorer"),
+}));
+
+vi.mock("@/components/lessons/PaginatedLessonContent", () => ({
+  PaginatedLessonContent: () => createElement("div", null, "paginated-deck"),
+}));
+
+vi.mock("@/components/shared/ProgressBar", () => ({
+  ProgressBar: () => createElement("div", null, "progress-bar"),
+}));
+
+vi.mock("@/components/shared/Reveal", () => ({
+  Reveal: ({ children }: { children: React.ReactNode }) => createElement("div", null, children),
 }));
 
 vi.mock("@/components/lessons/PaginatedExam", () => ({
@@ -70,14 +110,22 @@ vi.mock("@/components/lessons/PaginatedExam", () => ({
     createElement("div", null, locked ? "quiz-locked" : "quiz-open"),
 }));
 
-import LessonVideoPage from "@/app/(dashboard)/dashboard/courses/[slug]/lessons/[lessonSlug]/video/page";
+import LessonContentPage from "@/app/(dashboard)/dashboard/courses/[slug]/lessons/[lessonSlug]/content/page";
 import LessonQuizPage from "@/app/(dashboard)/dashboard/courses/[slug]/lessons/[lessonSlug]/quiz/page";
+import LessonVideoPage from "@/app/(dashboard)/dashboard/courses/[slug]/lessons/[lessonSlug]/video/page";
 import { LessonShell } from "@/components/lessons/LessonShell";
 
-function render(node: React.ReactElement) {
+function mount() {
   const container = document.createElement("div");
   document.body.appendChild(container);
-  const root = createRoot(container);
+  return { container, root: createRoot(container) };
+}
+
+async function render(node: React.ReactElement) {
+  const { container, root } = mount();
+  await act(async () => {
+    root.render(node);
+  });
   return { container, root };
 }
 
@@ -87,7 +135,9 @@ describe("lesson video gating", () => {
       slug: "module-1-introduction-to-ai",
       lessonSlug: "what-is-ai",
       lesson: {
+        id: 1,
         title: "What is AI?",
+        content: "# What is AI?\n\nWatch for three things.",
         course_slug: "module-1-introduction-to-ai",
         course_title: "Module 1: Introduction to AI",
         estimated_minutes: 8,
@@ -95,40 +145,66 @@ describe("lesson video gating", () => {
         video_watched: false,
         require_full_watch: true,
         status: "in_progress",
+        score: null,
+        interaction_log: [],
+        sandbox_config: {},
       },
+      course: null,
       videoUrl: "https://www.youtube-nocookie.com/embed/c0m6yaGlZh4",
       needsVideo: true,
       videoDone: false,
+      isLoading: false,
+      notice: null,
+      prev: null,
+      next: null,
       recapQuestions: [],
+      checkpointQuestions: [],
+      guidedBlocks: [],
+      artifactBundle: [],
       markVideoWatched: markVideoWatchedMock,
       setNotice: setNoticeMock,
       updateProgress: updateProgressMock,
+      openTutor: openTutorMock,
     };
     pushMock.mockReset();
     replaceMock.mockReset();
     setNoticeMock.mockReset();
     markVideoWatchedMock.mockReset();
     updateProgressMock.mockReset();
-    pathnameValue = "/dashboard/courses/module-1-introduction-to-ai/lessons/what-is-ai/video";
+    openTutorMock.mockReset();
+    pathnameValue = `${LESSON_BASE}/content`;
   });
 
   afterEach(() => {
     document.body.innerHTML = "";
   });
 
-  it("keeps the video-page CTA from advancing to the quiz before the video is finished", async () => {
-    const { container, root } = render(createElement(LessonVideoPage));
+  it("plays the video inside the lesson step instead of behind its own tab", async () => {
+    const { container, root } = await render(createElement(LessonContentPage));
 
     try {
-      await act(async () => {
-        root.render(createElement(LessonVideoPage));
-      });
+      expect(container.textContent).toContain("video-player");
+      // No hand-off to a separate video destination.
+      expect(container.textContent).not.toContain("Watch Video");
+      const videoLinks = Array.from(container.querySelectorAll("a")).filter((anchor) =>
+        anchor.getAttribute("href")?.endsWith("/video")
+      );
+      expect(videoLinks).toHaveLength(0);
+    } finally {
+      root.unmount();
+      container.remove();
+    }
+  });
 
+  it("keeps the lesson-step CTA from advancing to the quiz before the video is finished", async () => {
+    const { container, root } = await render(createElement(LessonContentPage));
+
+    try {
       const button = Array.from(container.querySelectorAll("button")).find((candidate) =>
         candidate.textContent?.includes("Finish Video to Unlock Quiz")
       );
 
-      expect(button?.textContent).toContain("Finish Video to Unlock Quiz");
+      expect(button?.getAttribute("aria-disabled")).toBe("true");
 
       await act(async () => {
         button?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
@@ -144,17 +220,29 @@ describe("lesson video gating", () => {
     }
   });
 
-  it("redirects direct quiz navigation back to the video step while the quiz is locked", async () => {
-    const { container, root } = render(createElement(LessonQuizPage));
+  it("offers the quiz once the video is done", async () => {
+    workspaceValue.lesson!.video_watched = true;
+    workspaceValue.videoDone = true;
+
+    const { container, root } = await render(createElement(LessonContentPage));
 
     try {
-      await act(async () => {
-        root.render(createElement(LessonQuizPage));
-      });
-
-      expect(replaceMock).toHaveBeenCalledWith(
-        "/dashboard/courses/module-1-introduction-to-ai/lessons/what-is-ai/video"
+      const link = Array.from(container.querySelectorAll("a")).find((anchor) =>
+        anchor.textContent?.includes("Start Recap Quiz")
       );
+      expect(link?.getAttribute("href")).toBe(`${LESSON_BASE}/quiz`);
+    } finally {
+      root.unmount();
+      container.remove();
+    }
+  });
+
+  it("redirects direct quiz navigation back to the lesson step while the quiz is locked", async () => {
+    pathnameValue = `${LESSON_BASE}/quiz`;
+    const { container, root } = await render(createElement(LessonQuizPage));
+
+    try {
+      expect(replaceMock).toHaveBeenCalledWith(`${LESSON_BASE}/content`);
       expect(setNoticeMock).toHaveBeenCalledWith(
         "Watch the lesson video all the way through before taking the Recap Quiz."
       );
@@ -165,30 +253,37 @@ describe("lesson video gating", () => {
     }
   });
 
-  it("routes the locked Recap Quiz tab back to the video step", async () => {
-    const { container, root } = render(createElement(LessonShell, null, createElement("div", null, "body")));
+  it("sends the retired /video route back to the lesson step", async () => {
+    pathnameValue = `${LESSON_BASE}/video`;
+    const { container, root } = await render(createElement(LessonVideoPage));
 
     try {
-      await act(async () => {
-        root.render(createElement(LessonShell, null, createElement("div", null, "body")));
+      expect(replaceMock).toHaveBeenCalledWith(`${LESSON_BASE}/content`);
+    } finally {
+      root.unmount();
+      container.remove();
+    }
+  });
+
+  it("shows linear step orientation and no step-tab navigation in the shell", async () => {
+    const { container, root } = await render(
+      createElement(LessonShell, null, createElement("div", null, "body"))
+    );
+
+    try {
+      // Orientation is text, not a set of jumpable tabs.
+      expect(container.textContent).toContain("Lesson · step 1 of 3");
+
+      const stepLinks = Array.from(container.querySelectorAll("a")).filter((anchor) => {
+        const href = anchor.getAttribute("href") ?? "";
+        return (
+          href.endsWith("/content") ||
+          href.endsWith("/video") ||
+          href.endsWith("/quiz") ||
+          href.endsWith("/progress")
+        );
       });
-
-      const button = Array.from(container.querySelectorAll("button")).find((candidate) =>
-        candidate.textContent?.includes("Recap Quiz")
-      );
-
-      expect(button?.getAttribute("aria-disabled")).toBe("true");
-
-      await act(async () => {
-        button?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
-      });
-
-      expect(setNoticeMock).toHaveBeenCalledWith(
-        "Watch the lesson video all the way through before taking the Recap Quiz."
-      );
-      expect(pushMock).toHaveBeenCalledWith(
-        "/dashboard/courses/module-1-introduction-to-ai/lessons/what-is-ai/video"
-      );
+      expect(stepLinks).toHaveLength(0);
     } finally {
       root.unmount();
       container.remove();

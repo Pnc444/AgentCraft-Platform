@@ -87,7 +87,8 @@ class LessonAdmin(admin.ModelAdmin):
                 "fields": ("video_url", "require_full_watch"),
                 "description": (
                     "Paste a YouTube watch, youtu.be, or embed link. "
-                    "When set, students get a Video tab in the lesson (16:9 player). "
+                    "When set, a 16:9 player appears inside the lesson itself, "
+                    "below the lesson text. "
                     "Use “Require full watch” to lock the Recap Quiz until they finish the video, "
                     "or uncheck it to let them skip."
                 ),
