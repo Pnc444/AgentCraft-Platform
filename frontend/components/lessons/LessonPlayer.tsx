@@ -15,17 +15,18 @@ import {
 } from "lucide-react";
 import { LessonContent } from "@/components/lessons/LessonContent";
 import { LessonVideo } from "@/components/lessons/LessonVideo";
+import { LessonWorkbench } from "@/components/lessons/LessonWorkbench";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 import { lessonStepHref } from "@/lib/lesson-steps";
 import type { CheckpointQuestion } from "@/components/lessons/CheckpointQuiz";
-import type { Beat } from "@/types";
+import type { Beat, LessonArtifact } from "@/types";
 
 /**
  * Courses that render lessons through the player instead of the stacked
  * content page (plan step 1: Module 4 proves it; later steps widen the set,
  * step 7 deletes the flag and the old page together).
  */
-const PLAYER_COURSES = new Set(["module-4-ai-agents"]);
+const PLAYER_COURSES = new Set(["module-4-ai-agents", "module-6-openclaw"]);
 
 export function isPlayerCourse(courseSlug: string): boolean {
   return PLAYER_COURSES.has(courseSlug);
@@ -38,7 +39,7 @@ export function isPlayerCourse(courseSlug: string): boolean {
  */
 export function LessonPlayer() {
   const router = useRouter();
-  const { slug, lessonSlug, lesson, needsVideo, videoDone, markVideoWatched } =
+  const { slug, lessonSlug, lesson, needsVideo, videoDone, markVideoWatched, artifactBundle } =
     useLessonWorkspace();
   const beats = (lesson?.beats ?? []) as Beat[];
   const storageKey = lesson ? `agentcraft-player:${lesson.id}` : "";
@@ -46,6 +47,7 @@ export function LessonPlayer() {
   const [index, setIndex] = useState(0);
   const [revealed, setRevealed] = useState<Record<number, boolean>>({});
   const [picks, setPicks] = useState<Record<number, number>>({});
+  const [workDone, setWorkDone] = useState<Record<number, boolean>>({});
 
   /*
     Resume where the learner left off (session-scoped, like quiz drafts).
@@ -94,7 +96,9 @@ export function LessonPlayer() {
         ? pickedCorrect
         : beat.type === "do" && beat.action === "video"
           ? videoDone || !needsVideo
-          : true);
+          : beat.type === "do" && beat.action === "workbench"
+            ? !!workDone[index]
+            : true);
 
   const goForward = useCallback(() => {
     if (!satisfied) return;
@@ -155,6 +159,8 @@ export function LessonPlayer() {
             onPick={(option) => setPicks((p) => ({ ...p, [index]: option }))}
             videoDone={videoDone}
             markVideoWatched={markVideoWatched}
+            artifacts={artifactBundle}
+            onWorkDone={() => setWorkDone((w) => ({ ...w, [index]: true }))}
           />
         </div>
       </div>
@@ -200,6 +206,8 @@ function BeatView({
   onPick,
   videoDone,
   markVideoWatched,
+  artifacts,
+  onWorkDone,
 }: {
   beat: Beat;
   revealed: boolean;
@@ -208,7 +216,20 @@ function BeatView({
   onPick: (option: number) => void;
   videoDone: boolean;
   markVideoWatched: Parameters<typeof LessonVideo>[0]["onWatched"];
+  artifacts: LessonArtifact[];
+  onWorkDone: () => void;
 }) {
+  if (beat.type === "do" && beat.action === "workbench") {
+    return (
+      <LessonWorkbench
+        artifacts={artifacts}
+        paths={beat.artifact_paths ?? []}
+        instructions={beat.instructions ?? []}
+        onAllOpened={onWorkDone}
+      />
+    );
+  }
+
   if (beat.type === "predict") {
     return (
       <div className="space-y-4">

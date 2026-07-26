@@ -125,6 +125,10 @@ export interface Beat {
   bullets?: string[];
   action?: "video" | "terminal" | "workbench" | "studio" | "tutor_try";
   video_url?: string;
+  /** workbench beats: the bundle paths this beat opens (empty = whole bundle). */
+  artifact_paths?: string[];
+  /** workbench beats: the task instructions shown above the files. */
+  instructions?: string[];
   source?: string;
 }
 

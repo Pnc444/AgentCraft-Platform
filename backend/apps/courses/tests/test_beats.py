@@ -148,3 +148,34 @@ def test_module_4_exam_meets_the_authoring_standard():
     assert module["lessons"][-1][2] == "quiz", "the exam must be the module's last lesson"
     problems = _module_assessment_problems(module)
     assert problems == [], f"validator flags module 4: {problems}"
+
+
+def test_blocks_with_artifacts_emit_workbench_beats():
+    from apps.courses.beats import beats_from_guided_blocks
+
+    blocks = [
+        {"title": "Idea", "body": "Read.", "predict_first": {"question": "Q?"}},
+        {
+            "title": "The routing rule",
+            "body": "Two files.",
+            "try_this": ["Open SOUL.md", "Find the name line"],
+            "artifact_paths": ["a/SOUL.md", "a/openclaw.json"],
+        },
+        {"title": "Map", "body": "The home.", "interactive_widget": "openclaw_file_explorer"},
+    ]
+    beats = beats_from_guided_blocks(blocks, title="T")
+    types = [(b["type"], b.get("action")) for b in beats]
+    assert types == [
+        ("predict", None),
+        ("explain", None),
+        ("do", "workbench"),
+        ("explain", None),
+        ("do", "workbench"),
+    ]
+    wb = beats[2]
+    assert wb["artifact_paths"] == ["a/SOUL.md", "a/openclaw.json"]
+    assert wb["instructions"] == ["Open SOUL.md", "Find the name line"]
+    # try_this moved onto the workbench beat, not duplicated on the explain
+    assert beats[1]["try_this"] == []
+    # the explorer-widget block gets the whole bundle (empty = all)
+    assert beats[4]["artifact_paths"] == []

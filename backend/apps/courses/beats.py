@@ -198,11 +198,17 @@ def beats_from_guided_blocks(
     for block in blocks:
         if not isinstance(block, dict):
             continue
+        # A block that points at real files becomes two beats: its idea, then a
+        # workbench do-beat where the learner opens (and safely edits) those
+        # files for real (plan §4). The block's try_this lines are the task
+        # instructions there, not reading-side decoration.
+        artifact_paths = block.get("artifact_paths") or []
+        opens_files = bool(artifact_paths) or block.get("interactive_widget") == "openclaw_file_explorer"
         common = {
             "title": block.get("title") or title,
             "body": block.get("body") or "",
             "analogy": block.get("analogy") or "",
-            "try_this": block.get("try_this") or [],
+            "try_this": [] if opens_files else (block.get("try_this") or []),
             "kind": block.get("kind") or "",
             "source": "blocks",
         }
@@ -218,6 +224,19 @@ def beats_from_guided_blocks(
             )
         else:
             beats.append({"type": "explain", **common})
+
+        if opens_files:
+            beats.append(
+                {
+                    "type": "do",
+                    "action": "workbench",
+                    "title": block.get("title") or "Open the files",
+                    # Empty means "the whole bundle" — the widget block maps the home.
+                    "artifact_paths": artifact_paths,
+                    "instructions": block.get("try_this") or [],
+                    "source": "blocks",
+                }
+            )
 
         if block.get("checkpoint_after") and bank:
             question = bank[bank_cursor % len(bank)]
