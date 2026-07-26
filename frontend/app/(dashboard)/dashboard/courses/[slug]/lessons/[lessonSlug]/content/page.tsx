@@ -16,6 +16,7 @@ import {
   Lightbulb,
   MonitorPlay,
   Sparkles,
+  TerminalSquare,
   Wrench,
 } from "lucide-react";
 import { CheckpointQuiz } from "@/components/lessons/CheckpointQuiz";
@@ -23,6 +24,7 @@ import type { CheckpointQuestion } from "@/components/lessons/CheckpointQuiz";
 import { LessonArtifactPack } from "@/components/lessons/LessonArtifactPack";
 import { LessonCapstoneStudio } from "@/components/lessons/LessonCapstoneStudio";
 import { LessonContent } from "@/components/lessons/LessonContent";
+import { LessonSandbox } from "@/components/lessons/LessonSandbox";
 import { LessonSection } from "@/components/lessons/LessonSection";
 import { LessonVideo } from "@/components/lessons/LessonVideo";
 import { OpenClawFileExplorer } from "@/components/lessons/OpenClawFileExplorer";
@@ -31,7 +33,12 @@ import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 import { ProgressBar } from "@/components/shared/ProgressBar";
 import { Reveal } from "@/components/shared/Reveal";
 import { completedCheckpointIds, completedInteractionKeys } from "@/lib/lesson-interactions";
-import { getCapstoneAssignment, lessonStepHref, STEP_AFTER_LESSON } from "@/lib/lesson-steps";
+import {
+  getCapstoneAssignment,
+  getSandboxSpec,
+  lessonStepHref,
+  STEP_AFTER_LESSON,
+} from "@/lib/lesson-steps";
 
 function inferBlockKind(title: string) {
   const normalized = title.trim().toLowerCase();
@@ -140,6 +147,10 @@ export default function LessonContentPage() {
   );
   const capstoneAssignment = useMemo(
     () => getCapstoneAssignment(lesson.sandbox_config),
+    [lesson.sandbox_config]
+  );
+  const sandboxSpec = useMemo(
+    () => getSandboxSpec(lesson.sandbox_config),
     [lesson.sandbox_config]
   );
   const blockLayouts = useMemo(() => {
@@ -569,22 +580,17 @@ export default function LessonContentPage() {
         </LessonSection>
       ) : null}
 
-      {lesson.lesson_type === "sandbox" && (
+      {sandboxSpec && (
         <LessonSection
-          title="Interactive Demo"
-          icon={<Wrench className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />}
+          title="Practice It"
+          icon={<TerminalSquare className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />}
         >
-          <p className="text-sm text-craft-muted">Sandbox</p>
-          <button
-            type="button"
-            onClick={() =>
-              alert("Sandbox integration coming soon. Diego and Douglas are wiring it up.")
-            }
-            className="btn-primary mt-4"
-          >
-            <Wrench className="h-4 w-4" />
-            Launch Sandbox
-          </button>
+          <LessonSandbox
+            spec={sandboxSpec}
+            lessonId={lesson.id}
+            interactionLog={lesson.interaction_log}
+            onRecordInteraction={recordArtifactInteraction}
+          />
         </LessonSection>
       )}
 

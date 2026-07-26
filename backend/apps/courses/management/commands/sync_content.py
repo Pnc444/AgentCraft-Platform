@@ -8,6 +8,7 @@ from apps.courses.curriculum import (
     load_content,
 )
 from apps.courses.models import Course, Lesson, Skill
+from apps.courses.sandbox_specs import sandbox_spec_for
 
 
 class Command(BaseCommand):
@@ -89,6 +90,11 @@ class Command(BaseCommand):
                 spec_slugs.append(slug)
                 content = load_content(module["slug"], slug, title)
 
+                # Practice-terminal spec, if this lesson has one authored.
+                sandbox_spec = sandbox_spec_for(module["slug"], slug)
+                if sandbox_spec:
+                    spec_config["sandbox"] = sandbox_spec
+
                 lesson = Lesson.objects.filter(course=course, slug=slug).first()
                 if lesson is None:
                     config = spec_config
@@ -125,6 +131,12 @@ class Command(BaseCommand):
                 elif not (lesson.sandbox_config or {}).get("questions"):
                     config = dict(lesson.sandbox_config or {})
                     config["questions"] = default_recap_questions(title, slug)
+                    lesson.sandbox_config = config
+                # The sandbox spec is code-owned, not admin-editable, so it syncs
+                # regardless of whether this lesson also ships quiz questions.
+                if sandbox_spec:
+                    config = dict(lesson.sandbox_config or {})
+                    config["sandbox"] = sandbox_spec
                     lesson.sandbox_config = config
                 if ai_tutor_prompt:
                     lesson.ai_tutor_prompt = ai_tutor_prompt

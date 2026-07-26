@@ -339,6 +339,49 @@ body {
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
   }
 
+  /* Tutor chat markdown. Deliberately tighter than .prose-lesson: answers are
+     short and live in a 400px bubble, so headings and big margins would waste
+     the space. Inherits bubble color rather than setting its own. */
+  .prose-tutor > :first-child {
+    @apply mt-0;
+  }
+
+  .prose-tutor > :last-child {
+    @apply mb-0;
+  }
+
+  .prose-tutor p {
+    @apply my-2 leading-relaxed;
+  }
+
+  .prose-tutor ul {
+    @apply my-2 list-disc space-y-1 pl-5;
+  }
+
+  .prose-tutor ol {
+    @apply my-2 list-decimal space-y-1 pl-5;
+  }
+
+  .prose-tutor strong {
+    @apply font-semibold text-craft-ink;
+  }
+
+  .prose-tutor a {
+    @apply font-medium text-cyan-700 underline underline-offset-2 dark:text-cyan-300;
+  }
+
+  .prose-tutor code {
+    @apply rounded bg-craft-canvas px-1.5 py-0.5 font-mono text-[0.85em] text-craft-ink;
+  }
+
+  .prose-tutor pre {
+    @apply my-2 overflow-x-auto rounded-lg bg-craft-navy p-3 text-xs leading-relaxed text-slate-100;
+  }
+
+  .prose-tutor pre code {
+    @apply bg-transparent p-0 text-inherit;
+  }
+
   .prose-lesson {
     @apply text-[15px] leading-7 text-craft-muted;
   }

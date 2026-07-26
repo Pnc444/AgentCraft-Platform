@@ -32,6 +32,7 @@ LOCAL_APPS = [
     "apps.accounts",
     "apps.courses",
     "apps.learning",
+    "apps.tutor",
     "shared",
 ]
 
@@ -82,6 +83,24 @@ if REDIS_URL:
             "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
         }
     }
+
+# --- AI tutor (OpenRouter) ---------------------------------------------------
+# Server-side only. OPENROUTER_MANAGEMENT_KEY is deliberately NOT read here: it
+# provisions keys and reads billing, and must never reach an inference call.
+OPENROUTER_API_KEY = env("OPENROUTER_API_KEY", default="").strip()
+OPENROUTER_TUTOR_MODELS = env.list(
+    "OPENROUTER_TUTOR_MODELS",
+    default=[
+        "nvidia/nemotron-3-ultra-550b-a55b:free",
+        "nvidia/nemotron-3-super-120b-a12b:free",
+        "nvidia/nemotron-3-nano-30b-a3b:free",
+        "openai/gpt-oss-20b:free",
+        "openrouter/free",
+    ],
+)
+OPENROUTER_MAX_TOKENS = env.int("OPENROUTER_MAX_TOKENS", default=900)
+OPENROUTER_TIMEOUT_SECONDS = env.int("OPENROUTER_TIMEOUT_SECONDS", default=60)
+OPENROUTER_SITE_URL = env("OPENROUTER_SITE_URL", default="http://localhost:3000")
 
 AUTH_USER_MODEL = "accounts.User"
 

@@ -64,6 +64,28 @@ export interface LessonArtifact {
   body?: string | Record<string, unknown> | unknown[];
 }
 
+/** One checked step in a sandbox lesson's practice terminal. */
+export interface SandboxTask {
+  id: string;
+  goal: string;
+  detail?: string;
+  /** Regex sources (case-insensitive) that count as solving the step. */
+  accept: string[];
+  hint?: string;
+  output?: string;
+  success?: string;
+}
+
+export interface SandboxSpec {
+  intro?: string;
+  tasks: SandboxTask[];
+  /** Near-misses worth correcting specifically rather than rejecting. */
+  misfires?: { match: string[]; message: string }[];
+  /** Commands that respond but aren't a step (e.g. docker ps between tasks). */
+  extras?: { match: string[]; output: string }[];
+  completion?: { title: string; body: string };
+}
+
 export interface Skill {
   id: number;
   name: string;
@@ -77,6 +99,13 @@ export interface LessonSummary {
   title: string;
   slug: string;
   lesson_type: LessonType;
+  /**
+   * Honest badge text, computed server-side from what the lesson actually
+   * contains. A `sandbox` lesson with no practice terminal reports "Read",
+   * not "Practice" — see backend/apps/courses/lesson_types.py.
+   */
+  type_label: string;
+  type_promise: string;
   order: number;
   estimated_minutes: number;
   status: LessonStatus;

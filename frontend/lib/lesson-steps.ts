@@ -5,6 +5,7 @@ import type {
   LessonArtifact,
   LessonType,
   LessonStatus,
+  SandboxSpec,
 } from "@/types";
 
 export const LESSON_STATUS_UI = {
@@ -61,6 +62,27 @@ export function getLessonArtifacts(config: Record<string, unknown>): LessonArtif
       typeof (artifact as LessonArtifact).path === "string" &&
       typeof (artifact as LessonArtifact).summary === "string"
   );
+}
+
+/**
+ * A sandbox lesson only renders its terminal if it actually declares steps.
+ * No spec means no sandbox UI at all — an honest absence beats a button that
+ * pretends to launch something.
+ */
+export function getSandboxSpec(config: Record<string, unknown>): SandboxSpec | null {
+  const raw = config?.sandbox;
+  if (!raw || typeof raw !== "object") return null;
+  const spec = raw as SandboxSpec;
+  if (!Array.isArray(spec.tasks) || spec.tasks.length === 0) return null;
+  const usable = spec.tasks.every(
+    (task) =>
+      task &&
+      typeof task.id === "string" &&
+      typeof task.goal === "string" &&
+      Array.isArray(task.accept) &&
+      task.accept.length > 0
+  );
+  return usable ? spec : null;
 }
 
 export function getCapstoneAssignment(config: Record<string, unknown>): CapstoneAssignment | null {

@@ -30,7 +30,10 @@ async function refreshAccessToken(): Promise<string | null> {
   return access;
 }
 
-function tryRefreshAccessToken(): Promise<string | null> {
+export const API_BASE = API_BASE_URL;
+
+/** Shared with streaming callers that cannot use apiClient's JSON parsing. */
+export function tryRefreshAccessToken(): Promise<string | null> {
   if (!refreshPromise) {
     refreshPromise = refreshAccessToken().finally(() => {
       refreshPromise = null;

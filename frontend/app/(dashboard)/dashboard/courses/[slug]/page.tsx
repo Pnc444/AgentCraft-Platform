@@ -106,8 +106,11 @@ export default function CourseDetailPage() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold text-craft-ink">{lesson.title}</p>
-                  <p className="mt-0.5 text-xs capitalize text-craft-faint">
-                    {lesson.lesson_type.replace("_", " ")} · {lesson.estimated_minutes} min
+                  <p
+                    className="mt-0.5 text-xs text-craft-faint"
+                    title={lesson.type_promise}
+                  >
+                    {lesson.type_label} · {lesson.estimated_minutes} min
                   </p>
                 </div>
                 <Link

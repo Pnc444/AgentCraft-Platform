@@ -280,6 +280,8 @@ export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
           onClose={() => setTutorOpen(false)}
           lessonTitle={lesson.title}
           courseTitle={lesson.course_title}
+          courseSlug={slug}
+          lessonSlug={lessonSlug}
         />
       )}
     </LessonWorkspaceContext.Provider>

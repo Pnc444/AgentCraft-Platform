@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from apps.learning.models import Progress
 
+from .lesson_types import type_label, type_promise
 from .models import Course, Lesson, Skill
 
 
@@ -13,10 +14,28 @@ class SkillSerializer(serializers.ModelSerializer):
 
 class LessonListSerializer(serializers.ModelSerializer):
     status = serializers.SerializerMethodField()
+    type_label = serializers.SerializerMethodField()
+    type_promise = serializers.SerializerMethodField()
 
     class Meta:
         model = Lesson
-        fields = ["id", "title", "slug", "lesson_type", "order", "estimated_minutes", "status"]
+        fields = [
+            "id",
+            "title",
+            "slug",
+            "lesson_type",
+            "type_label",
+            "type_promise",
+            "order",
+            "estimated_minutes",
+            "status",
+        ]
+
+    def get_type_label(self, obj):
+        return type_label(obj)
+
+    def get_type_promise(self, obj):
+        return type_promise(obj)
 
     def _progress(self, obj):
         return self.context.get("progress_records", {}).get(obj.id)

@@ -77,7 +77,7 @@ export default function StudentDashboardPage() {
                 </h2>
                 <p className="mt-2 text-sm text-craft-muted">
                   {path.continueTarget.lesson.estimated_minutes} min ·{" "}
-                  {path.continueTarget.lesson.lesson_type.replace("_", " ")}
+                  {path.continueTarget.lesson.type_label}
                 </p>
                 <Link
                   href={lessonHref(path.continueTarget)}
