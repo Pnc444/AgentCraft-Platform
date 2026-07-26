@@ -120,6 +120,94 @@ def explain_streak_problems(beats: list[dict], *, lesson_label: str = "lesson") 
     return problems
 
 
+# Two adjacent reading beats fold into one when the result is still a single
+# screen's worth. Splitting prose at every `##` produced 9-10 consecutive
+# explain beats — the "wall" the beat model exists to prevent.
+MERGE_MAX_CHARS = 1100
+
+
+def _is_plain_explain(beat: dict) -> bool:
+    """An explain beat carrying nothing but a title and body."""
+    return (
+        beat.get("type") == "explain"
+        and not beat.get("analogy")
+        and not beat.get("try_this")
+        and not beat.get("question")
+    )
+
+
+def merge_adjacent_explains(beats: list[dict], *, limit: int = MERGE_MAX_CHARS) -> list[dict]:
+    """Fold consecutive short explain beats into one screen.
+
+    The absorbed beat's heading is kept inside the merged body, so the reader
+    still sees the structure the markdown had — nothing is discarded.
+    """
+    out: list[dict] = []
+    for beat in beats:
+        previous = out[-1] if out else None
+        if (
+            previous is not None
+            and _is_plain_explain(previous)
+            and _is_plain_explain(beat)
+            and len(previous.get("body") or "") + len(beat.get("body") or "") <= limit
+        ):
+            merged = dict(previous)
+            body = (merged.get("body") or "").rstrip()
+            heading = (beat.get("title") or "").strip()
+            addition = (beat.get("body") or "").lstrip()
+            merged["body"] = "\n\n".join(
+                part for part in (body, f"## {heading}" if heading else "", addition) if part
+            )
+            out[-1] = merged
+            continue
+        out.append(beat)
+    return out
+
+
+def distribute_checks(beats: list[dict], questions: list[dict]) -> list[dict]:
+    """Drop spare questions into explain-explain seams.
+
+    Only ever called with questions authored for in-lesson checkpoints — never
+    the recap bank, which the recap quiz owns. Reusing recap items here would
+    make a learner answer the same question twice in two minutes, which is the
+    recycled-exam defect at lesson scale.
+    """
+    spare = [
+        q for q in questions
+        if isinstance(q, dict) and q.get("prompt") and q.get("options")
+    ]
+    if not spare:
+        return beats
+
+    used = {
+        (b.get("question") or {}).get("prompt")
+        for b in beats
+        if b.get("type") == "check" and isinstance(b.get("question"), dict)
+    }
+    spare = [q for q in spare if q.get("prompt") not in used]
+    if not spare:
+        return beats
+
+    out: list[dict] = []
+    for beat in beats:
+        if (
+            out
+            and out[-1].get("type") == "explain"
+            and beat.get("type") == "explain"
+            and spare
+        ):
+            out.append(
+                {
+                    "type": "check",
+                    "title": "Quick check",
+                    "question": spare.pop(0),
+                    "source": "blocks",
+                }
+            )
+        out.append(beat)
+    return out
+
+
 def _strip_leading_title(content: str, title: str) -> str:
     """Drop a leading h1 that repeats the lesson title (mirrors the frontend)."""
     lines = content.split("\n")
@@ -149,14 +237,18 @@ def beats_from_markdown(
     *,
     title: str = "",
     video_url: str = "",
-    questions: list[dict] | None = None,
+    questions: list[dict] | None = None,  # noqa: ARG001 - accepted for call-site symmetry; see below
     sandbox: dict | None = None,
 ) -> list[dict]:
     """Mechanical markdown → beats conversion (the generic fallback, §3).
 
-    ``##`` sections become explain beats; a video becomes a `do` beat right
-    after the first explain; the recap bank trails as check beats. No count
-    clamping — fallback is exempt from authoring rules by design.
+    ``##`` sections become explain beats (adjacent short ones merge into one
+    screen); a video becomes a `do` beat after the first explain; a practice
+    terminal trails the reading.
+
+    ``questions`` is deliberately unused: the recap bank belongs to the recap
+    quiz. Appending it here made every fallback lesson ask the identical five
+    questions in the content step and again in the quiz.
     """
     body = _strip_leading_title(content or "", title or "")
     beats: list[dict] = []
@@ -198,19 +290,10 @@ def beats_from_markdown(
             }
         )
 
-    for question in questions or []:
-        if not isinstance(question, dict) or not question.get("prompt"):
-            continue
-        beats.append(
-            {
-                "type": "check",
-                "title": "Check yourself",
-                "question": question,
-                "source": "fallback",
-            }
-        )
-
-    return beats
+    # The recap bank is NOT appended here. It belongs to the recap quiz; adding
+    # it to the content step made the learner answer the identical five
+    # questions twice in a row (verified across 30+ lessons).
+    return merge_adjacent_explains(beats)
 
 
 def beats_from_guided_blocks(
@@ -333,6 +416,8 @@ def beats_from_guided_blocks(
                 "source": "blocks",
             }
         )
+
+    beats = distribute_checks(merge_adjacent_explains(beats), bank)
 
     if remember_lines:
         beats.append(

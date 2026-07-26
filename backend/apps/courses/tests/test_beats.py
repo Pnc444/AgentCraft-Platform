@@ -70,15 +70,21 @@ Run nginx.
 """
 
 
-def test_fallback_splits_sections_and_appends_checks():
+def test_fallback_merges_short_sections_and_never_recycles_the_recap_bank():
+    """Three short sections are one screen, not three; and the recap bank stays
+    with the recap quiz — appending it here made learners answer the identical
+    questions twice in a row."""
     questions = [{"prompt": "Q1?", "options": ["a", "b"], "answer_index": 0}]
     beats = beats_from_markdown(MD, title="Your First Containers", questions=questions)
-    types = [b["type"] for b in beats]
-    assert types == ["explain", "explain", "explain", "check"]
-    # the duplicate leading h1 is stripped, intro becomes the first explain
-    assert "Time to actually run something." in beats[0]["body"]
-    assert beats[1]["title"] == "1. Hello, world"
-    assert all(b["source"] == "fallback" for b in beats)
+    assert [b["type"] for b in beats] == ["explain"]
+    # nothing is discarded: absorbed headings survive inside the body
+    body = beats[0]["body"]
+    assert "Time to actually run something." in body
+    assert "## 1. Hello, world" in body
+    assert "## 2. A real web server" in body
+    assert "Run nginx." in body
+    # the recap question is NOT duplicated into the lesson
+    assert not any(b["type"] == "check" for b in beats)
 
 
 def test_fallback_places_video_after_first_explain():
@@ -202,11 +208,36 @@ def test_module_8_exam_meets_the_authoring_standard():
 
 
 def test_fallback_emits_terminal_beat_for_sandbox_lessons():
-    beats = beats_from_markdown(MD, title="T", questions=[{"prompt": "q", "options": ["a"]}], sandbox={"title": "Practice It", "tasks": []})
+    beats = beats_from_markdown(MD, title="T", sandbox={"title": "Practice It", "tasks": []})
     types = [(b["type"], b.get("action")) for b in beats]
     assert ("do", "terminal") in types
-    # terminal sits after the prose, before the checks
-    assert types.index(("do", "terminal")) < types.index(("check", None))
+    # the practice terminal is the lesson's last beat, after the reading
+    assert types[-1] == ("do", "terminal")
+
+
+def test_two_long_sections_never_merge_into_one_wall():
+    """Merging is for short sections. Two substantial ones stay two screens —
+    otherwise the fix would just rebuild the wall inside a single beat."""
+    long_md = "Intro.\n\n## A\n\n" + ("x" * 700) + "\n\n## B\n\n" + ("y" * 700)
+    beats = beats_from_markdown(long_md, title="T")
+    # the 6-char intro folds into A (706 <= limit); A and B do not (1406 > limit)
+    assert [b["type"] for b in beats] == ["explain", "explain"]
+    assert "Intro." in beats[0]["body"] and "## A" in beats[0]["body"]
+    assert beats[1]["title"] == "B"
+    assert "x" * 700 not in beats[1]["body"]
+
+
+def test_distribute_checks_never_reuses_a_question_already_asked():
+    from apps.courses.beats import distribute_checks
+
+    q = {"prompt": "Already asked?", "options": ["a", "b"], "answer_index": 0}
+    beats = [
+        {"type": "check", "question": q},
+        {"type": "explain", "body": "one"},
+        {"type": "explain", "body": "two"},
+    ]
+    out = distribute_checks(beats, [q])
+    assert [b["type"] for b in out] == ["check", "explain", "explain"]
 
 
 def test_every_published_module_passes_assessment_validation():
