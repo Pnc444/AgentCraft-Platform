@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { LayoutDashboard } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 import { Logo } from "@/components/shared/Logo";
@@ -10,6 +11,10 @@ export function SiteHeader() {
   const accessToken = useAuthStore((s) => s.accessToken);
   const hasHydrated = useAuthStore((s) => s.hasHydrated);
   const isAuthed = hasHydrated && !!accessToken;
+  // A CTA pointing at the page you are already on is noise (audit F7).
+  const pathname = usePathname();
+  const onRegister = pathname === "/register";
+  const onLogin = pathname === "/login";
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#0F172A] shadow-header backdrop-blur-md dark:bg-craft-hero">
@@ -25,18 +30,22 @@ export function SiteHeader() {
             </Link>
           ) : (
             <>
-              <Link
-                href="/login"
-                className="px-3 py-2 text-sm text-slate-300 transition hover:text-white"
-              >
-                Log in
-              </Link>
-              <Link
-                href="/register"
-                className="rounded-full bg-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-btn transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-400 hover:shadow-btn-hover"
-              >
-                Join now
-              </Link>
+              {!onLogin && (
+                <Link
+                  href="/login"
+                  className="px-3 py-2 text-sm text-slate-300 transition hover:text-white"
+                >
+                  Log in
+                </Link>
+              )}
+              {!onRegister && (
+                <Link
+                  href="/register"
+                  className="rounded-full bg-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow-btn transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-400 hover:shadow-btn-hover"
+                >
+                  Join now
+                </Link>
+              )}
             </>
           )}
         </div>

@@ -29,7 +29,19 @@ export default function CourseDetailPage() {
   });
 
   if (isLoading && !course) return <p className="animate-pulse text-craft-faint">Loading course…</p>;
-  if (!course) return <p className="text-craft-muted">Course not found.</p>;
+  if (!course)
+    return (
+      // Never a dead end (audit F2): say what happened, offer a way forward.
+      <div className="mx-auto mt-16 max-w-md text-center">
+        <p className="text-lg font-semibold text-craft-ink">That course doesn&apos;t exist.</p>
+        <p className="mt-2 text-sm text-craft-muted">
+          It may have been renamed or unpublished. Your courses are still on the dashboard.
+        </p>
+        <Link href="/dashboard" className="btn-primary mt-6">
+          Back to my courses
+        </Link>
+      </div>
+    );
 
   return (
     <div className="mx-auto max-w-3xl">

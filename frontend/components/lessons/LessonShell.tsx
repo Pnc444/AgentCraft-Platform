@@ -22,7 +22,19 @@ export function LessonShell({ children }: { children: React.ReactNode }) {
   const { lesson, isLoading, notice, openTutor } = useLessonWorkspace();
 
   if (isLoading) return <p className="animate-pulse text-craft-faint">Loading lesson…</p>;
-  if (!lesson) return <p className="text-craft-muted">Lesson not found.</p>;
+  if (!lesson)
+    return (
+      // Never a dead end (audit F2).
+      <div className="mx-auto mt-16 max-w-md text-center">
+        <p className="text-lg font-semibold text-craft-ink">That lesson doesn&apos;t exist.</p>
+        <p className="mt-2 text-sm text-craft-muted">
+          It may have moved when the course was updated. Everything current is on the dashboard.
+        </p>
+        <Link href="/dashboard" className="btn-primary mt-6">
+          Back to my courses
+        </Link>
+      </div>
+    );
 
   const step = lessonStepPosition(pathname, {
     isExam: isExamLessonType(lesson.lesson_type),

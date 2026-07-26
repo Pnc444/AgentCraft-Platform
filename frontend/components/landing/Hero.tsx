@@ -79,7 +79,9 @@ export function Hero() {
 
             <div className="bg-craft-navy px-5 py-5 text-craft-inverse shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
               <p className="text-xs font-semibold uppercase tracking-wide text-craft-inverse-muted">
-                Your Progress
+                {/* Product preview with example numbers — never claim a
+                    visitor has progress they don't have (audit F3). */}
+                Progress preview
               </p>
               <div className="mt-4 flex flex-wrap items-center gap-6">
                 <div className="hero-progress-item relative flex h-20 w-20 shrink-0 items-center justify-center drop-shadow-[0_8px_16px_rgba(34,211,238,0.18)]">
@@ -115,7 +117,9 @@ export function Hero() {
                   <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-700">
                     <div className="hero-bar-fill h-full w-1/3 rounded-full bg-cyan-400" />
                   </div>
-                  <p className="mt-1 text-[11px] text-craft-faint">Lesson 2 of 6</p>
+                  {/* Module 3 really has 5 lessons — the mock must not lie
+                      about the actual curriculum (audit F3). */}
+                  <p className="mt-1 text-[11px] text-craft-faint">Lesson 2 of 5</p>
                 </div>
 
                 <div className="hero-progress-item shrink-0">
