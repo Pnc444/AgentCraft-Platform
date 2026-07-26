@@ -35,6 +35,91 @@ describe("PaginatedExam", () => {
     document.body.innerHTML = "";
   });
 
+  it("opens a already-passed exam on its standing result, not a blank attempt", async () => {
+    const onPassed = vi.fn();
+    const { container, root } = render(
+      createElement(PaginatedExam, {
+        questions,
+        label: "Exam",
+        previouslyPassed: true,
+        previousScore: 90,
+        onPassed,
+      })
+    );
+
+    try {
+      await act(async () => {
+        root.render(
+          createElement(PaginatedExam, {
+            questions,
+            label: "Exam",
+            previouslyPassed: true,
+            previousScore: 90,
+            onPassed,
+          })
+        );
+      });
+
+      // The standing result, with the score preserved.
+      expect(container.textContent).toContain("Exam already complete");
+      expect(container.textContent).toContain("90%");
+      expect(container.textContent).toContain("nothing here has been reset");
+
+      // Crucially: NOT a fresh attempt.
+      expect(container.textContent).not.toContain("Question 1");
+      expect(container.textContent).not.toContain("What is AI?");
+
+      // Retaking must be a deliberate press, never the default.
+      expect(container.textContent).toContain("Retake exam");
+
+      // Re-entering a finished exam must not re-report completion.
+      expect(onPassed).not.toHaveBeenCalled();
+    } finally {
+      root.unmount();
+      container.remove();
+    }
+  });
+
+  it("starts a genuinely fresh attempt only when retake is pressed", async () => {
+    const { container, root } = render(
+      createElement(PaginatedExam, {
+        questions,
+        label: "Exam",
+        previouslyPassed: true,
+        previousScore: 90,
+      })
+    );
+
+    try {
+      await act(async () => {
+        root.render(
+          createElement(PaginatedExam, {
+            questions,
+            label: "Exam",
+            previouslyPassed: true,
+            previousScore: 90,
+          })
+        );
+      });
+
+      const retake = Array.from(container.querySelectorAll("button")).find((b) =>
+        b.textContent?.includes("Retake exam")
+      );
+      expect(retake).toBeDefined();
+
+      await act(async () => {
+        retake!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      });
+
+      expect(container.textContent).toContain("Question 1");
+      expect(container.textContent).toContain("What is AI?");
+      expect(container.textContent).not.toContain("Exam already complete");
+    } finally {
+      root.unmount();
+      container.remove();
+    }
+  });
+
   it("shows one question at a time with step chrome", async () => {
     const { container, root } = render(
       createElement(PaginatedExam, { questions, label: "Exam" })

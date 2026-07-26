@@ -51,6 +51,10 @@ export default function LessonQuizPage() {
       <PaginatedExam
         questions={recapQuestions}
         label={assessmentLabel}
+        // Status only ever becomes "completed" by passing this assessment, so
+        // it is a safe signal that a result already stands.
+        previouslyPassed={lesson.status === "completed"}
+        previousScore={lesson.score}
         locked={needsVideo && !videoDone}
         lockedReason={`Watch the lesson video to the end before taking the ${assessmentLabel}.`}
         onLockedAction={() => {

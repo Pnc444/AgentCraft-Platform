@@ -29,12 +29,25 @@ interface PaginatedExamProps {
    * off their own result.
    */
   completionAction?: React.ReactNode;
+  /**
+   * This learner has already passed. Opens on a record of that result instead
+   * of a blank question 1 — returning to a finished exam must not look like
+   * the attempt was wiped.
+   */
+  previouslyPassed?: boolean;
+  /** Score from that earlier pass, when the server recorded one. */
+  previousScore?: number | null;
 }
 
 const DEFAULT_PASS_SCORE = 80;
 const CELEBRATE_MS = 2200;
 
-type Phase = "answering" | "result";
+/**
+ * `completed` is the entry state for an exam this learner already passed: a
+ * record of the result, not a fresh attempt. From there they can review the
+ * questions (read-only, correct answers shown) or deliberately retake.
+ */
+type Phase = "answering" | "result" | "completed";
 
 /**
  * One-question-per-slide assessment UI (Module 1 Exam + recap quizzes).
@@ -51,6 +64,8 @@ export function PaginatedExam({
   onLockedAction,
   label = "Exam",
   completionAction,
+  previouslyPassed = false,
+  previousScore = null,
 }: PaginatedExamProps) {
   const bank = useMemo(
     () => questions.filter((q) => q.options?.length && typeof q.answer_index === "number"),
@@ -67,11 +82,14 @@ export function PaginatedExam({
   );
   const slideRef = useRef<HTMLDivElement>(null);
   const [answers, setAnswers] = useState<Record<string, number>>({});
-  const [phase, setPhase] = useState<Phase>("answering");
-  const [score, setScore] = useState<number | null>(null);
-  const [passed, setPassed] = useState(false);
+  // Entry state is decided once, on mount: an already-passed exam opens on its
+  // result, never on a blank question 1.
+  const [phase, setPhase] = useState<Phase>(previouslyPassed ? "completed" : "answering");
+  const [score, setScore] = useState<number | null>(previouslyPassed ? previousScore : null);
+  const [passed, setPassed] = useState(previouslyPassed);
   const [showConfetti, setShowConfetti] = useState(false);
-  const notifiedPass = useRef(false);
+  // Already reported — re-entering a finished exam must not re-fire completion.
+  const notifiedPass = useRef(previouslyPassed);
   const onPassedRef = useRef(onPassed);
   onPassedRef.current = onPassed;
 
@@ -168,6 +186,65 @@ export function PaginatedExam({
         No {label.toLowerCase()} questions are configured for this lesson yet. Add them in the admin
         panel under the lesson&apos;s quiz / sandbox config.
       </p>
+    );
+  }
+
+  /*
+    Already passed. Show the standing result, not a blank attempt — returning
+    to a finished exam previously looked identical to never having taken it,
+    which reads as "your progress was wiped". Retaking is available, but it is
+    a deliberate press, never the default.
+  */
+  if (phase === "completed") {
+    return (
+      <div className="card px-5 py-6 sm:px-6">
+        <div className="mx-auto max-w-2xl">
+          <div className="flex items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white shadow-soft">
+              <CheckCircle2 className="h-5 w-5" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-base font-bold text-craft-ink">
+                {label} already complete
+              </p>
+              <p className="mt-1 text-sm text-craft-muted">
+                {typeof score === "number"
+                  ? `You passed this ${label.toLowerCase()} with ${score}%. That result stands — nothing here has been reset.`
+                  : `You've already passed this ${label.toLowerCase()}. That result stands — nothing here has been reset.`}
+              </p>
+
+              {completionAction && <div className="mt-4">{completionAction}</div>}
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    // Read-only walkthrough: the existing result rendering
+                    // already marks correct answers, so reuse it as-is.
+                    setPhase("result");
+                    setCurrentIndex(0);
+                    setAnimClass("slide-active");
+                  }}
+                  className="btn-secondary"
+                >
+                  Review questions
+                </button>
+                <button
+                  type="button"
+                  onClick={reset}
+                  className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-craft-muted transition hover:bg-craft-soft hover:text-craft-ink"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  Retake {label.toLowerCase()}
+                </button>
+              </div>
+              <p className="mt-2 text-xs text-craft-faint">
+                Retaking starts a fresh attempt. Your passing result is kept either way.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -359,6 +436,15 @@ export function PaginatedExam({
                   <button type="button" onClick={reset} className="btn-secondary">
                     <RotateCcw className="h-4 w-4" />
                     Retry {label.toLowerCase()}
+                  </button>
+                )}
+                {previouslyPassed && showResult && passed && (
+                  <button
+                    type="button"
+                    onClick={() => setPhase("completed")}
+                    className="btn-secondary"
+                  >
+                    Done reviewing
                   </button>
                 )}
               </div>
