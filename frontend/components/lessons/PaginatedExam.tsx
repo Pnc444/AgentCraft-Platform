@@ -522,13 +522,21 @@ export function PaginatedExam({
                     Retry {label.toLowerCase()}
                   </button>
                 )}
-                {previouslyPassed && showResult && passed && (
+                {/*
+                  A passed result offers exactly two things: the forward action
+                  (inside the pass card above) and a deliberate retake. There is
+                  no "Done reviewing" — Back already pages to the questions, so
+                  a button whose only job is "stop looking" was one more thing
+                  to read for no new destination.
+                */}
+                {showResult && passed && (
                   <button
                     type="button"
-                    onClick={() => setPhase("completed")}
-                    className="btn-secondary"
+                    onClick={reset}
+                    className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-craft-muted transition hover:bg-craft-soft hover:text-craft-ink"
                   >
-                    Done reviewing
+                    <RotateCcw className="h-4 w-4" />
+                    Retake {label.toLowerCase()}
                   </button>
                 )}
               </div>

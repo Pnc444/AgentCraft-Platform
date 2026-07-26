@@ -202,6 +202,70 @@ describe("PaginatedExam", () => {
     }
   });
 
+  it("offers only a retake on the passed results slide — no Done reviewing", async () => {
+    const { container, root } = render(
+      createElement(PaginatedExam, {
+        questions,
+        label: "Exam",
+        previouslyPassed: true,
+        previousScore: 100,
+        completionAction: createElement("a", { href: "/next" }, "Start Module 1.5"),
+      })
+    );
+
+    try {
+      const rerender = () =>
+        act(async () => {
+          root.render(
+            createElement(PaginatedExam, {
+              questions,
+              label: "Exam",
+              previouslyPassed: true,
+              previousScore: 100,
+              completionAction: createElement("a", { href: "/next" }, "Start Module 1.5"),
+            })
+          );
+        });
+      await rerender();
+
+      const byText = (t: string) =>
+        Array.from(container.querySelectorAll("button")).find((b) =>
+          b.textContent?.includes(t)
+        );
+
+      await act(async () => {
+        byText("Review questions")!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      });
+
+      // Page to the results slide. navigate() defers with a double
+      // requestAnimationFrame, which jsdom only fires on a timer — so each
+      // click needs a real flush, not just an await.
+      const flush = () =>
+        act(async () => {
+          await new Promise((resolve) => setTimeout(resolve, 60));
+        });
+      for (let i = 0; i < 5; i += 1) {
+        const advance = byText("Review") ?? byText("Next");
+        if (!advance || (advance as HTMLButtonElement).disabled) break;
+        await act(async () => {
+          advance.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        });
+        await flush();
+        if (container.textContent?.includes("You passed with")) break;
+      }
+
+      expect(container.textContent).toContain("You passed with 100%!");
+      expect(container.textContent).toContain("Start Module 1.5");
+      // Back already pages to the questions, so a "stop looking" button was one
+      // more thing to read for no new destination.
+      expect(container.textContent).not.toContain("Done reviewing");
+      expect(byText("Retake exam")).toBeDefined();
+    } finally {
+      root.unmount();
+      container.remove();
+    }
+  });
+
   it("shows one question at a time with step chrome", async () => {
     const { container, root } = render(
       createElement(PaginatedExam, { questions, label: "Exam" })
