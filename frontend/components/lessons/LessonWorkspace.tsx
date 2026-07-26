@@ -12,17 +12,19 @@ import {
 } from "react";
 import { useParams, usePathname } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getCourse, getLesson, updateLessonProgress } from "@/lib/api/courses";
+import { getCourse, getCourses, getLesson, updateLessonProgress } from "@/lib/api/courses";
 import {
   invalidateLearningProgress,
   patchLessonStatusInCache,
 } from "@/lib/learning-progress";
 import type { VideoCompletionDetails } from "@/components/lessons/LessonVideo";
 import {
+  entryStepForLessonType,
   getCheckpointQuestions,
   getGuidedLessonBlocks,
   getLessonArtifacts,
   getRecapQuestions,
+  lessonStepHref,
 } from "@/lib/lesson-steps";
 import type {
   CourseDetail,
@@ -62,6 +64,15 @@ type LessonWorkspaceValue = {
   videoDone: boolean;
   prev: { slug: string; title: string } | null;
   next: { slug: string; title: string } | null;
+  /** True when this is the module's final lesson — i.e. there is no `next`. */
+  atModuleEnd: boolean;
+  /** The module that follows this one, or null at the end of the course. */
+  nextModule: {
+    slug: string;
+    title: string;
+    totalLessons: number;
+    href: string;
+  } | null;
   progressPending: boolean;
   updateProgress: (data: ProgressPayload) => void;
   markVideoWatched: (details: VideoCompletionDetails) => void;
@@ -112,6 +123,56 @@ export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
       ? queryClient.getQueryState(["course", slug])?.dataUpdatedAt
       : undefined,
   });
+
+  // --- Next module -----------------------------------------------------
+  // Finishing a module's last lesson (an exam, usually) used to be a dead end:
+  // there is no "next lesson", so the footer rendered nothing and the only way
+  // onward was the sidebar. Resolve the following module here so the lesson
+  // pages can offer a real forward step.
+  const { data: allCourses } = useQuery({
+    queryKey: ["courses"],
+    queryFn: getCourses,
+    staleTime: 5 * 60_000,
+  });
+
+  const nextCourseSummary = useMemo(() => {
+    if (!allCourses?.length || !course) return null;
+    return (
+      [...allCourses]
+        .sort((a, b) => a.order - b.order)
+        .find((candidate) => candidate.order > course.order) ?? null
+    );
+  }, [allCourses, course]);
+
+  // Only fetched once the learner is actually at the end of the module, so a
+  // normal mid-module lesson costs nothing extra.
+  const atModuleEnd = !!course?.lessons?.length && course.lessons.at(-1)?.slug === lessonSlug;
+
+  const { data: nextCourseDetail } = useQuery({
+    queryKey: ["course", nextCourseSummary?.slug],
+    queryFn: () => getCourse(nextCourseSummary!.slug),
+    enabled: !!nextCourseSummary?.slug && atModuleEnd,
+    staleTime: 5 * 60_000,
+  });
+
+  const nextModule = useMemo(() => {
+    if (!nextCourseSummary) return null;
+    const firstLesson = nextCourseDetail?.lessons?.[0];
+    return {
+      slug: nextCourseSummary.slug,
+      title: nextCourseSummary.title,
+      totalLessons: nextCourseSummary.total_lessons,
+      // Deep-link into lesson 1 when we know it; otherwise the module overview
+      // still gets them there rather than leaving them stranded.
+      href: firstLesson
+        ? lessonStepHref(
+            nextCourseSummary.slug,
+            firstLesson.slug,
+            entryStepForLessonType(firstLesson.lesson_type)
+          )
+        : `/dashboard/courses/${nextCourseSummary.slug}`,
+    };
+  }, [nextCourseSummary, nextCourseDetail]);
 
   // Prefetch neighbor lessons for snappy prev/next
   useEffect(() => {
@@ -243,6 +304,8 @@ export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
       videoDone,
       prev: prev ? { slug: prev.slug, title: prev.title } : null,
       next: next ? { slug: next.slug, title: next.title } : null,
+      atModuleEnd,
+      nextModule,
       progressPending: progressMutation.isPending,
       updateProgress,
       markVideoWatched,
@@ -264,6 +327,8 @@ export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
       videoDone,
       prev,
       next,
+      atModuleEnd,
+      nextModule,
       progressMutation.isPending,
       updateProgress,
       markVideoWatched,

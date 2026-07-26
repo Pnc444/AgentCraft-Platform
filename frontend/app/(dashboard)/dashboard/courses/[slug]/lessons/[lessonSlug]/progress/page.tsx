@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2, ChevronLeft, ChevronRight, ClipboardCheck, Sparkles } from "lucide-react";
 import clsx from "clsx";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
+import { ModuleHandoff } from "@/components/lessons/ModuleHandoff";
 import { ProgressBar } from "@/components/shared/ProgressBar";
 import { Reveal } from "@/components/shared/Reveal";
 import { completedCheckpointIds, completedInteractionKeys } from "@/lib/lesson-interactions";
@@ -28,6 +29,8 @@ export default function LessonProgressPage() {
     progressPending,
     prev,
     next,
+    atModuleEnd,
+    nextModule,
     guidedBlocks,
   } = useLessonWorkspace();
 
@@ -246,6 +249,21 @@ export default function LessonProgressPage() {
         </div>
       </Reveal>
 
+      {/*
+        End of the module and this lesson is done → offer the next module.
+        Without this the exam is a dead end: it is the module's last lesson, so
+        the nav below has no `next` and renders an empty span.
+      */}
+      {atModuleEnd && lesson.status === "completed" && (
+        <Reveal delay={100}>
+          <ModuleHandoff
+            courseTitle={lesson.course_title}
+            nextModule={nextModule}
+            isExam={isExamLesson}
+          />
+        </Reveal>
+      )}
+
       <Reveal delay={100}>
         <nav className="flex items-center justify-between gap-4 pt-2">
           {prev ? (
@@ -259,6 +277,12 @@ export default function LessonProgressPage() {
           {next ? (
             <Link href={lessonStepHref(slug, next.slug, "content")} className="btn-secondary">
               {next.title}
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          ) : atModuleEnd && lesson.status !== "completed" && nextModule ? (
+            // Module not finished yet — keep the door visible but quiet.
+            <Link href={nextModule.href} className="btn-secondary">
+              {nextModule.title}
               <ChevronRight className="h-4 w-4" />
             </Link>
           ) : (

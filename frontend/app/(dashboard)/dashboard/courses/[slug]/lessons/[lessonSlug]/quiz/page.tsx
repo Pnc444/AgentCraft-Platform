@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { PaginatedExam } from "@/components/lessons/PaginatedExam";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 import {
@@ -24,6 +24,8 @@ export default function LessonQuizPage() {
     videoDone,
     setNotice,
     updateProgress,
+    atModuleEnd,
+    nextModule,
   } = useLessonWorkspace();
 
   useEffect(() => {
@@ -37,6 +39,8 @@ export default function LessonQuizPage() {
 
   const isExamLesson = isExamLessonType(lesson.lesson_type);
   const assessmentLabel = assessmentLabelForLessonType(lesson.lesson_type);
+  // Passing this also finishes the module — the exam is its last lesson.
+  const endsModule = atModuleEnd;
 
   return (
     <div className="space-y-3">
@@ -60,8 +64,28 @@ export default function LessonQuizPage() {
             updateProgress({ status: "completed", score });
           }
           setNotice(null);
-          router.push(lessonStepHref(slug, lessonSlug, "progress"));
+          // When this assessment ends the module we show a "next module" button
+          // instead, so the learner leaves on their own terms rather than being
+          // yanked off their own result.
+          if (!endsModule) {
+            router.push(lessonStepHref(slug, lessonSlug, "progress"));
+          }
         }}
+        completionAction={
+          endsModule ? (
+            nextModule ? (
+              <Link href={nextModule.href} className="btn-primary">
+                Start {nextModule.title}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            ) : (
+              <Link href="/dashboard" className="btn-primary">
+                You finished the course — back to dashboard
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            )
+          ) : undefined
+        }
       />
 
       <div className="flex flex-wrap items-center justify-between gap-2 pt-0.5">

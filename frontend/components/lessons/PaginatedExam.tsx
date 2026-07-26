@@ -22,6 +22,13 @@ interface PaginatedExamProps {
   lockedReason?: string;
   onLockedAction?: () => void;
   label?: string;
+  /**
+   * Rendered inside the pass card instead of the "taking you to progress…"
+   * line. Supplied when finishing this assessment also finishes the module, so
+   * the learner presses a real button to move on rather than being auto-moved
+   * off their own result.
+   */
+  completionAction?: React.ReactNode;
 }
 
 const DEFAULT_PASS_SCORE = 80;
@@ -43,6 +50,7 @@ export function PaginatedExam({
   lockedReason,
   onLockedAction,
   label = "Exam",
+  completionAction,
 }: PaginatedExamProps) {
   const bank = useMemo(
     () => questions.filter((q) => q.options?.length && typeof q.answer_index === "number"),
@@ -231,10 +239,19 @@ export function PaginatedExam({
                       <p className="text-base font-bold text-emerald-800 dark:text-emerald-300">
                         You passed with {score}%!
                       </p>
-                      <p className="mt-1 text-sm text-emerald-700/80 dark:text-emerald-200/80">
-                        Great work. This {label.toLowerCase()} is complete. Taking you to
-                        progress…
-                      </p>
+                      {completionAction ? (
+                        <>
+                          <p className="mt-1 text-sm text-emerald-700/80 dark:text-emerald-200/80">
+                            Great work — that finishes this module.
+                          </p>
+                          <div className="mt-4">{completionAction}</div>
+                        </>
+                      ) : (
+                        <p className="mt-1 text-sm text-emerald-700/80 dark:text-emerald-200/80">
+                          Great work. This {label.toLowerCase()} is complete. Taking you to
+                          progress…
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
