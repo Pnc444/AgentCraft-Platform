@@ -39,7 +39,8 @@ class Command(BaseCommand):
                 skill=skill,
                 order=module["order"],
                 difficulty=module["difficulty"],
-                is_published=module.get("published", True),
+                # Fail safe: a module must opt in to being published (see sync_content).
+                is_published=module.get("published", False),
             )
             for i, lesson_spec in enumerate(module["lessons"], start=1):
                 title, slug, ltype, minutes = lesson_spec[:4]

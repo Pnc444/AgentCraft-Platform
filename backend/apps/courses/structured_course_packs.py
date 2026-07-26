@@ -1153,6 +1153,7 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                     'requires_guided_blocks',
                     'requires_checkpoint_banks',
                     'requires_agent_learning_artifacts'],
+  'published': True,
   'slug': 'module-4-ai-agents',
   'title': 'Module 4: How Agents Think'},
  {'description': 'Give the agent you designed a real home: set up OpenClaw the official way, teach '

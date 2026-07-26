@@ -69,7 +69,10 @@ class Command(BaseCommand):
                     "skill": skill,
                     "order": module["order"],
                     "difficulty": module["difficulty"],
-                    "is_published": module.get("published", True),
+                    # Fail safe: a module must opt in to being published. Matches
+                    # Course.is_published's model default. Defaulting to True here
+                    # silently published any spec that forgot the key.
+                    "is_published": module.get("published", False),
                 },
             )
             self.stdout.write(
