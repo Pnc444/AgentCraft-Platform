@@ -305,7 +305,8 @@ import pytest
     [
         ("module-1-5-how-llms-work", "MODULE_1_5_RECAP", "MODULE_1_5_SEAM_CHECKS"),
         ("module-3-prompting", "MODULE_3_RECAP", "MODULE_3_SEAM_CHECKS"),
-        ("module-4-5-docker-and-environments", "MODULE_4_5_RECAP", "MODULE_4_5_SEAM_CHECKS"),
+        ("module-4-5-docker-and-environments", "MODULE_4_5_RECAP", "MODULE_4_5_SEAM_CHECKS", "MODULE_7_SEAM_CHECKS"),
+        ("module-7-claude", "MODULE_7_RECAP", "MODULE_7_SEAM_CHECKS"),
     ],
 )
 def test_seam_checks_close_every_reading_run_without_recycling(course_slug, recap_name, seam_name):
@@ -349,7 +350,7 @@ def test_seam_check_ids_are_unique_across_the_course():
 
     ids = [
         q["id"]
-        for name in ("MODULE_1_5_SEAM_CHECKS", "MODULE_3_SEAM_CHECKS", "MODULE_4_5_SEAM_CHECKS")
+        for name in ("MODULE_1_5_SEAM_CHECKS", "MODULE_3_SEAM_CHECKS", "MODULE_4_5_SEAM_CHECKS", "MODULE_7_SEAM_CHECKS")
         for bank in getattr(curriculum, name).values()
         for q in bank
     ]

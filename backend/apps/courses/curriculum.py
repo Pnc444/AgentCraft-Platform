@@ -1158,6 +1158,175 @@ MODULE_5_RECAP = {
 
 
 # Module 7 recap questions — real questions written from the lesson content.
+# Module 7 seam checks (plan §0.2), grounded in each lesson's own text.
+MODULE_7_SEAM_CHECKS = {
+    "what-claude-code-is": [
+        {
+            "id": "m7-what-seam1",
+            "prompt": "In the three-box diagram, what is different about Claude Code compared with the Hermes build?",
+            "options": [
+                "The middle and right boxes come from the same company — no OpenRouter-style model swapping",
+                "There is no model provider box at all",
+                "The gateway box disappears because Claude Code has no interface",
+            ],
+            "answer_index": 0,
+            "explanation": "Claude Code talks to Claude models only: the agent loop and the model provider are both Anthropic, so there is no model swapping.",
+        },
+        {
+            "id": "m7-what-seam2",
+            "prompt": "Hermes needed you to bring a Docker sandbox before first run. What does Claude Code ship with instead?",
+            "options": [
+                "Nothing — you still build the sandbox yourself",
+                "A permission system that asks before editing files or running commands",
+                "A separate antivirus layer",
+            ],
+            "answer_index": 1,
+            "explanation": "Safety is built in, not bolted on: Claude Code ships a permission system and a sandboxable shell tool, so this module configures guardrails rather than building them.",
+        },
+    ],
+    "install-and-first-session": [
+        {
+            "id": "m7-inst-seam1",
+            "prompt": "Why does the lesson tell you to buy prepaid credits and leave auto-reload off?",
+            "options": [
+                "Because prepaid credits are the spending cap — when they are gone, the agent stops",
+                "Because auto-reload is not available on Console accounts",
+                "Because credits expire if reloading is enabled",
+            ],
+            "answer_index": 0,
+            "explanation": "Same pattern as the OpenRouter step: set the money limit before the agent does anything. Prepaid credits with no auto-reload *are* the cap.",
+        },
+        {
+            "id": "m7-inst-seam2",
+            "prompt": "You ask Claude Code to \"delete every file in this folder\". What does the lesson have you do?",
+            "options": [
+                "Approve it, to see whether the sandbox holds",
+                "Deny it — the deny button is the explicit boundary the agent acts inside",
+                "Nothing; the agent refuses without asking",
+            ],
+            "answer_index": 1,
+            "explanation": "It asks first, and you deny. The lesson frames that deny as Module 4.5's principle as a feature: the agent acts on your machine, so the boundary has to be explicit.",
+        },
+        {
+            "id": "m7-inst-seam3",
+            "prompt": "Why does the first session happen in a fresh empty folder like `~/agent-practice`?",
+            "options": [
+                "Because Claude Code cannot start in a folder that already has files",
+                "Same discipline as Hermes' blank slate — the working directory is the agent's default territory",
+                "Because permission prompts only appear in empty folders",
+            ],
+            "answer_index": 1,
+            "explanation": "The prompt shows the working directory, and that directory is the agent's default territory — so the first run happens in an empty practice folder, not your real files.",
+        },
+    ],
+    "claudemd-and-skills": [
+        {
+            "id": "m7-cmd-seam1",
+            "prompt": "Which file is loaded automatically at the start of every session?",
+            "options": [
+                "CLAUDE.md — standing instructions, always loaded",
+                "SKILL.md — loaded every session so triggers stay fresh",
+                "log.md — the agent reads its own history first",
+            ],
+            "answer_index": 0,
+            "explanation": "CLAUDE.md is always loaded; skills are loaded when relevant. That is exactly why CLAUDE.md should stay short.",
+        },
+        {
+            "id": "m7-cmd-seam2",
+            "prompt": "In a skill's frontmatter, what decides *when* the agent uses it?",
+            "options": [
+                "The `name` field",
+                "The `description` field — the agent reads it to decide the skill applies",
+                "Alphabetical order of the skill folders",
+            ],
+            "answer_index": 1,
+            "explanation": "The description is the trigger, exactly like OpenClaw's frontmatter — which is why a natural phrase can invoke the skill without typing `/daily-log`.",
+        },
+        {
+            "id": "m7-cmd-seam3",
+            "prompt": "You run the daily-log skill twice and the second run overwrites the file instead of appending. What does the lesson tell you to do?",
+            "options": [
+                "File a bug — the skill system is unreliable",
+                "Sharpen the prose in the skill's steps and try again — debugging a skill is editing prose",
+                "Switch to writing the log with code instead",
+            ],
+            "answer_index": 1,
+            "explanation": "If the second run rewrites the file, step 4 was not clear enough. Editing the prose *is* the debugging — that is what programming an agent looks like here.",
+        },
+    ],
+    "custom-subagents": [
+        {
+            "id": "m7-sub-seam1",
+            "prompt": "The reviewer subagent's frontmatter reads `tools: Read, Glob, Grep`. What does that guarantee?",
+            "options": [
+                "It is physically unable to modify files or run commands, no matter what it is asked",
+                "It will ask permission before editing, like the main agent",
+                "It can edit files but not delete them",
+            ],
+            "answer_index": 0,
+            "explanation": "No Write, no Edit, no Bash. Restriction lives in the file — you audit it by reading one line.",
+        },
+        {
+            "id": "m7-sub-seam2",
+            "prompt": "Which Module 4.5 idea do restricted subagents apply, and at what scale?",
+            "options": [
+                "Reproducibility, applied per-project",
+                "Least privilege, applied per-agent instead of per-container",
+                "Disposability, applied per-session",
+            ],
+            "answer_index": 1,
+            "explanation": "Choosing each subagent's tools is least privilege — the container principle from 4.5, now applied one agent at a time.",
+        },
+        {
+            "id": "m7-sub-seam3",
+            "prompt": "You ask the reviewer to fix the problems it found. What happens?",
+            "options": [
+                "It fixes them, since it already read the files",
+                "It cannot — the main agent has to apply fixes, with your permission prompt still in the loop",
+                "It asks you to grant it the Write tool for this one request",
+            ],
+            "answer_index": 1,
+            "explanation": "The reviewer has no Write tool, so it cannot act. The main agent applies fixes and your permission prompt stays in the loop.",
+        },
+    ],
+    "build-your-agent": [
+        {
+            "id": "m7-lab-seam1",
+            "prompt": "The lab's `CLAUDE.md` must state that notes go in `notes/`, every note gets a Sources section, and notes are never deleted. Why do those belong there rather than in a skill?",
+            "options": [
+                "They are standing rules that apply always, not a triggered procedure",
+                "Because skills cannot mention folders",
+                "Because CLAUDE.md is the only file the agent can read",
+            ],
+            "answer_index": 0,
+            "explanation": "Standing rule that applies always → CLAUDE.md; procedure that applies when triggered → skill. The lab splits the four files on exactly that line.",
+        },
+        {
+            "id": "m7-lab-seam2",
+            "prompt": "You give one instruction and expect four hand-offs. Which component fires *first*?",
+            "options": [
+                "The reviewer subagent, so the plan gets checked before work starts",
+                "The research-note skill — triggered without you naming it",
+                "The daily-log skill, to record that work began",
+            ],
+            "answer_index": 1,
+            "explanation": "The expected flow is research-note skill → note written → daily-log fires → reviewer reports. The first hand-off is the skill triggering on its description alone.",
+        },
+        {
+            "id": "m7-lab-seam3",
+            "prompt": "During the pipeline run, a step never fires. Where does the lesson send you to debug?",
+            "options": [
+                "The model settings, to raise the temperature",
+                "The `description:` line that carries the trigger — sharpen it and rerun",
+                "The permission mode, which must be switched off",
+            ],
+            "answer_index": 1,
+            "explanation": "Same debugging move as lesson 3: the trigger lives in a description line. Sharpen the prose and run it again.",
+        },
+    ],
+}
+
+
 MODULE_7_RECAP = {
     "what-claude-code-is": [
         {
@@ -2581,11 +2750,26 @@ CURRICULUM = [
         "published": True,
         "difficulty": 2,
         "lessons": [
-            ("What Claude Code Is", "what-claude-code-is", "theory", 8, {"questions": MODULE_7_RECAP["what-claude-code-is"]}),
-            ("Install and First Session", "install-and-first-session", "interactive", 12, {"questions": MODULE_7_RECAP["install-and-first-session"]}),
-            ("CLAUDE.md and Skills", "claudemd-and-skills", "sandbox", 15, {"questions": MODULE_7_RECAP["claudemd-and-skills"]}),
-            ("Custom Subagents", "custom-subagents", "sandbox", 15, {"questions": MODULE_7_RECAP["custom-subagents"]}),
-            ("Build Your Agent Lab", "build-your-agent", "agent_lab", 15, {"questions": MODULE_7_RECAP["build-your-agent"]}),
+            ("What Claude Code Is", "what-claude-code-is", "theory", 8, {
+                    "questions": MODULE_7_RECAP["what-claude-code-is"],
+                    "checkpoint_questions": MODULE_7_SEAM_CHECKS["what-claude-code-is"],
+                }),
+            ("Install and First Session", "install-and-first-session", "interactive", 12, {
+                    "questions": MODULE_7_RECAP["install-and-first-session"],
+                    "checkpoint_questions": MODULE_7_SEAM_CHECKS["install-and-first-session"],
+                }),
+            ("CLAUDE.md and Skills", "claudemd-and-skills", "sandbox", 15, {
+                    "questions": MODULE_7_RECAP["claudemd-and-skills"],
+                    "checkpoint_questions": MODULE_7_SEAM_CHECKS["claudemd-and-skills"],
+                }),
+            ("Custom Subagents", "custom-subagents", "sandbox", 15, {
+                    "questions": MODULE_7_RECAP["custom-subagents"],
+                    "checkpoint_questions": MODULE_7_SEAM_CHECKS["custom-subagents"],
+                }),
+            ("Build Your Agent Lab", "build-your-agent", "agent_lab", 15, {
+                    "questions": MODULE_7_RECAP["build-your-agent"],
+                    "checkpoint_questions": MODULE_7_SEAM_CHECKS["build-your-agent"],
+                }),
             ("Module 7 Exam", "module-7-exam", "quiz", 12, {"questions": MODULE_7_EXAM_QUESTIONS}),
         ],
     },
