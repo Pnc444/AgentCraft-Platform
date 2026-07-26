@@ -1,5 +1,5 @@
-import type { CheckpointQuestion } from "@/components/lessons/CheckpointQuiz";
 import type {
+  CheckpointQuestion,
   CapstoneAssignment,
   GuidedLessonBlock,
   LessonArtifact,

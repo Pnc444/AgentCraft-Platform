@@ -11,7 +11,7 @@ import {
   Sparkles,
   XCircle,
 } from "lucide-react";
-import type { CheckpointQuestion } from "@/components/lessons/CheckpointQuiz";
+import type { CheckpointQuestion } from "@/types";
 import { ConfettiBurst } from "@/components/lessons/ConfettiBurst";
 
 interface PaginatedExamProps {
@@ -56,10 +56,9 @@ const CELEBRATE_MS = 2200;
 type Phase = "answering" | "result" | "completed";
 
 /**
- * One-question-per-slide assessment UI (Module 1 Exam + recap quizzes).
- * Mirrors PaginatedLessonContent: fixed viewport card, step counter,
- * Back/Next footer — designed so neurodivergent students never face a
- * long scrolling wall of questions.
+ * One-question-per-slide assessment UI (module exams + recap quizzes):
+ * fixed viewport card, question counter, Back/Next footer — designed so
+ * neurodivergent students never face a long scrolling wall of questions.
  */
 export function PaginatedExam({
   questions,
@@ -573,7 +572,7 @@ export function PaginatedExam({
           ) : null}
         </div>
 
-        {/* Footer navigation — same chrome as PaginatedLessonContent */}
+        {/* Footer navigation — same chrome as the lesson player */}
         <div className="flex shrink-0 items-center justify-between gap-3 border-t border-craft-border bg-craft-surface/90 px-5 py-2.5 backdrop-blur-sm sm:px-6">
           <button
             type="button"

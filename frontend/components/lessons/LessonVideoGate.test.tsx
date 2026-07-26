@@ -65,11 +65,6 @@ vi.mock("@/components/lessons/LessonWorkspace", () => ({
   useLessonWorkspace: () => workspaceValue,
 }));
 
-vi.mock("@/components/lessons/LessonSection", () => ({
-  LessonSection: ({ children }: { children: React.ReactNode }) =>
-    createElement("section", null, children),
-}));
-
 vi.mock("@/components/lessons/LessonVideo", () => ({
   LessonVideo: () => createElement("div", null, "video-player"),
 }));
@@ -79,24 +74,8 @@ vi.mock("@/components/lessons/LessonContent", () => ({
   stripDuplicateTitle: (content: string) => content,
 }));
 
-vi.mock("@/components/lessons/CheckpointQuiz", () => ({
-  CheckpointQuiz: () => createElement("div", null, "checkpoint"),
-}));
-
-vi.mock("@/components/lessons/LessonArtifactPack", () => ({
-  LessonArtifactPack: () => createElement("div", null, "artifacts"),
-}));
-
 vi.mock("@/components/lessons/LessonCapstoneStudio", () => ({
   LessonCapstoneStudio: () => createElement("div", null, "capstone"),
-}));
-
-vi.mock("@/components/lessons/OpenClawFileExplorer", () => ({
-  OpenClawFileExplorer: () => createElement("div", null, "explorer"),
-}));
-
-vi.mock("@/components/lessons/PaginatedLessonContent", () => ({
-  PaginatedLessonContent: () => createElement("div", null, "paginated-deck"),
 }));
 
 vi.mock("@/components/shared/ProgressBar", () => ({

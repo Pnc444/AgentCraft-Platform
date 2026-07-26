@@ -20,29 +20,7 @@ import { LessonCapstoneStudio } from "@/components/lessons/LessonCapstoneStudio"
 import { LessonSandbox } from "@/components/lessons/LessonSandbox";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 import { getCapstoneAssignment, lessonStepHref } from "@/lib/lesson-steps";
-import type { CheckpointQuestion } from "@/components/lessons/CheckpointQuiz";
-import type { Beat, LessonArtifact, SandboxSpec } from "@/types";
-
-/**
- * Courses that render lessons through the player instead of the stacked
- * content page (plan step 1: Module 4 proves it; later steps widen the set,
- * step 7 deletes the flag and the old page together).
- */
-const PLAYER_COURSES = new Set([
-  "module-1-introduction-to-ai",
-  "module-1-5-how-llms-work",
-  "module-3-prompting",
-  "module-4-ai-agents",
-  "module-4-5-docker-and-environments",
-  "module-5-hermes",
-  "module-7-claude",
-  "module-6-openclaw",
-  "module-8-capstone-safety-evaluation",
-]);
-
-export function isPlayerCourse(courseSlug: string): boolean {
-  return PLAYER_COURSES.has(courseSlug);
-}
+import type { Beat, CheckpointQuestion, LessonArtifact, SandboxSpec } from "@/types";
 
 /**
  * The zero-scroll lesson player (plan §3). One beat on screen; nothing renders

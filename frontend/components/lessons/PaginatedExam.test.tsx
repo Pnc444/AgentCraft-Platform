@@ -2,7 +2,7 @@ import { act, createElement } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { PaginatedExam } from "@/components/lessons/PaginatedExam";
-import type { CheckpointQuestion } from "@/components/lessons/CheckpointQuiz";
+import type { CheckpointQuestion } from "@/types";
 
 vi.mock("@/components/lessons/ConfettiBurst", () => ({
   ConfettiBurst: () => null,

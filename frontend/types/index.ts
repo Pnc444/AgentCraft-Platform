@@ -1,4 +1,3 @@
-import type { CheckpointQuestion } from "@/components/lessons/CheckpointQuiz";
 
 export interface User {
   id: number;
@@ -12,6 +11,16 @@ export interface User {
 }
 
 export type LessonStatus = "not_started" | "in_progress" | "completed" | "stuck";
+
+/** One quiz/checkpoint question — the shared shape for recaps, exams, and check beats. */
+export interface CheckpointQuestion {
+  id: string;
+  prompt: string;
+  options: string[];
+  answer_index: number;
+  /** Shown after answering: why the right answer is right, naming the lesson. */
+  explanation?: string;
+}
 
 export type LessonType = "theory" | "interactive" | "sandbox" | "quiz" | "agent_lab";
 
