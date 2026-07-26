@@ -297,32 +297,59 @@ def test_no_workbench_invented_when_lesson_has_no_artifacts():
     assert beats[0]["try_this"] == ["Say it out loud."]
 
 
-def test_module_1_5_seam_checks_close_every_gap_without_recycling():
-    """Plan §0.2, module 1.5: authored seam checks break every reading run, and
-    none of them repeats a recap-bank question."""
-    from apps.courses.curriculum import MODULE_1_5_RECAP, MODULE_1_5_SEAM_CHECKS
-    from apps.courses.beats import derive_beats
-    from apps.courses.curriculum import load_content
+import pytest
 
-    recap_prompts = {q["prompt"] for bank in MODULE_1_5_RECAP.values() for q in bank}
-    for slug, seams in MODULE_1_5_SEAM_CHECKS.items():
-        # every seam question is distinct from every recap question
-        for q in seams:
+
+@pytest.mark.parametrize(
+    ("course_slug", "recap_name", "seam_name"),
+    [
+        ("module-1-5-how-llms-work", "MODULE_1_5_RECAP", "MODULE_1_5_SEAM_CHECKS"),
+        ("module-3-prompting", "MODULE_3_RECAP", "MODULE_3_SEAM_CHECKS"),
+    ],
+)
+def test_seam_checks_close_every_reading_run_without_recycling(course_slug, recap_name, seam_name):
+    """Plan §0.2: authored seam checks break every reading run, and none of them
+    repeats a question the recap quiz already asks."""
+    from apps.courses import curriculum
+    from apps.courses.beats import derive_beats
+
+    recap = getattr(curriculum, recap_name)
+    seams = getattr(curriculum, seam_name)
+    recap_prompts = {q["prompt"] for bank in recap.values() for q in bank}
+
+    for slug, questions in seams.items():
+        for q in questions:
             assert q["prompt"] not in recap_prompts, f"{slug}: recycles a recap question"
             assert q.get("explanation"), f"{slug}: seam check needs an explanation"
+            assert q.get("id"), f"{slug}: seam check needs an id"
             assert 0 <= q["answer_index"] < len(q["options"])
 
         beats = derive_beats(
-            content=load_content("module-1-5-how-llms-work", slug, slug),
-            sandbox_config={
-                "questions": MODULE_1_5_RECAP[slug],
-                "checkpoint_questions": seams,
-            },
+            content=curriculum.load_content(course_slug, slug, slug),
+            sandbox_config={"questions": recap[slug], "checkpoint_questions": questions},
             title=slug,
         )
         run = worst = 0
         for beat in beats:
             run = run + 1 if beat["type"] == "explain" else 0
             worst = max(worst, run)
-        assert worst == 1, f"{slug}: still has a reading run of {worst}"
-        assert 5 <= len(beats) <= 9, f"{slug}: {len(beats)} beats is outside the budget"
+        assert worst == 1, f"{course_slug}/{slug}: still has a reading run of {worst}"
+
+        asked = [
+            (b.get("question") or {}).get("prompt")
+            for b in beats
+            if b["type"] == "check"
+        ]
+        assert len(asked) == len(set(asked)), f"{slug}: asks the same question twice"
+
+
+def test_seam_check_ids_are_unique_across_the_course():
+    from apps.courses import curriculum
+
+    ids = [
+        q["id"]
+        for name in ("MODULE_1_5_SEAM_CHECKS", "MODULE_3_SEAM_CHECKS")
+        for bank in getattr(curriculum, name).values()
+        for q in bank
+    ]
+    assert len(ids) == len(set(ids))

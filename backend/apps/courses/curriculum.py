@@ -1921,6 +1921,122 @@ MODULE_1_5_RECAP = {
 
 
 # Module 3 recap questions — real questions (ported from feat/module3).
+# Module 3 seam checks (plan §0.2). One per gap between reading beats, each
+# answerable from the beat immediately before it. Scenario-shaped where the
+# MODULE_3_RECAP bank is definitional.
+MODULE_3_SEAM_CHECKS = {
+    "what-prompts-are": [
+        {
+            "id": "m3-wpa-seam1",
+            "prompt": "Your prompt says \"summarize this\" and nothing else. Which of the four parts of a prompt is most clearly missing?",
+            "options": [
+                "Output format — nothing says bullets, JSON, length, or tone",
+                "Instruction — there is no verb telling the model what to do",
+                "The model name, which every prompt must include",
+            ],
+            "answer_index": 0,
+            "explanation": "The instruction is present (summarize). Context, examples, and especially output format are what is missing — the lesson's rule is more signal, less guesswork.",
+        },
+    ],
+    "how-context-affects-responses": [
+        {
+            "id": "m3-ctx-seam1",
+            "prompt": "You ask \"Should we ship this feature?\" twice — once with just the feature name, once with the full PRD, deadline, and team size. What changes?",
+            "options": [
+                "Nothing, because the question string is identical both times",
+                "The answer shifts from generic pros and cons to trade-offs tied to your project",
+                "The model retrains itself on the PRD before answering",
+            ],
+            "answer_index": 1,
+            "explanation": "The question string did not change — the surrounding information did. Context steers the angle of the answer.",
+        },
+    ],
+    "system-vs-user-prompts": [
+        {
+            "id": "m3-sys-seam1",
+            "prompt": "Which instruction belongs in the system prompt rather than the user prompt?",
+            "options": [
+                "\"Draft a reply to the email below.\"",
+                "\"Reply only in valid JSON matching this schema.\"",
+                "\"Explain recursion like I'm 12.\"",
+            ],
+            "answer_index": 1,
+            "explanation": "System prompts carry behaviour that should stay stable across the whole session. The other two are this-turn requests, so they are user prompts.",
+        },
+        {
+            "id": "m3-sys-seam2",
+            "prompt": "The lesson lists three common mistakes with roles. Which one is a mistake?",
+            "options": [
+                "Putting a long one-off document in the system prompt instead of user context",
+                "Keeping persona and formatting rules in the system prompt",
+                "Sending a different user prompt on every turn",
+            ],
+            "answer_index": 0,
+            "explanation": "Long one-off documents belong in user context. The other two are exactly how the split is supposed to work.",
+        },
+    ],
+    "good-and-bad-prompts": [
+        {
+            "id": "m3-gbp-seam1",
+            "prompt": "\"Be brief\" and \"Write 1000 words\" in the same prompt. Which bad pattern is that, and what does the model do?",
+            "options": [
+                "Assumed context — the model cannot see your files",
+                "Contradictory instructions — the model picks one arbitrarily",
+                "Overloaded ask — the tasks should be split up",
+            ],
+            "answer_index": 1,
+            "explanation": "Contradictory instructions leave the model to pick one arbitrarily. Assumed context and overloaded asks are separate bad patterns in the same table.",
+        },
+        {
+            "id": "m3-gbp-seam2",
+            "prompt": "In CRAFT, which letter covers \"return bullets, max 5 items\"?",
+            "options": [
+                "A for Action — it is part of the task",
+                "F for Format — how the answer should look",
+                "T for Tone — it constrains the writing",
+            ],
+            "answer_index": 1,
+            "explanation": "Format is bullets, JSON, table, or max length. Action is the verb; Tone is formality and constraints like \"no invented citations\".",
+        },
+    ],
+    "hands-on-prompt-exercises": [
+        {
+            "id": "m3-hop-seam1",
+            "prompt": "On the five-row rubric, which rows does Prompt B (\"...8 bullet points for exam review, define mitosis and meiosis in one line each\") clearly beat \"Notes on chapter 4\"?",
+            "options": [
+                "Context, Specificity, and Format",
+                "Only Clarity, since both name a chapter",
+                "None — rubric scores apply to models, not prompts",
+            ],
+            "answer_index": 0,
+            "explanation": "Prompt B should win on Context, Specificity, and Format — it names the subject, the audience, the count, and the shape of the answer.",
+        },
+        {
+            "id": "m3-hop-seam2",
+            "prompt": "In the context experiment you send \"What should we do next?\" twice — once bare, once prefixed with team size, sprint deadline, and the CI blocker. What does the gap between the two answers demonstrate?",
+            "options": [
+                "That the second run used a smarter model",
+                "Context at work — the same question gets a far more specific answer",
+                "That short prompts are always wrong",
+            ],
+            "answer_index": 1,
+            "explanation": "Same fixed question, same model — only the context changed. The lesson calls that gap \"context at work\".",
+        },
+        {
+            "id": "m3-hop-seam3",
+            "prompt": "Your reply ignores the format you asked for. According to the self-check, what do you do first?",
+            "options": [
+                "Switch to a different model",
+                "Iterate the prompt before blaming the model",
+                "Send the same prompt again unchanged",
+            ],
+            "answer_index": 1,
+            "explanation": "If the response misses the format, constraints, context, or audience you named, iterate the prompt first — improving context and constraints beats changing models.",
+        },
+    ],
+}
+
+
 MODULE_3_RECAP = {
     "what-prompts-are": [
         {
@@ -2302,11 +2418,26 @@ CURRICULUM = [
         "published": True,
         "difficulty": 1,
         "lessons": [
-            ("What Prompts Are", "what-prompts-are", "theory", 8, {"questions": MODULE_3_RECAP["what-prompts-are"]}),
-            ("How Context Affects Responses", "how-context-affects-responses", "theory", 10, {"questions": MODULE_3_RECAP["how-context-affects-responses"]}),
-            ("System Prompts vs User Prompts", "system-vs-user-prompts", "theory", 10, {"questions": MODULE_3_RECAP["system-vs-user-prompts"]}),
-            ("Good and Bad Prompts", "good-and-bad-prompts", "theory", 10, {"questions": MODULE_3_RECAP["good-and-bad-prompts"]}),
-            ("Hands-on Prompt Exercises", "hands-on-prompt-exercises", "interactive", 15, {"questions": MODULE_3_RECAP["hands-on-prompt-exercises"]}),
+            ("What Prompts Are", "what-prompts-are", "theory", 8, {
+                    "questions": MODULE_3_RECAP["what-prompts-are"],
+                    "checkpoint_questions": MODULE_3_SEAM_CHECKS["what-prompts-are"],
+                }),
+            ("How Context Affects Responses", "how-context-affects-responses", "theory", 10, {
+                    "questions": MODULE_3_RECAP["how-context-affects-responses"],
+                    "checkpoint_questions": MODULE_3_SEAM_CHECKS["how-context-affects-responses"],
+                }),
+            ("System Prompts vs User Prompts", "system-vs-user-prompts", "theory", 10, {
+                    "questions": MODULE_3_RECAP["system-vs-user-prompts"],
+                    "checkpoint_questions": MODULE_3_SEAM_CHECKS["system-vs-user-prompts"],
+                }),
+            ("Good and Bad Prompts", "good-and-bad-prompts", "theory", 10, {
+                    "questions": MODULE_3_RECAP["good-and-bad-prompts"],
+                    "checkpoint_questions": MODULE_3_SEAM_CHECKS["good-and-bad-prompts"],
+                }),
+            ("Hands-on Prompt Exercises", "hands-on-prompt-exercises", "interactive", 15, {
+                    "questions": MODULE_3_RECAP["hands-on-prompt-exercises"],
+                    "checkpoint_questions": MODULE_3_SEAM_CHECKS["hands-on-prompt-exercises"],
+                }),
             ("Module 3 Exam", "module-3-exam", "quiz", 10, {"questions": MODULE_3_EXAM_QUESTIONS}),
         ],
     },
