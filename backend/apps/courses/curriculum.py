@@ -623,11 +623,121 @@ MODULE_1_BRIEF_HISTORY_RECAP_QUESTIONS = [
     },
 ]
 
+# Module 1 exam — fresh combining items (plan §6). The old exam was the four
+# recap banks concatenated: a student re-answered the identical 20 questions
+# and got a completion. Every item below spans at least two lessons or applies
+# one to a novel scenario, and none appears in any recap bank (machine-checked).
 MODULE_1_EXAM_QUESTIONS = [
-    *MODULE_1_WHAT_IS_AI_RECAP_QUESTIONS,
-    *MODULE_1_WHAT_ARE_LLMS_RECAP_QUESTIONS,
-    *MODULE_1_OTHER_TYPES_OF_AI_RECAP_QUESTIONS,
-    *MODULE_1_BRIEF_HISTORY_RECAP_QUESTIONS,
+    {
+        "id": "m1-exam-1",
+        "prompt": "AlphaGo beat a world champion at Go, yet it cannot drive a car or plan a holiday. In the seven-types framework, what is it?",
+        "options": [
+            "Narrow AI — superhuman at one task, and the only capability that exists today",
+            "AGI, because beating a champion requires general intelligence",
+            "A reactive machine that remembers every game it ever played",
+        ],
+        "answer_index": 0,
+        "explanation": "Superhuman at one task is not general intelligence (What is AI?); narrow AI is the only capability that exists today (Other Types of AI).",
+    },
+    {
+        "id": "m1-exam-2",
+        "prompt": "A friend insists the chatbot 'really understands' them because its replies feel human. What is actually happening under the hood?",
+        "options": [
+            "It looked up their messages in a database of every possible reply",
+            "It is predicting the next words from statistical patterns learned in training",
+            "It passed the Turing test, which proves understanding",
+        ],
+        "answer_index": 1,
+        "explanation": "Humanlike output is next-word prediction over learned patterns (What are LLMs?), not thinking — the gap Turing's 1950 question opened (Brief History).",
+    },
+    {
+        "id": "m1-exam-3",
+        "prompt": "Why does training a capable LLM require enormous amounts of text?",
+        "options": [
+            "The model memorizes the text so it can quote it back on demand",
+            "Regulations require a minimum dataset size",
+            "The patterns it predicts from are learned from data — more varied text, better predictions",
+        ],
+        "answer_index": 2,
+        "explanation": "AI systems find patterns in large datasets (What is AI?), and an LLM's language ability is those patterns at scale (What are LLMs?).",
+    },
+    {
+        "id": "m1-exam-4",
+        "prompt": "The term 'artificial intelligence' was coined in the 1950s, yet the first AI winter followed. What ended the drought decades later?",
+        "options": [
+            "Cheaper, faster compute and far more data than early researchers ever had",
+            "A new definition of intelligence that was easier to meet",
+            "Governments banning AI research until it improved",
+        ],
+        "answer_index": 0,
+        "explanation": "Early promises outran the era's compute and data; the return ran on both arriving at scale (Brief History).",
+    },
+    {
+        "id": "m1-exam-5",
+        "prompt": "A model card advertises '70 billion parameters.' What are parameters?",
+        "options": [
+            "The rules programmers hand-wrote for every situation",
+            "The learned values inside the model, tuned during training, that shape its predictions",
+            "The number of documents the model can search per second",
+        ],
+        "answer_index": 1,
+        "explanation": "Parameters are what training adjusts — the 'large' in large language model (What are LLMs?).",
+    },
+    {
+        "id": "m1-exam-6",
+        "prompt": "One system evaluates only the current chessboard with no memory of past games; another uses recent traffic to steer a car. Which types are these?",
+        "options": [
+            "Both are AGI, because both make decisions",
+            "Reactive machine and limited memory AI, respectively",
+            "Limited memory and reactive machine, respectively",
+        ],
+        "answer_index": 1,
+        "explanation": "Reactive machines respond to the present only; limited memory AI uses recent data (Other Types of AI).",
+    },
+    {
+        "id": "m1-exam-7",
+        "prompt": "Turing asked in 1950 whether machines can think. Which answer best matches where AI actually stands today?",
+        "options": [
+            "Yes — modern chatbots think and understand like people",
+            "No progress at all — the question remains purely theoretical",
+            "We have narrow systems that perform impressively without thinking; AGI remains hypothetical",
+        ],
+        "answer_index": 2,
+        "explanation": "Today's AI is narrow (Other Types of AI); humanlike output is pattern prediction, not thought (What are LLMs?; Brief History).",
+    },
+    {
+        "id": "m1-exam-8",
+        "prompt": "An LLM writes a brilliant essay about swimming technique. What follows from Module 1 about its other abilities?",
+        "options": [
+            "Nothing — excellence at language implies nothing about tasks outside its training",
+            "It could also coach swimming in a pool, since it clearly understands the sport",
+            "It must be AGI, because essays require general knowledge",
+        ],
+        "answer_index": 0,
+        "explanation": "Superhuman at one task is not general intelligence (What is AI?) — the AlphaGo lesson applied to language.",
+    },
+    {
+        "id": "m1-exam-9",
+        "prompt": "Which sequence puts Module 1's history in the right order?",
+        "options": [
+            "AI term coined → first AI winter → compute and data return → modern breakthrough moment",
+            "First AI winter → AI term coined → modern breakthrough → compute arrives",
+            "Modern breakthrough → AI term coined → first AI winter → compute arrives",
+        ],
+        "answer_index": 0,
+        "explanation": "Coined in the 1950s, frozen by unmet promises, revived by compute and data, then the overnight-sensation moment (Brief History).",
+    },
+    {
+        "id": "m1-exam-10",
+        "prompt": "What would a system need to demonstrate before Module 1 would call it AGI rather than narrow AI?",
+        "options": [
+            "Beating humans at one more benchmark than last year",
+            "Handling unfamiliar intellectual tasks across domains the way a person can",
+            "Generating text fast enough to feel conversational",
+        ],
+        "answer_index": 1,
+        "explanation": "AGI differs from narrow AI by generality across tasks, not by higher scores on one (Other Types of AI).",
+    },
 ]
 
 MODULE_1_CHECKPOINT = {

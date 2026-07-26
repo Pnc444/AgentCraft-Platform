@@ -168,7 +168,9 @@ def test_sync_content_uses_curriculum_recap_questions_for_module_1_brief_history
     assert all(question["id"].startswith("m1-history-") for question in questions)
 
 
-def test_sync_content_uses_full_module_1_exam_question_bank():
+def test_sync_content_module_1_exam_is_fresh_not_recycled():
+    """The old exam was the four recap banks concatenated — a student
+    re-answered the same 20 questions (plan §6). The bank is now authored."""
     call_command("sync_content", courses=["module-1-introduction-to-ai"])
 
     course = Course.objects.get(slug="module-1-introduction-to-ai")
@@ -177,8 +179,8 @@ def test_sync_content_uses_full_module_1_exam_question_bank():
     questions = lesson.sandbox_config["questions"]
 
     assert lesson.title == "Module 1 Exam"
-    assert len(questions) == 20
-    assert questions[0]["id"] == "m1-ai-video-q1"
-    assert questions[5]["id"] == "m1-llm-video-q1"
-    assert questions[10]["id"] == "m1-other-ai-q1"
-    assert questions[15]["id"] == "m1-history-q1"
+    assert len(questions) == 10
+    assert all(q["id"].startswith("m1-exam-") for q in questions)
+    assert all(q.get("explanation") for q in questions)
+    recap_ids = {"m1-ai-video-q1", "m1-llm-video-q1", "m1-other-ai-q1", "m1-history-q1"}
+    assert not recap_ids & {q["id"] for q in questions}

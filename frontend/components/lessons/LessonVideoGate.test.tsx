@@ -149,6 +149,11 @@ describe("lesson video gating", () => {
         score: null,
         interaction_log: [],
         sandbox_config: {},
+        beats: [
+          { type: "explain", title: "Watch for three things", body: "Intro." },
+          { type: "do", action: "video", title: "Watch the video", video_url: "https://www.youtube-nocookie.com/embed/x" },
+          { type: "recap", title: "Remember", bullets: ["AI is narrow."] },
+        ],
       },
       course: null,
       videoUrl: "https://www.youtube-nocookie.com/embed/c0m6yaGlZh4",
@@ -184,9 +189,16 @@ describe("lesson video gating", () => {
     const { container, root } = await render(createElement(LessonContentPage));
 
     try {
+      // The player shows one beat at a time: advance past the intro explain.
+      const cont = () =>
+        Array.from(container.querySelectorAll("button")).filter((b) =>
+          b.textContent?.includes("Continue")
+        ).pop();
+      await act(async () => {
+        cont()!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      });
       expect(container.textContent).toContain("video-player");
       // No hand-off to a separate video destination.
-      expect(container.textContent).not.toContain("Watch Video");
       const videoLinks = Array.from(container.querySelectorAll("a")).filter((anchor) =>
         anchor.getAttribute("href")?.endsWith("/video")
       );
@@ -201,19 +213,21 @@ describe("lesson video gating", () => {
     const { container, root } = await render(createElement(LessonContentPage));
 
     try {
-      const button = Array.from(container.querySelectorAll("button")).find((candidate) =>
-        candidate.textContent?.includes("Finish Video to Unlock Quiz")
-      );
-
-      expect(button?.getAttribute("aria-disabled")).toBe("true");
-
+      const cont = () =>
+        Array.from(container.querySelectorAll("button")).filter((b) =>
+          b.textContent?.includes("Continue")
+        ).pop();
+      // advance onto the video beat, where the gate lives
       await act(async () => {
-        button?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        cont()!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
       });
-
-      expect(setNoticeMock).toHaveBeenCalledWith(
-        "Watch the lesson video all the way through before taking the Recap Quiz."
-      );
+      expect(container.textContent).toContain("video-player");
+      // videoDone=false: the gate holds Continue shut
+      expect((cont() as HTMLButtonElement).disabled).toBe(true);
+      await act(async () => {
+        cont()!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      });
+      expect(container.textContent).toContain("video-player");
       expect(pushMock).not.toHaveBeenCalled();
     } finally {
       root.unmount();
@@ -228,10 +242,22 @@ describe("lesson video gating", () => {
     const { container, root } = await render(createElement(LessonContentPage));
 
     try {
-      const link = Array.from(container.querySelectorAll("a")).find((anchor) =>
-        anchor.textContent?.includes("Start Recap Quiz")
-      );
-      expect(link?.getAttribute("href")).toBe(`${LESSON_BASE}/quiz`);
+      const cont = () =>
+        Array.from(container.querySelectorAll("button")).filter((b) =>
+          b.textContent?.includes("Continue")
+        ).pop();
+      // explain -> video (ungated now) -> recap; the last beat routes to the quiz
+      await act(async () => {
+        cont()!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      });
+      await act(async () => {
+        cont()!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      });
+      expect(cont()!.textContent).toContain("Continue to Recap Quiz");
+      await act(async () => {
+        cont()!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      });
+      expect(pushMock).toHaveBeenCalledWith(`${LESSON_BASE}/quiz`);
     } finally {
       root.unmount();
       container.remove();
@@ -272,8 +298,9 @@ describe("lesson video gating", () => {
     );
 
     try {
-      // Orientation is text, not a set of jumpable tabs.
-      expect(container.textContent).toContain("Lesson · step 1 of 3");
+      // Player courses carry their own beat counter, so the shell's step chip
+      // stays off the content step (one position signal per screen, audit B1).
+      expect(container.textContent).not.toContain("step 1 of 3");
 
       const stepLinks = Array.from(container.querySelectorAll("a")).filter((anchor) => {
         const href = anchor.getAttribute("href") ?? "";

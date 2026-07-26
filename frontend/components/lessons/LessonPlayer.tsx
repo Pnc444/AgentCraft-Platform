@@ -17,10 +17,11 @@ import { LessonContent } from "@/components/lessons/LessonContent";
 import { LessonVideo } from "@/components/lessons/LessonVideo";
 import { LessonWorkbench } from "@/components/lessons/LessonWorkbench";
 import { LessonCapstoneStudio } from "@/components/lessons/LessonCapstoneStudio";
+import { LessonSandbox } from "@/components/lessons/LessonSandbox";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 import { getCapstoneAssignment, lessonStepHref } from "@/lib/lesson-steps";
 import type { CheckpointQuestion } from "@/components/lessons/CheckpointQuiz";
-import type { Beat, LessonArtifact } from "@/types";
+import type { Beat, LessonArtifact, SandboxSpec } from "@/types";
 
 /**
  * Courses that render lessons through the player instead of the stacked
@@ -28,7 +29,11 @@ import type { Beat, LessonArtifact } from "@/types";
  * step 7 deletes the flag and the old page together).
  */
 const PLAYER_COURSES = new Set([
+  "module-1-introduction-to-ai",
+  "module-1-5-how-llms-work",
+  "module-3-prompting",
   "module-4-ai-agents",
+  "module-4-5-docker-and-environments",
   "module-6-openclaw",
   "module-8-capstone-safety-evaluation",
 ]);
@@ -156,7 +161,11 @@ export function LessonPlayer() {
       {/* One beat. The pane may scroll internally; the page never does. */}
       <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-8 sm:py-6">
         <div className="mx-auto max-w-2xl">
-          {beat.type === "do" && beat.action === "studio" ? (
+          {beat.type === "do" && beat.action === "terminal" ? (
+            /* The practice terminal persists task state via interaction_log;
+               the recap quiz gates completion, so the beat is ungated. */
+            <TerminalBeat />
+          ) : beat.type === "do" && beat.action === "studio" ? (
             /*
               The capstone studio is the lesson's spine (plan step 4). It has
               its own verify machinery persisted via interaction_log, so the
@@ -422,5 +431,27 @@ function StudioBeat({ beat }: { beat: Beat }) {
         onRecordInteraction={(event) => updateProgress({ interaction_event: event })}
       />
     </div>
+  );
+}
+
+
+function TerminalBeat() {
+  const { lesson, updateProgress } = useLessonWorkspace();
+  if (!lesson) return null;
+  const spec = lesson.sandbox_config?.sandbox as SandboxSpec | undefined;
+  if (!spec) {
+    return (
+      <p className="text-sm text-craft-muted">
+        This practice step&apos;s terminal spec is missing from the lesson config.
+      </p>
+    );
+  }
+  return (
+    <LessonSandbox
+      spec={spec}
+      lessonId={lesson.id}
+      interactionLog={lesson.interaction_log}
+      onRecordInteraction={(event) => updateProgress({ interaction_event: event })}
+    />
   );
 }

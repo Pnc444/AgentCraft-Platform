@@ -124,6 +124,7 @@ def beats_from_markdown(
     title: str = "",
     video_url: str = "",
     questions: list[dict] | None = None,
+    sandbox: dict | None = None,
 ) -> list[dict]:
     """Mechanical markdown → beats conversion (the generic fallback, §3).
 
@@ -158,6 +159,18 @@ def beats_from_markdown(
         }
         # After the first explain when there is one; otherwise the video leads.
         beats.insert(1 if beats else 0, video_beat)
+
+    if sandbox:
+        # The practice terminal is a real action, not an appendix below the
+        # prose — it becomes a do-beat before the checks (plan step 5).
+        beats.append(
+            {
+                "type": "do",
+                "action": "terminal",
+                "title": str(sandbox.get("title") or "Practice it"),
+                "source": "fallback",
+            }
+        )
 
     for question in questions or []:
         if not isinstance(question, dict) or not question.get("prompt"):
@@ -293,9 +306,11 @@ def derive_beats(
         if mapped:
             return mapped
     questions = config.get("questions")
+    sandbox = config.get("sandbox")
     return beats_from_markdown(
         content,
         title=title,
         video_url=(video_url or "").strip(),
         questions=questions if isinstance(questions, list) else None,
+        sandbox=sandbox if isinstance(sandbox, dict) else None,
     )

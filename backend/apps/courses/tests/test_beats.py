@@ -199,3 +199,11 @@ def test_module_8_exam_meets_the_authoring_standard():
     module = next(m for m in CURRICULUM if m["slug"] == "module-8-capstone-safety-evaluation")
     assert module["lessons"][-1][2] == "quiz"
     assert _module_assessment_problems(module) == []
+
+
+def test_fallback_emits_terminal_beat_for_sandbox_lessons():
+    beats = beats_from_markdown(MD, title="T", questions=[{"prompt": "q", "options": ["a"]}], sandbox={"title": "Practice It", "tasks": []})
+    types = [(b["type"], b.get("action")) for b in beats]
+    assert ("do", "terminal") in types
+    # terminal sits after the prose, before the checks
+    assert types.index(("do", "terminal")) < types.index(("check", None))
