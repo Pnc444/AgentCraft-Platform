@@ -398,12 +398,14 @@ def test_module_1_5_videos_share_one_position_and_stay_ungated():
 
     module = next(m for m in CURRICULUM if m["slug"] == "module-1-5-how-llms-work")
     expected = {
-        "context-windows": MODULE_1_5_CONTEXT_VIDEO_URL,
-        "tokens": MODULE_1_5_TOKENS_VIDEO_URL,
+        "context-windows": (MODULE_1_5_CONTEXT_VIDEO_URL, "Context management in Claude Code"),
+        "tokens": (MODULE_1_5_TOKENS_VIDEO_URL, "What is an AI Token?"),
     }
-    for slug, url in expected.items():
+    for slug, (url, video_title) in expected.items():
         config = next(l for l in module["lessons"] if l[1] == slug)[4]
         assert config["video_url"] == url
+        # Every video names what it shows — "Watch the video" is only a fallback.
+        assert config["video_title"] == video_title
         assert "?si=" not in config["video_url"], f"{slug}: share param must not be stored"
         # Both videos illustrate prose that already teaches the concept, so
         # neither gates the recap quiz.

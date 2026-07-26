@@ -2878,8 +2878,7 @@ CURRICULUM = [
                     "questions": MODULE_1_5_RECAP["context-windows"],
                     "checkpoint_questions": MODULE_1_5_SEAM_CHECKS["context-windows"],
                     "video_url": MODULE_1_5_CONTEXT_VIDEO_URL,
-                    # "Watch the video" says nothing. Name what it shows.
-                    "video_title": "Watch: context management in Claude Code",
+                    "video_title": "Context management in Claude Code",
                     "video_position": MODULE_1_5_VIDEO_POSITION,
                     # Supplementary, so it does NOT gate the recap quiz. Module 1's
                     # videos ARE the lesson and require full playback; here the
@@ -2902,9 +2901,7 @@ CURRICULUM = [
                     # Supplementary, like the context-windows video: the prose
                     # teaches tokens, so the recap quiz is not gated on playback.
                     "require_full_watch": False,
-                    # Deliberately NOT given a descriptive title: nobody has told
-                    # me what this video shows, and inventing one would be a claim
-                    # I cannot verify. Falls back to "Watch the video".
+                    "video_title": "What is an AI Token?",
                 },
             ),
             (
