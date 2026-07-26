@@ -105,3 +105,29 @@ def test_derive_prefers_authored_beats():
 def test_derive_falls_back_for_plain_lessons():
     beats = derive_beats(content=MD, sandbox_config={}, title="Your First Containers")
     assert beats and beats[0]["type"] == "explain"
+
+
+BLOCKS = [
+    {"title": "One helper", "body": "Meet Juno.", "predict_first": {"question": "What would a friend do?", "hint": "Think steps."}, "remember": "Agents act."},
+    {"title": "The map", "body": "Six questions.", "analogy": "A checklist.", "checkpoint_after": True},
+    {"title": "Tools", "body": "Search and read.", "try_this": ["Open the map."]},
+]
+CHECKPOINTS = [{"prompt": "Which question?", "options": ["goal", "vibes"], "answer_index": 0}]
+
+
+def test_blocks_map_to_beats_mechanically():
+    from apps.courses.beats import beats_from_guided_blocks
+
+    beats = beats_from_guided_blocks(BLOCKS, checkpoint_questions=CHECKPOINTS, title="T")
+    types = [b["type"] for b in beats]
+    assert types == ["predict", "explain", "check", "explain", "recap"]
+    assert beats[0]["question"] == "What would a friend do?"
+    assert beats[2]["question"]["prompt"] == "Which question?"
+    assert beats[4]["bullets"] == ["Agents act."]
+
+
+def test_derive_prefers_blocks_over_markdown():
+    config = {"guided_blocks": BLOCKS, "checkpoint_questions": CHECKPOINTS, "questions": [{"prompt": "recap q", "options": ["a"]}]}
+    beats = derive_beats(content=MD, sandbox_config=config, title="T")
+    assert beats[0]["source"] == "blocks"
+    assert all(b["type"] != "explain" or "Hello, world" not in b.get("title", "") for b in beats)

@@ -174,6 +174,73 @@ def beats_from_markdown(
     return beats
 
 
+def beats_from_guided_blocks(
+    blocks: list[dict],
+    *,
+    checkpoint_questions: list[dict] | None = None,
+    title: str = "",
+) -> list[dict]:
+    """Mechanical guided-blocks → beats mapping (plan step 1).
+
+    The structured modules were authored as beats before the player existed:
+    ``predict_first`` is a predict beat, a block body is an explain beat, a
+    ``checkpoint_after`` flag pulls one question from the checkpoint bank as a
+    check beat, and the blocks' ``remember`` lines fold into one closing recap.
+    """
+    beats: list[dict] = []
+    bank = [
+        q for q in (checkpoint_questions or [])
+        if isinstance(q, dict) and q.get("prompt") and q.get("options")
+    ]
+    bank_cursor = 0
+    remember_lines: list[str] = []
+
+    for block in blocks:
+        if not isinstance(block, dict):
+            continue
+        common = {
+            "title": block.get("title") or title,
+            "body": block.get("body") or "",
+            "analogy": block.get("analogy") or "",
+            "try_this": block.get("try_this") or [],
+            "kind": block.get("kind") or "",
+            "source": "blocks",
+        }
+        predict = block.get("predict_first") or {}
+        if predict.get("question"):
+            beats.append(
+                {
+                    "type": "predict",
+                    "question": predict["question"],
+                    "hint": predict.get("hint") or "",
+                    **common,
+                }
+            )
+        else:
+            beats.append({"type": "explain", **common})
+
+        if block.get("checkpoint_after") and bank:
+            question = bank[bank_cursor % len(bank)]
+            bank_cursor += 1
+            beats.append(
+                {"type": "check", "title": "Checkpoint", "question": question, "source": "blocks"}
+            )
+
+        if block.get("remember"):
+            remember_lines.append(block["remember"])
+
+    if remember_lines:
+        beats.append(
+            {
+                "type": "recap",
+                "title": "Remember this",
+                "bullets": remember_lines[:3],
+                "source": "blocks",
+            }
+        )
+    return beats
+
+
 def derive_beats(
     *,
     content: str,
@@ -186,6 +253,15 @@ def derive_beats(
     authored = config.get("beats")
     if isinstance(authored, list) and authored:
         return authored
+    blocks = config.get("guided_blocks")
+    if isinstance(blocks, list) and blocks:
+        mapped = beats_from_guided_blocks(
+            blocks,
+            checkpoint_questions=config.get("checkpoint_questions"),
+            title=title,
+        )
+        if mapped:
+            return mapped
     questions = config.get("questions")
     return beats_from_markdown(
         content,
