@@ -831,6 +831,254 @@ MODULE_1_CHECKPOINT = {
 
 
 # Module 5 recap questions — real questions written from the lesson content.
+# Module 5 seam checks (plan §0.2), grounded in each lesson's own text.
+MODULE_5_SEAM_CHECKS = {
+    "what-hermes-is": [
+        {
+            "id": "m5-what-seam1",
+            "prompt": "Hermes sends API calls to a model and then executes actions. Which half happens on your machine?",
+            "options": [
+                "The heavy thinking — the model runs locally",
+                "The doing — commands, files, and services run on yours; thinking happens on the provider's servers",
+                "Neither; Hermes is entirely cloud-hosted",
+            ],
+            "answer_index": 1,
+            "explanation": "Thinking happens on the provider's servers, doing happens on yours — and that last part is exactly why this module cares so much about safety.",
+        },
+        {
+            "id": "m5-what-seam2",
+            "prompt": "In the three-box diagram, which box runs on your machine?",
+            "options": [
+                "The middle one — the agent loop and its tools",
+                "The right one — the model provider",
+                "The left one — the gateways only",
+            ],
+            "answer_index": 0,
+            "explanation": "Tasks flow left to right and results flow back, but the middle box — agent loop plus tools — is the one running on your machine.",
+        },
+    ],
+    "openrouter-and-your-api-key": [
+        {
+            "id": "m5-or-seam1",
+            "prompt": "Why does this lesson come *before* the install?",
+            "options": [
+                "Because the installer launches a setup wizard that asks for provider and key mid-install",
+                "Because OpenRouter must approve your account for 24 hours first",
+                "Because Hermes cannot be installed without a paid plan",
+            ],
+            "answer_index": 0,
+            "explanation": "v0.18.2's installer launches the wizard mid-install and asks for provider and key, so you get the account, cap, and key ready first.",
+        },
+        {
+            "id": "m5-or-seam2",
+            "prompt": "The lesson says to use a dedicated email rather than your personal one. What is the reason given?",
+            "options": [
+                "OpenRouter blocks personal email domains",
+                "One identity for the agent means one kill switch if anything goes wrong",
+                "Dedicated emails get higher free-model rate limits",
+            ],
+            "answer_index": 1,
+            "explanation": "One identity for the agent means one kill switch — and it pays off in the final lesson, where you can delete the whole account.",
+        },
+    ],
+    "install-and-setup-wizard": [
+        {
+            "id": "m5-inst-seam1",
+            "prompt": "Windows 10 users are told to install Windows Terminal first. What breaks without it?",
+            "options": [
+                "The installer refuses to run at all",
+                "The wizard's ANSI colours render as garbage, so you cannot read the menus",
+                "Docker cannot be detected as a backend",
+            ],
+            "answer_index": 1,
+            "explanation": "Everything still works, but the legacy console renders the wizard's ANSI colours as garbage — you cannot read the menus or match the screenshots.",
+        },
+        {
+            "id": "m5-inst-seam2",
+            "prompt": "Blank Slate force-enables only three things. Which three?",
+            "options": [
+                "Provider & Model, File Operations, and Terminal",
+                "Web, Browser, and Code Execution",
+                "Memory, Skills, and Delegation",
+            ],
+            "answer_index": 0,
+            "explanation": "Only the minimum to run an agent at all is force-enabled. Everything else — web, browser, code exec, vision, memory, delegation, cron, skills, plugins, MCP — starts disabled.",
+        },
+        {
+            "id": "m5-inst-seam3",
+            "prompt": "At the provider step, what happens right after you paste your key?",
+            "options": [
+                "The wizard prints `API key saved.`",
+                "The wizard immediately starts a chat to test it",
+                "The wizard restarts so the key can load",
+            ],
+            "answer_index": 0,
+            "explanation": "You paste at the `OPENROUTER_API_KEY` prompt and see `API key saved.`, then move on to picking a default model from the list.",
+        },
+        {
+            "id": "m5-inst-seam4",
+            "prompt": "The wizard offers Local as the default terminal backend. Why does the lesson say never to choose it for a running agent?",
+            "options": [
+                "Local is slower than Docker",
+                "With Local there is no isolation — the agent runs as you, with your files and network",
+                "Local does not support Python",
+            ],
+            "answer_index": 1,
+            "explanation": "No isolation at all: the agent runs as you, with your files, your network, your environment. Box before power switch.",
+        },
+        {
+            "id": "m5-inst-seam5",
+            "prompt": "Which four lines should `/config` show before you exit?",
+            "options": [
+                "Model, API Key (masked), Environment: docker, Toolsets: file, terminal",
+                "Model, Password, Environment: local, Toolsets: all",
+                "Provider, Region, Container ID, Skills: 73",
+            ],
+            "answer_index": 0,
+            "explanation": "Those four lines prove the configuration: your free model via openrouter.ai, a masked key, the docker environment, and the minimal toolsets.",
+        },
+        {
+            "id": "m5-inst-seam6",
+            "prompt": "After the wizard, Docker Desktop shows no Hermes container. What does the lesson say about that?",
+            "options": [
+                "The Docker backend failed and must be reconfigured",
+                "It is expected — and it is the first question of the next lesson",
+                "The container is hidden and can only be seen with `docker ps -a`",
+            ],
+            "answer_index": 1,
+            "explanation": "Expected: the sandbox does not exist yet. The checkpoint calls it out deliberately as the opening question of the next lesson.",
+        },
+    ],
+    "first-conversation-and-container": [
+        {
+            "id": "m5-first-seam1",
+            "prompt": "Why was there no container after you chose the Docker backend?",
+            "options": [
+                "The backend is lazy — choosing it wrote one line of config; the container appears on the first command",
+                "Docker Desktop had to be restarted first",
+                "Containers are only created when you exit Hermes",
+            ],
+            "answer_index": 0,
+            "explanation": "Choosing the backend only wrote config. The container is created the first time the agent actually runs a command.",
+        },
+        {
+            "id": "m5-first-seam2",
+            "prompt": "Commands run inside the container, but where does your API key live?",
+            "options": [
+                "Inside the container, so commands can reach the provider",
+                "In the `.env` file on the host — commands inside the box never see the credential",
+                "In the container's environment variables, masked",
+            ],
+            "answer_index": 1,
+            "explanation": "Keys stay outside the box: the `.env` lives on the host and the Hermes process makes the model calls, so commands inside the container never see it.",
+        },
+        {
+            "id": "m5-first-seam3",
+            "prompt": "You ask the agent to run `whoami`. The answer is `root`. What does that tell you?",
+            "options": [
+                "Your own account has been elevated to administrator",
+                "Inside the container the agent runs as the container's root user, not as you",
+                "The sandbox failed and the command ran on the host",
+            ],
+            "answer_index": 1,
+            "explanation": "The answer is the tell: inside the container the agent is the container's root user — not you on your machine.",
+        },
+        {
+            "id": "m5-first-seam4",
+            "prompt": "You start several Hermes sessions across the course. What accumulates, and what should you do?",
+            "options": [
+                "Nothing accumulates; sessions reuse one container",
+                "Each session gets its own container; old ones are safe to delete — the box is furniture",
+                "Sessions share a container but each adds a new image",
+            ],
+            "answer_index": 1,
+            "explanation": "Each session gets its own container, so they pile up. Deleting old ones is Module 4.5's disposability lesson in practice — throw it out and a fresh one appears on demand.",
+        },
+    ],
+    "sandbox-verification-lab": [
+        {
+            "id": "m5-lab-seam1",
+            "prompt": "The lab warns each attempt may take 2–3+ minutes while the agent hunts. What does a long, exhaustive failure mean?",
+            "options": [
+                "The agent is broken and should be interrupted",
+                "It is the best result — the agent tried everything and the box still held",
+                "The model is too small and should be swapped",
+            ],
+            "answer_index": 1,
+            "explanation": "Don't interrupt it. A long exhaustive failure is the best result this lab produces: the agent tried everything with its full toolset and the box held.",
+        },
+        {
+            "id": "m5-lab-seam2",
+            "prompt": "On Windows, why is `/mnt/c/Users/` the realistic escape route to test?",
+            "options": [
+                "Because Docker runs via WSL, and `/mnt/c` is how WSL normally reaches your C: drive",
+                "Because Windows stores all Docker images there",
+                "Because Hermes mounts it by default for file operations",
+            ],
+            "answer_index": 0,
+            "explanation": "It is the realistic back door on lab machines — and the hardened container does not get that mount. If you ever DO see your files there, the setup is misconfigured; stop and flag it.",
+        },
+    ],
+    "put-it-to-work": [
+        {
+            "id": "m5-work-seam1",
+            "prompt": "What is the line between a chatbot and an agent, as this lesson draws it?",
+            "options": [
+                "A chatbot can *tell* you the Fibonacci numbers; an agent writes a program, runs it, checks the output, and reports back",
+                "An agent uses a bigger model than a chatbot",
+                "A chatbot works offline; an agent needs the internet",
+            ],
+            "answer_index": 0,
+            "explanation": "Text in → text out versus goal in → acts → reads the result → acts again. A chatbot cannot run the program; your agent did it unsupervised.",
+        },
+        {
+            "id": "m5-work-seam2",
+            "prompt": "In Task 1 the agent performs four steps with no further input. Which is the one a chatbot could not do?",
+            "options": [
+                "write_file — creating the script",
+                "terminal — running the script with python inside the container",
+                "answer — reporting the largest number",
+            ],
+            "answer_index": 1,
+            "explanation": "Step 2 is the dividing line: a chatbot cannot run the program on a real machine. Your agent ran it inside the locked-down container you designed.",
+        },
+        {
+            "id": "m5-work-seam3",
+            "prompt": "In Task 2 you are told to be bold. What makes that safe?",
+            "options": [
+                "The agent asks permission before every command",
+                "Everything runs in the disposable sandbox — worst case you delete the container and a fresh one appears",
+                "Free models cannot cause damage",
+            ],
+            "answer_index": 1,
+            "explanation": "Everything runs in the disposable sandbox. Being bold is safe precisely because the box is furniture.",
+        },
+        {
+            "id": "m5-work-seam4",
+            "prompt": "The autonomy dial lists capabilities Blank Slate left off. Which one makes the agent act with no human present at all?",
+            "options": [
+                "Skills + memory",
+                "Gateways such as Telegram or Discord",
+                "Cron — it acts on a schedule",
+            ],
+            "answer_index": 2,
+            "explanation": "Gateways let it act when you are nowhere near the terminal; cron goes further — it acts on a schedule with no human present at all.",
+        },
+        {
+            "id": "m5-work-seam5",
+            "prompt": "Teardown is three steps because two things live outside your machine. Which step is the real kill switch?",
+            "options": [
+                "Running `hermes uninstall --full`",
+                "Deleting the hermes containers and the nikolaik/python-nodejs image",
+                "Revoking the API key on OpenRouter — no local uninstaller can reach it",
+            ],
+            "answer_index": 2,
+            "explanation": "The key lives on OpenRouter's servers. Revoking it is the real kill switch: even a leaked copy becomes worthless.",
+        },
+    ],
+}
+
+
 MODULE_5_RECAP = {
     "what-hermes-is": [
         {
@@ -2729,12 +2977,30 @@ CURRICULUM = [
         "published": True,
         "difficulty": 2,
         "lessons": [
-            ("What Hermes Is", "what-hermes-is", "theory", 8, {"questions": MODULE_5_RECAP["what-hermes-is"]}),
-            ("OpenRouter and Your API Key", "openrouter-and-your-api-key", "interactive", 10, {"questions": MODULE_5_RECAP["openrouter-and-your-api-key"]}),
-            ("Install and the Setup Wizard", "install-and-setup-wizard", "interactive", 15, {"questions": MODULE_5_RECAP["install-and-setup-wizard"]}),
-            ("First Conversation and the Container", "first-conversation-and-container", "sandbox", 15, {"questions": MODULE_5_RECAP["first-conversation-and-container"]}),
-            ("Sandbox Verification Lab", "sandbox-verification-lab", "sandbox", 12, {"questions": MODULE_5_RECAP["sandbox-verification-lab"]}),
-            ("Put It to Work", "put-it-to-work", "agent_lab", 15, {"questions": MODULE_5_RECAP["put-it-to-work"]}),
+            ("What Hermes Is", "what-hermes-is", "theory", 8, {
+                    "questions": MODULE_5_RECAP["what-hermes-is"],
+                    "checkpoint_questions": MODULE_5_SEAM_CHECKS["what-hermes-is"],
+                }),
+            ("OpenRouter and Your API Key", "openrouter-and-your-api-key", "interactive", 10, {
+                    "questions": MODULE_5_RECAP["openrouter-and-your-api-key"],
+                    "checkpoint_questions": MODULE_5_SEAM_CHECKS["openrouter-and-your-api-key"],
+                }),
+            ("Install and the Setup Wizard", "install-and-setup-wizard", "interactive", 15, {
+                    "questions": MODULE_5_RECAP["install-and-setup-wizard"],
+                    "checkpoint_questions": MODULE_5_SEAM_CHECKS["install-and-setup-wizard"],
+                }),
+            ("First Conversation and the Container", "first-conversation-and-container", "sandbox", 15, {
+                    "questions": MODULE_5_RECAP["first-conversation-and-container"],
+                    "checkpoint_questions": MODULE_5_SEAM_CHECKS["first-conversation-and-container"],
+                }),
+            ("Sandbox Verification Lab", "sandbox-verification-lab", "sandbox", 12, {
+                    "questions": MODULE_5_RECAP["sandbox-verification-lab"],
+                    "checkpoint_questions": MODULE_5_SEAM_CHECKS["sandbox-verification-lab"],
+                }),
+            ("Put It to Work", "put-it-to-work", "agent_lab", 15, {
+                    "questions": MODULE_5_RECAP["put-it-to-work"],
+                    "checkpoint_questions": MODULE_5_SEAM_CHECKS["put-it-to-work"],
+                }),
             ("Module 5 Exam", "module-5-exam", "quiz", 12, {"questions": MODULE_5_EXAM_QUESTIONS}),
         ],
     },
