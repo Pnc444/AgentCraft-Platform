@@ -388,11 +388,24 @@ def test_explicit_video_position_counts_learner_visible_beats():
     assert beats[2]["action"] == "video"
 
 
+def test_every_module_1_5_lesson_has_a_video():
+    """The module is now uniformly video-supported; a lesson quietly losing its
+    video should fail here rather than being noticed in a screenshot."""
+    from apps.courses.curriculum import CURRICULUM
+
+    module = next(m for m in CURRICULUM if m["slug"] == "module-1-5-how-llms-work")
+    teaching = [l for l in module["lessons"] if l[2] != "quiz"]
+    assert len(teaching) == 3
+    for lesson in teaching:
+        assert lesson[4].get("video_url"), f"{lesson[1]} lost its video"
+
+
 def test_module_1_5_videos_share_one_position_and_stay_ungated():
     from apps.courses.curriculum import (
         CURRICULUM,
         MODULE_1_5_CONTEXT_VIDEO_URL,
         MODULE_1_5_TOKENS_VIDEO_URL,
+        MODULE_1_5_TRAINING_VIDEO_URL,
         MODULE_1_5_VIDEO_POSITION,
     )
 
@@ -400,6 +413,10 @@ def test_module_1_5_videos_share_one_position_and_stay_ungated():
     expected = {
         "context-windows": (MODULE_1_5_CONTEXT_VIDEO_URL, "Context management in Claude Code"),
         "tokens": (MODULE_1_5_TOKENS_VIDEO_URL, "What is an AI Token?"),
+        "training-vs-inference": (
+            MODULE_1_5_TRAINING_VIDEO_URL,
+            "AI Training vs Inference Explained",
+        ),
     }
     for slug, (url, video_title) in expected.items():
         config = next(l for l in module["lessons"] if l[1] == slug)[4]

@@ -490,8 +490,9 @@ MODULE_6_EXAM_QUESTIONS = [
 # Stored without the ?si= share parameter, matching every other video here.
 MODULE_1_5_CONTEXT_VIDEO_URL = "https://www.youtube-nocookie.com/embed/eW3oTyfeWZ0"
 MODULE_1_5_TOKENS_VIDEO_URL = "https://www.youtube-nocookie.com/embed/OjrGu0L5K7M"
+MODULE_1_5_TRAINING_VIDEO_URL = "https://www.youtube-nocookie.com/embed/gZYrSZHHZns"
 
-# Both Module 1.5 videos sit at the same place in their lesson: beat 3, after the
+# All three Module 1.5 videos sit at the same place in their lesson: beat 3, after the
 # opening explanation and its check, before the second teaching beat. Position is
 # 1-based and counts the beats the learner sees, matching the player's "3 / 8".
 MODULE_1_5_VIDEO_POSITION = 3
@@ -2912,6 +2913,12 @@ CURRICULUM = [
                 {
                     "questions": MODULE_1_5_RECAP["training-vs-inference"],
                     "checkpoint_questions": MODULE_1_5_SEAM_CHECKS["training-vs-inference"],
+                    "video_url": MODULE_1_5_TRAINING_VIDEO_URL,
+                    "video_title": "AI Training vs Inference Explained",
+                    "video_position": MODULE_1_5_VIDEO_POSITION,
+                    # Supplementary, like the module's other two: the prose
+                    # teaches the distinction, so the quiz is not gated on it.
+                    "require_full_watch": False,
                 },
             ),
             ("Module 1.5 Exam", "module-1-5-exam", "quiz", 10, {"questions": MODULE_1_5_EXAM_QUESTIONS}),
