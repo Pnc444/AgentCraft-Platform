@@ -485,6 +485,11 @@ MODULE_6_EXAM_QUESTIONS = [
 ]
 
 
+# Module 1.5: a Claude Code walkthrough of context management. Supplementary —
+# the lesson prose teaches the concept; the video shows one real tool doing it.
+# Stored without the ?si= share parameter, matching every other video here.
+MODULE_1_5_CONTEXT_VIDEO_URL = "https://www.youtube-nocookie.com/embed/eW3oTyfeWZ0"
+
 MODULE_1_WHAT_IS_AI_VIDEO_URL = "https://www.youtube-nocookie.com/embed/c0m6yaGlZh4"
 MODULE_1_WHAT_ARE_LLMS_VIDEO_URL = "https://www.youtube-nocookie.com/embed/qMxuthTIQq4"
 MODULE_1_OTHER_TYPES_OF_AI_VIDEO_URL = "https://www.youtube-nocookie.com/embed/XFZ-rQ8eeR8"
@@ -2866,6 +2871,15 @@ CURRICULUM = [
                 {
                     "questions": MODULE_1_5_RECAP["context-windows"],
                     "checkpoint_questions": MODULE_1_5_SEAM_CHECKS["context-windows"],
+                    "video_url": MODULE_1_5_CONTEXT_VIDEO_URL,
+                    # "Watch the video" says nothing. Name what it shows.
+                    "video_title": "Watch: context management in Claude Code",
+                    # Supplementary, so it does NOT gate the recap quiz. Module 1's
+                    # videos ARE the lesson and require full playback; here the
+                    # prose carries the teaching and the video shows an example,
+                    # so locking the assessment behind it would gate the lesson on
+                    # material that is not the lesson.
+                    "require_full_watch": False,
                 },
             ),
             (

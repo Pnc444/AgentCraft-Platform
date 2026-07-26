@@ -86,6 +86,8 @@ declare global {
         el: string | HTMLElement,
         opts: {
           videoId: string;
+          /** Serve the player from youtube-nocookie.com. */
+          host?: string;
           width?: string | number;
           height?: string | number;
           playerVars?: Record<string, string | number>;
@@ -290,6 +292,13 @@ export function LessonVideo({
       const playing = window.YT.PlayerState?.PLAYING ?? 1;
       playerRef.current = new window.YT.Player(containerId, {
         videoId: id,
+        /*
+          Every lesson stores a youtube-nocookie.com URL — a deliberate privacy
+          choice — but the IFrame API builds its own iframe and defaults to
+          youtube.com, so the stored intent was silently discarded. Passing host
+          makes playback honour it.
+        */
+        host: "https://www.youtube-nocookie.com",
         width: "100%",
         height: "100%",
         playerVars: {

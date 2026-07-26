@@ -81,6 +81,7 @@ class LessonDetailSerializer(LessonListSerializer):
             sandbox_config=obj.sandbox_config or {},
             video_url=obj.video_url or "",
             title=obj.title,
+            require_full_watch=obj.require_full_watch,
         )
 
     def get_video_watched(self, obj):

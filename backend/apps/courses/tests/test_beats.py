@@ -356,3 +356,33 @@ def test_seam_check_ids_are_unique_across_the_course():
         for q in bank
     ]
     assert len(ids) == len(set(ids))
+
+
+def test_required_video_leads_and_supplementary_video_trails():
+    """Module 1's videos ARE the lesson, so they lead. Module 1.5's Claude Code
+    walkthrough is an example of a concept the prose already taught, so it
+    follows the reading instead of pre-empting it."""
+    required = beats_from_markdown(MD, title="T", video_url="https://v/x", video_required=True)
+    assert required[1]["action"] == "video", "a required video leads the lesson"
+
+    supplementary = beats_from_markdown(
+        MD, title="T", video_url="https://v/x", video_required=False, video_title="See it in practice"
+    )
+    assert supplementary[-1]["action"] == "video", "a supplementary video trails the reading"
+    assert supplementary[-1]["title"] == "See it in practice"
+    # and the generic label is only a fallback
+    assert beats_from_markdown(MD, title="T", video_url="https://v/x")[1]["title"] == "Watch the video"
+
+
+def test_module_1_5_context_lesson_ships_the_video_ungated():
+    from apps.courses.curriculum import CURRICULUM, MODULE_1_5_CONTEXT_VIDEO_URL
+
+    module = next(m for m in CURRICULUM if m["slug"] == "module-1-5-how-llms-work")
+    spec = next(l for l in module["lessons"] if l[1] == "context-windows")
+    config = spec[4]
+    assert config["video_url"] == MODULE_1_5_CONTEXT_VIDEO_URL
+    assert "?si=" not in config["video_url"], "share tracking param must not be stored"
+    # Supplementary: the prose teaches the concept, so the recap quiz is not
+    # gated behind watching a demo of one specific tool.
+    assert config["require_full_watch"] is False
+    assert config["video_title"]

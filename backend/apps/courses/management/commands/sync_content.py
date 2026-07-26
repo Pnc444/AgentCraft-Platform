@@ -106,6 +106,11 @@ class Command(BaseCommand):
                 spec_config = dict(lesson_spec[4]) if len(lesson_spec) > 4 else {}
                 ai_tutor_prompt = spec_config.pop("ai_tutor_prompt", "")
                 spec_video_url = (spec_config.pop("video_url", "") or "").strip()
+                # Track presence, not just value: an explicit curriculum choice
+                # should reach existing lessons, while silence keeps whatever an
+                # admin set. Without this, "require_full_watch": False applied to
+                # new lessons only and was silently dropped on every re-sync.
+                spec_sets_full_watch = "require_full_watch" in spec_config
                 spec_require_full_watch = bool(spec_config.pop("require_full_watch", True))
                 spec_slugs.append(slug)
                 content = load_content(module["slug"], slug, title)
@@ -142,6 +147,7 @@ class Command(BaseCommand):
                                 sandbox_config=spec_config,
                                 video_url=spec_video_url,
                                 title=title,
+                                require_full_watch=spec_require_full_watch,
                             ),
                             lesson_label=label,
                         )
@@ -175,6 +181,8 @@ class Command(BaseCommand):
                 lesson.content = content
                 if spec_video_url and not (lesson.video_url or "").strip():
                     lesson.video_url = spec_video_url
+                if spec_sets_full_watch:
+                    lesson.require_full_watch = spec_require_full_watch
                 if spec_config.get("questions"):
                     config = dict(lesson.sandbox_config or {})
                     config.update(spec_config)

@@ -240,6 +240,8 @@ def beats_from_markdown(
     questions: list[dict] | None = None,  # noqa: ARG001 - accepted for call-site symmetry; see below
     sandbox: dict | None = None,
     seam_checks: list[dict] | None = None,
+    video_title: str = "",
+    video_required: bool = True,
 ) -> list[dict]:
     """Mechanical markdown → beats conversion (the generic fallback, §3).
 
@@ -276,12 +278,18 @@ def beats_from_markdown(
         video_beat = {
             "type": "do",
             "action": "video",
-            "title": "Watch the video",
+            "title": video_title or "Watch the video",
             "video_url": video_url,
             "source": "fallback",
         }
-        # After the first explain when there is one; otherwise the video leads.
-        beats.insert(1 if beats else 0, video_beat)
+        if video_required:
+            # The video IS the lesson (Module 1's stubs): it leads, right after
+            # the short framing paragraph.
+            beats.insert(1 if beats else 0, video_beat)
+        else:
+            # Supplementary: an example of a concept the prose already taught,
+            # so it follows the reading instead of pre-empting it.
+            beats.append(video_beat)
 
     if sandbox:
         # The practice terminal is a real action, not an appendix below the
@@ -442,6 +450,7 @@ def derive_beats(
     sandbox_config: dict[str, Any] | None,
     video_url: str = "",
     title: str = "",
+    require_full_watch: bool = True,
 ) -> list[dict]:
     """The player's single entry point: authored beats, else fallback."""
     config = sandbox_config or {}
@@ -471,4 +480,6 @@ def derive_beats(
         questions=questions if isinstance(questions, list) else None,
         sandbox=sandbox if isinstance(sandbox, dict) else None,
         seam_checks=seam_checks if isinstance(seam_checks, list) else None,
+        video_title=str(config.get("video_title") or ""),
+        video_required=bool(require_full_watch),
     )
