@@ -114,7 +114,15 @@ export function LessonPlayer() {
   if (!beats.length) return <p className="text-craft-muted">This lesson has no content yet.</p>;
 
   return (
-    <div className="card flex h-[calc(100dvh-19.5rem)] min-h-[22rem] flex-col overflow-hidden sm:h-[calc(100dvh-16rem)] sm:min-h-[26rem]">
+    /*
+      Height is a CEILING, not a fixed size. A fixed height made a 200-character
+      beat render ~1100px of void below three lines of text — and it satisfied a
+      naive zero-scroll check (scrollHeight === clientHeight) precisely because
+      the card never grew. Sizing to content with a viewport cap gives compact
+      beats a compact card and long beats an internally-scrolling one, which is
+      what "no scrollbar, ever" actually meant.
+    */
+    <div className="card flex max-h-[calc(100dvh-17rem)] flex-col overflow-hidden sm:max-h-[calc(100dvh-14rem)]">
       {/* Header: beat title + ONE position signal (segmented bar + count). */}
       <div className="flex shrink-0 items-center justify-between gap-4 border-b border-craft-border px-5 py-3 sm:px-6">
         <h2 className="min-w-0 truncate text-base font-bold text-craft-ink">

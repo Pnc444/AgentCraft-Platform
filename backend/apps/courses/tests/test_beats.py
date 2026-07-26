@@ -222,3 +222,45 @@ def test_every_published_module_passes_assessment_validation():
         if module["slug"] in VALIDATION_EXEMPT_SLUGS:
             continue
         assert _module_assessment_problems(module) == [], module["slug"]
+
+
+def test_orphaned_artifacts_become_reachable_and_carry_their_instruction():
+    """A block saying 'open the card below' with no artifact_paths used to
+    resolve by accident on the stacked page. One-beat-per-screen orphaned the
+    file and turned the instruction into a lie (FAKE)."""
+    from apps.courses.beats import beats_from_guided_blocks
+
+    blocks = [
+        {"title": "Who carries the doubt?", "body": "Ask.", "predict_first": {"question": "Q?"}},
+        {"title": "Three ways to stop", "body": "Goal met.", "try_this": ["Open the card below and read the three stop rules once."]},
+        {"title": "Trap", "body": "One more search.", "remember": "Stop rules exist."},
+    ]
+    beats = beats_from_guided_blocks(
+        blocks, title="T", lesson_artifact_paths=("lesson_artifacts/agents/stop-rules-and-checks.md",)
+    )
+    types = [(b["type"], b.get("action")) for b in beats]
+    assert ("do", "workbench") in types, "the lesson's artifact must be reachable"
+
+    wb = next(b for b in beats if b.get("action") == "workbench")
+    # The instruction rides WITH the file it names, so "the card below" is true.
+    assert wb["instructions"] == ["Open the card below and read the three stop rules once."]
+    # And it is not also left on the explain beat.
+    assert beats[types.index(("do", "workbench")) - 1]["try_this"] == []
+
+
+def test_artifacts_reachable_even_when_no_block_has_try_this():
+    from apps.courses.beats import beats_from_guided_blocks
+
+    blocks = [{"title": "A", "body": "x", "predict_first": {"question": "Q?"}}, {"title": "B", "body": "y"}]
+    beats = beats_from_guided_blocks(blocks, title="T", lesson_artifact_paths=("a/f.md",))
+    assert any(b.get("action") == "workbench" for b in beats)
+
+
+def test_no_workbench_invented_when_lesson_has_no_artifacts():
+    from apps.courses.beats import beats_from_guided_blocks
+
+    blocks = [{"title": "A", "body": "x", "try_this": ["Say it out loud."]}]
+    beats = beats_from_guided_blocks(blocks, title="T", lesson_artifact_paths=())
+    assert not any(b.get("action") == "workbench" for b in beats)
+    # try_this stays where it was — there is no file to move it to.
+    assert beats[0]["try_this"] == ["Say it out loud."]

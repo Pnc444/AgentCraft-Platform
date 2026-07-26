@@ -145,12 +145,15 @@ export function LessonWorkbench({ artifacts, paths, instructions, onAllOpened }:
                   onChange={(e) =>
                     setBuffers((prev) => ({ ...prev, [activeFile.path]: e.target.value }))
                   }
-                  className="h-56 w-full resize-none bg-craft-surface p-3 font-mono text-xs leading-relaxed text-craft-ink outline-none sm:h-64"
+                  // Shorter on phones: at 375x667 a 14rem editor pushed the
+                  // widget's own footer past the beat pane. The pane scrolls
+                  // internally either way, but a clipped footer reads as broken.
+                  className="h-36 w-full resize-none bg-craft-surface p-3 font-mono text-xs leading-relaxed text-craft-ink outline-none sm:h-64"
                   aria-label={`Contents of ${basename(activeFile.path)}`}
                 />
               </div>
             ) : (
-              <div className="flex h-56 items-center justify-center p-6 text-center text-sm text-craft-muted sm:h-64">
+              <div className="flex h-36 items-center justify-center p-6 text-center text-sm text-craft-muted sm:h-64">
                 Open each file on the left. Looking inside is the whole exercise.
               </div>
             )}

@@ -94,6 +94,32 @@ def validate_beats(
     return problems
 
 
+def explain_streak_problems(beats: list[dict], *, lesson_label: str = "lesson") -> list[str]:
+    """Report runs of 2+ consecutive `explain` beats.
+
+    Split out from :func:`validate_beats` so derived lessons can be held to the
+    passive-streak rule without also being held to the beat-count budget —
+    trimming a shipped lesson to 5-9 beats is content work, but a 10-beat wall
+    of reading is a defect either way.
+    """
+    problems: list[str] = []
+    run_start = -1
+    run = 0
+    for i, beat in enumerate(beats + [{"type": "_end"}]):
+        if beat.get("type") == "explain":
+            if run == 0:
+                run_start = i
+            run += 1
+            continue
+        if run >= 2:
+            problems.append(
+                f"{lesson_label}: beats {run_start + 1}-{run_start + run}: "
+                f"{run} explain beats in a row — passive streaks are where attention dies"
+            )
+        run = 0
+    return problems
+
+
 def _strip_leading_title(content: str, title: str) -> str:
     """Drop a leading h1 that repeats the lesson title (mirrors the frontend)."""
     lines = content.split("\n")
@@ -192,6 +218,7 @@ def beats_from_guided_blocks(
     *,
     checkpoint_questions: list[dict] | None = None,
     title: str = "",
+    lesson_artifact_paths: tuple[str, ...] = (),
 ) -> list[dict]:
     """Mechanical guided-blocks → beats mapping (plan step 1).
 
@@ -207,8 +234,25 @@ def beats_from_guided_blocks(
     ]
     bank_cursor = 0
     remember_lines: list[str] = []
+    produced_workbench = False
 
-    for block in blocks:
+    # Blocks whose try_this points at a practice file ("open the card below")
+    # while declaring no artifact_paths. The stacked page rendered the lesson's
+    # artifacts alongside everything else, so the reference resolved by accident;
+    # one-beat-per-screen breaks that, and the instruction becomes a lie. The
+    # first such block adopts the lesson's bundle so the file it names is on the
+    # very same screen.
+    adopting_index = -1
+    if lesson_artifact_paths and not any(
+        isinstance(b, dict) and (b.get("artifact_paths") or b.get("interactive_widget"))
+        for b in blocks
+    ):
+        for i, b in enumerate(blocks):
+            if isinstance(b, dict) and b.get("try_this"):
+                adopting_index = i
+                break
+
+    for block_index, block in enumerate(blocks):
         if not isinstance(block, dict):
             continue
         # A block that points at real files becomes two beats: its idea, then a
@@ -216,7 +260,12 @@ def beats_from_guided_blocks(
         # files for real (plan §4). The block's try_this lines are the task
         # instructions there, not reading-side decoration.
         artifact_paths = block.get("artifact_paths") or []
-        opens_files = bool(artifact_paths) or block.get("interactive_widget") == "openclaw_file_explorer"
+        adopts_bundle = block_index == adopting_index
+        opens_files = (
+            bool(artifact_paths)
+            or block.get("interactive_widget") == "openclaw_file_explorer"
+            or adopts_bundle
+        )
         common = {
             "title": block.get("title") or title,
             "body": block.get("body") or "",
@@ -239,6 +288,7 @@ def beats_from_guided_blocks(
             beats.append({"type": "explain", **common})
 
         if opens_files:
+            produced_workbench = True
             beats.append(
                 {
                     "type": "do",
@@ -272,6 +322,18 @@ def beats_from_guided_blocks(
         if block.get("remember"):
             remember_lines.append(block["remember"])
 
+    if lesson_artifact_paths and not produced_workbench:
+        beats.append(
+            {
+                "type": "do",
+                "action": "workbench",
+                "title": "The practice file",
+                "artifact_paths": [],
+                "instructions": [],
+                "source": "blocks",
+            }
+        )
+
     if remember_lines:
         beats.append(
             {
@@ -298,10 +360,14 @@ def derive_beats(
         return authored
     blocks = config.get("guided_blocks")
     if isinstance(blocks, list) and blocks:
+        bundle = config.get("artifact_bundle") or []
         mapped = beats_from_guided_blocks(
             blocks,
             checkpoint_questions=config.get("checkpoint_questions"),
             title=title,
+            lesson_artifact_paths=tuple(
+                a["path"] for a in bundle if isinstance(a, dict) and a.get("path")
+            ),
         )
         if mapped:
             return mapped

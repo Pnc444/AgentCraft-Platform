@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
-from apps.courses.beats import validate_beats
+from apps.courses.beats import derive_beats, explain_streak_problems, validate_beats
 from apps.courses.curriculum import (
     CURRICULUM,
     SKILL,
@@ -115,19 +115,36 @@ class Command(BaseCommand):
                 if sandbox_spec:
                     spec_config["sandbox"] = sandbox_spec
 
-                # Authored beats are held to the §2 rules (fallback-derived
-                # lessons are exempt — they are the migration safety net).
-                if spec_config.get("beats") and module["slug"] not in VALIDATION_EXEMPT_SLUGS:
+                if module["slug"] not in VALIDATION_EXEMPT_SLUGS:
                     artifact_paths = tuple(
                         artifact.get("path")
                         for artifact in spec_config.get("artifact_bundle") or []
                         if isinstance(artifact, dict) and artifact.get("path")
                     )
-                    problems += validate_beats(
-                        spec_config["beats"],
-                        artifact_paths=artifact_paths,
-                        lesson_label=f"{module['slug']}/{slug}",
-                    )
+                    label = f"{module['slug']}/{slug}"
+                    if spec_config.get("beats"):
+                        # Authored beats face the full §2 rule set.
+                        problems += validate_beats(
+                            spec_config["beats"],
+                            artifact_paths=artifact_paths,
+                            lesson_label=label,
+                        )
+                    else:
+                        # Derived beats are exempt from the beat-count budget
+                        # (splitting a shipped lesson is content work), but NOT
+                        # from the passive-streak rule. Exempting them entirely
+                        # let the validator report "0 problems" while 39 of 48
+                        # lessons ran 2+ explain beats in a row — the model's
+                        # central pedagogical rule, silently decorative.
+                        problems += explain_streak_problems(
+                            derive_beats(
+                                content=content,
+                                sandbox_config=spec_config,
+                                video_url=spec_video_url,
+                                title=title,
+                            ),
+                            lesson_label=label,
+                        )
 
                 lesson = Lesson.objects.filter(course=course, slug=slug).first()
                 if lesson is None:
