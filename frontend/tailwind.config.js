@@ -1,3 +1,14 @@
+/**
+ * The --craft-* variables hold plain hex, and raw CSS in globals.css reads them
+ * directly (e.g. `color: var(--craft-ink)`), so they must stay hex. A bare
+ * `var(--x)` color, though, makes Tailwind silently DROP every opacity modifier:
+ * `bg-craft-surface/95` emitted no CSS rule at all, so translucent surfaces
+ * rendered fully transparent. Wrapping in color-mix keeps the hex vars working
+ * for raw CSS while giving Tailwind a slot for <alpha-value>.
+ */
+const alphaVar = (name) =>
+  `color-mix(in srgb, var(${name}) calc(<alpha-value> * 100%), transparent)`;
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: "class",
@@ -6,26 +17,26 @@ module.exports = {
     extend: {
       colors: {
         craft: {
-          canvas: "var(--craft-canvas)",
-          surface: "var(--craft-surface)",
-          card: "var(--craft-card)",
-          soft: "var(--craft-soft)",
-          border: "var(--craft-border)",
-          ink: "var(--craft-ink)",
-          muted: "var(--craft-muted)",
-          faint: "var(--craft-faint)",
-          accent: "var(--craft-accent)",
-          secondary: "var(--craft-secondary)",
-          "accent-soft": "var(--craft-accent-soft)",
-          cyan: "var(--craft-cyan)",
-          glow: "var(--craft-glow)",
-          navy: "var(--craft-navy)",
-          "navy-soft": "var(--craft-navy-soft)",
-          success: "var(--craft-success)",
-          warning: "var(--craft-warning)",
-          hero: "var(--craft-hero)",
-          inverse: "var(--craft-inverse)",
-          "inverse-muted": "var(--craft-inverse-muted)",
+          canvas: alphaVar("--craft-canvas"),
+          surface: alphaVar("--craft-surface"),
+          card: alphaVar("--craft-card"),
+          soft: alphaVar("--craft-soft"),
+          border: alphaVar("--craft-border"),
+          ink: alphaVar("--craft-ink"),
+          muted: alphaVar("--craft-muted"),
+          faint: alphaVar("--craft-faint"),
+          accent: alphaVar("--craft-accent"),
+          secondary: alphaVar("--craft-secondary"),
+          "accent-soft": alphaVar("--craft-accent-soft"),
+          cyan: alphaVar("--craft-cyan"),
+          glow: alphaVar("--craft-glow"),
+          navy: alphaVar("--craft-navy"),
+          "navy-soft": alphaVar("--craft-navy-soft"),
+          success: alphaVar("--craft-success"),
+          warning: alphaVar("--craft-warning"),
+          hero: alphaVar("--craft-hero"),
+          inverse: alphaVar("--craft-inverse"),
+          "inverse-muted": alphaVar("--craft-inverse-muted"),
         },
       },
       fontFamily: {
