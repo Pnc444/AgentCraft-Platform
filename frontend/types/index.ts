@@ -111,8 +111,27 @@ export interface LessonSummary {
   status: LessonStatus;
 }
 
+/** One screen of the lesson player (plan §2). */
+export interface Beat {
+  type: "explain" | "predict" | "check" | "do" | "recap";
+  title?: string;
+  body?: string;
+  analogy?: string;
+  try_this?: string[];
+  kind?: string;
+  /** check beats: a CheckpointQuestion object; predict beats: the question text. */
+  question?: CheckpointQuestion | string;
+  hint?: string;
+  bullets?: string[];
+  action?: "video" | "terminal" | "workbench" | "studio" | "tutor_try";
+  video_url?: string;
+  source?: string;
+}
+
 export interface LessonDetail extends LessonSummary {
   content: string;
+  /** Derived server-side: authored beats, else guided blocks, else markdown fallback. */
+  beats?: Beat[];
   video_url: string;
   require_full_watch: boolean;
   video_watched: boolean;

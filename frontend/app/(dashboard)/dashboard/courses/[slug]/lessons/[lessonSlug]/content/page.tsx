@@ -24,6 +24,7 @@ import type { CheckpointQuestion } from "@/components/lessons/CheckpointQuiz";
 import { LessonArtifactPack } from "@/components/lessons/LessonArtifactPack";
 import { LessonCapstoneStudio } from "@/components/lessons/LessonCapstoneStudio";
 import { LessonContent, stripDuplicateTitle } from "@/components/lessons/LessonContent";
+import { LessonPlayer, isPlayerCourse } from "@/components/lessons/LessonPlayer";
 import { LessonSandbox } from "@/components/lessons/LessonSandbox";
 import { LessonSection } from "@/components/lessons/LessonSection";
 import { LessonVideo } from "@/components/lessons/LessonVideo";
@@ -100,6 +101,14 @@ function getAdaptiveCheckpointQuestions(
 }
 
 export default function LessonContentPage() {
+  const { lesson } = useLessonWorkspace();
+  // Flagged modules render through the zero-scroll player (plan step 1).
+  // Separate components so each owns its hooks.
+  if (lesson && isPlayerCourse(lesson.course_slug)) return <LessonPlayer />;
+  return <ClassicLessonContentPage />;
+}
+
+function ClassicLessonContentPage() {
   const router = useRouter();
   const {
     slug,

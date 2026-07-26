@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bot, Timer } from "lucide-react";
 import { isExamLessonType, lessonStepPosition } from "@/lib/lesson-steps";
+import { isPlayerCourse } from "@/components/lessons/LessonPlayer";
 import { Reveal } from "@/components/shared/Reveal";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 
@@ -59,12 +60,19 @@ export function LessonShell({ children }: { children: React.ReactNode }) {
                 <Timer className="h-3.5 w-3.5" />
                 {lesson.estimated_minutes} min
               </span>
-              <span aria-hidden className="text-craft-faint">
-                ·
-              </span>
-              <span>
-                {step.label} · step {step.current} of {step.total}
-              </span>
+              {/* Player courses carry their own beat counter — one position
+                  signal per screen (audit B1), so the step chip stays off
+                  their content step. */}
+              {!(isPlayerCourse(lesson.course_slug) && pathname.endsWith("/content")) && (
+                <>
+                  <span aria-hidden className="text-craft-faint">
+                    ·
+                  </span>
+                  <span>
+                    {step.label} · step {step.current} of {step.total}
+                  </span>
+                </>
+              )}
             </p>
 
             <h1 className="mt-3 text-3xl font-bold tracking-tight text-craft-ink">{lesson.title}</h1>
