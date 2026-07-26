@@ -1423,6 +1423,86 @@ MODULE_7_RECAP = {
 
 
 # Module 4.5 recap questions — real questions written from the lesson content.
+# Module 4.5 seam checks (plan §0.2). One per gap between reading beats,
+# answerable from the beat before it; distinct from MODULE_4_5_RECAP.
+MODULE_4_5_SEAM_CHECKS = {
+    "why-docker": [
+        {
+            "id": "m45-why-seam1",
+            "prompt": "In the shipping-container analogy, what plays the part of the crane?",
+            "options": [
+                "Docker itself — the ship does not care what is inside, it just carries containers",
+                "Your operating system, which unpacks each container",
+                "Docker Hub, which lifts images off the internet",
+            ],
+            "answer_index": 0,
+            "explanation": "The ship is your computer, the container is the packaged app, and Docker is the crane that moves it.",
+        },
+    ],
+    "docker-main-terms": [
+        {
+            "id": "m45-terms-seam1",
+            "prompt": "Which term does the lesson compare to \"Tupperware for leftovers\"?",
+            "options": [
+                "Port mapping",
+                "Volume — persistent storage that survives deletion",
+                "Dockerfile",
+            ],
+            "answer_index": 1,
+            "explanation": "A volume is persistent storage a container can use and it survives deletion — leftovers you keep. Port mapping is forwarding your mail; a Dockerfile is writing your own recipe.",
+        },
+    ],
+    "installing-docker-desktop": [
+        {
+            "id": "m45-install-seam1",
+            "prompt": "On Windows, Docker Desktop runs on top of which system that the installer sets up for you?",
+            "options": [
+                "WSL 2 — say yes if the installer prompts you",
+                "A virtual machine you must build yourself first",
+                "Docker Hub, installed locally",
+            ],
+            "answer_index": 0,
+            "explanation": "Docker Desktop on Windows uses WSL 2. The installer sets it up; if prompted, accept.",
+        },
+        {
+            "id": "m45-install-seam2",
+            "prompt": "You finished the installer. What tells you Docker is actually ready to use?",
+            "options": [
+                "The download finished, so it is ready",
+                "The whale icon stops animating and the dashboard shows \"Engine running\" in green",
+                "You created a Docker account",
+            ],
+            "answer_index": 1,
+            "explanation": "Wait for the whale: Docker is ready when the icon stops animating and the dashboard says Engine running. An account is not required for this course.",
+        },
+    ],
+    "first-containers": [
+        {
+            "id": "m45-first-seam1",
+            "prompt": "You ran `docker run hello-world` and the image was not on your machine. What did Docker do first?",
+            "options": [
+                "Refused, and told you to download the image manually",
+                "Pulled the image from Docker Hub, then created a container from it",
+                "Built the image from a Dockerfile in your current folder",
+            ],
+            "answer_index": 1,
+            "explanation": "Docker looked locally, did not find it, pulled it from Docker Hub, created a container, ran it, and the container exited — the whole loop in one command.",
+        },
+        {
+            "id": "m45-first-seam2",
+            "prompt": "You stopped and deleted the nginx container. What is left on your machine?",
+            "options": [
+                "Nothing at all — the image is deleted with the container",
+                "The cached image, so re-running the command brings it back in seconds",
+                "A running web server on port 8080",
+            ],
+            "answer_index": 1,
+            "explanation": "Deleting a container leaves your machine exactly as it was, but the image stays cached locally — that is why re-running `docker run` is instant.",
+        },
+    ],
+}
+
+
 MODULE_4_5_RECAP = {
     "why-docker": [
         {
@@ -2453,10 +2533,22 @@ CURRICULUM = [
         "published": True,
         "difficulty": 2,
         "lessons": [
-            ("Why Docker?", "why-docker", "theory", 8, {"questions": MODULE_4_5_RECAP["why-docker"]}),
-            ("The Main Terms", "docker-main-terms", "theory", 8, {"questions": MODULE_4_5_RECAP["docker-main-terms"]}),
-            ("Installing Docker Desktop", "installing-docker-desktop", "interactive", 15, {"questions": MODULE_4_5_RECAP["installing-docker-desktop"]}),
-            ("Your First Containers", "first-containers", "sandbox", 12, {"questions": MODULE_4_5_RECAP["first-containers"]}),
+            ("Why Docker?", "why-docker", "theory", 8, {
+                    "questions": MODULE_4_5_RECAP["why-docker"],
+                    "checkpoint_questions": MODULE_4_5_SEAM_CHECKS["why-docker"],
+                }),
+            ("The Main Terms", "docker-main-terms", "theory", 8, {
+                    "questions": MODULE_4_5_RECAP["docker-main-terms"],
+                    "checkpoint_questions": MODULE_4_5_SEAM_CHECKS["docker-main-terms"],
+                }),
+            ("Installing Docker Desktop", "installing-docker-desktop", "interactive", 15, {
+                    "questions": MODULE_4_5_RECAP["installing-docker-desktop"],
+                    "checkpoint_questions": MODULE_4_5_SEAM_CHECKS["installing-docker-desktop"],
+                }),
+            ("Your First Containers", "first-containers", "sandbox", 12, {
+                    "questions": MODULE_4_5_RECAP["first-containers"],
+                    "checkpoint_questions": MODULE_4_5_SEAM_CHECKS["first-containers"],
+                }),
             ("Module 4.5 Exam", "module-4-5-exam", "quiz", 10, {"questions": MODULE_4_5_EXAM_QUESTIONS}),
         ],
     },
