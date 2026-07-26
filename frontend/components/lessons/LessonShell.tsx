@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bot, Timer } from "lucide-react";
-import { isExamLessonType, lessonStepPosition } from "@/lib/lesson-steps";
 import { Reveal } from "@/components/shared/Reveal";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 
@@ -36,10 +35,6 @@ export function LessonShell({ children }: { children: React.ReactNode }) {
       </div>
     );
 
-  const step = lessonStepPosition(pathname, {
-    isExam: isExamLessonType(lesson.lesson_type),
-  });
-
   return (
     <div className="mx-auto w-full max-w-6xl lg:ml-[clamp(0px,calc(50vw-36rem-var(--sidebar-w,18rem)),calc(100%-72rem))] lg:mr-0">
       <Reveal>
@@ -59,19 +54,9 @@ export function LessonShell({ children }: { children: React.ReactNode }) {
                 <Timer className="h-3.5 w-3.5" />
                 {lesson.estimated_minutes} min
               </span>
-              {/* The player carries its own beat counter — one position
-                  signal per screen (audit B1), so the step chip stays off
-                  the content step. */}
-              {!pathname.endsWith("/content") && (
-                <>
-                  <span aria-hidden className="text-craft-faint">
-                    ·
-                  </span>
-                  <span>
-                    {step.label} · step {step.current} of {step.total}
-                  </span>
-                </>
-              )}
+              {/* No step chip: the player shows "beat 3 / 8" and the
+                  assessment shows "2 / 5". One position signal per screen
+                  (audit B1/B2). */}
             </p>
 
             <h1 className="mt-3 text-3xl font-bold tracking-tight text-craft-ink">{lesson.title}</h1>

@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, ChevronLeft } from "lucide-react";
 import { PaginatedExam } from "@/components/lessons/PaginatedExam";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 import {
@@ -12,6 +12,15 @@ import {
   lessonStepHref,
 } from "@/lib/lesson-steps";
 
+/**
+ * The assessment step, and the last screen of a lesson.
+ *
+ * There is no Progress step after this one. Progress was a report wearing a
+ * step's clothes: it restated "complete" four times and then hid the only
+ * forward button in its bottom-right corner, so finishing a mid-module quiz
+ * meant being routed to a dashboard to hunt for the way on. The forward action
+ * now lives on this card, where the result is.
+ */
 export default function LessonQuizPage() {
   const router = useRouter();
   const {
@@ -19,6 +28,7 @@ export default function LessonQuizPage() {
     lessonSlug,
     lesson,
     prev,
+    next,
     recapQuestions,
     needsVideo,
     videoDone,
@@ -39,8 +49,43 @@ export default function LessonQuizPage() {
 
   const isExamLesson = isExamLessonType(lesson.lesson_type);
   const assessmentLabel = assessmentLabelForLessonType(lesson.lesson_type);
-  // Passing this also finishes the module — the exam is its last lesson.
+  // Finishing the module's last lesson hands off to the next module instead.
   const endsModule = atModuleEnd;
+
+  /*
+    One primary action, always present, named after where it goes. Every branch
+    resolves to something real — a passed assessment is never a dead end.
+  */
+  const forwardAction = endsModule ? (
+    nextModule ? (
+      <Link href={nextModule.href} className="btn-primary">
+        Start {nextModule.title}
+        <ArrowRight className="h-4 w-4 shrink-0" />
+      </Link>
+    ) : nextModule === undefined ? (
+      // The course list has not resolved yet — never claim "course complete"
+      // on unknown data.
+      <Link href="/dashboard" className="btn-primary">
+        Back to dashboard
+        <ArrowRight className="h-4 w-4 shrink-0" />
+      </Link>
+    ) : (
+      <Link href="/dashboard" className="btn-primary">
+        You finished the course — back to dashboard
+        <ArrowRight className="h-4 w-4 shrink-0" />
+      </Link>
+    )
+  ) : next ? (
+    <Link href={lessonStepHref(slug, next.slug, "content")} className="btn-primary">
+      Next: {next.title}
+      <ArrowRight className="h-4 w-4 shrink-0" />
+    </Link>
+  ) : (
+    <Link href={`/dashboard/courses/${slug}`} className="btn-primary">
+      Back to the module
+      <ArrowRight className="h-4 w-4 shrink-0" />
+    </Link>
+  );
 
   return (
     <div className="space-y-3">
@@ -70,35 +115,12 @@ export default function LessonQuizPage() {
             updateProgress({ status: "completed", score });
           }
           setNotice(null);
-          // When this assessment ends the module we show a "next module" button
-          // instead, so the learner leaves on their own terms rather than being
-          // yanked off their own result.
-          if (!endsModule) {
-            router.push(lessonStepHref(slug, lessonSlug, "progress"));
-          }
+          // No auto-navigation. The learner leaves on their own terms, using
+          // the forward button on the result card.
         }}
-        completionAction={
-          endsModule ? (
-            nextModule ? (
-              <Link href={nextModule.href} className="btn-primary">
-                Start {nextModule.title}
-                <ArrowRight className="h-4 w-4 shrink-0" />
-              </Link>
-            ) : nextModule === null ? (
-              // Genuinely the last module — the course list confirmed it.
-              <Link href="/dashboard" className="btn-primary">
-                You finished the course — back to dashboard
-                <ArrowRight className="h-4 w-4 shrink-0" />
-              </Link>
-            ) : (
-              // Course list still loading: never claim "course complete" on
-              // unknown data. A neutral exit is honest and always correct.
-              <Link href="/dashboard" className="btn-primary">
-                Back to dashboard
-                <ArrowRight className="h-4 w-4 shrink-0" />
-              </Link>
-            )
-          ) : undefined
+        completionAction={forwardAction}
+        reviewLessonHref={
+          isExamLesson ? undefined : lessonStepHref(slug, lessonSlug, "content")
         }
       />
 
@@ -130,13 +152,6 @@ export default function LessonQuizPage() {
             Back to Lesson
           </Link>
         )}
-        <Link
-          href={lessonStepHref(slug, lessonSlug, "progress")}
-          className="inline-flex items-center gap-1 text-sm text-craft-muted transition hover:text-craft-ink"
-        >
-          Progress
-          <ChevronRight className="h-4 w-4" />
-        </Link>
       </div>
     </div>
   );

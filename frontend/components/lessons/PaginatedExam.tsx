@@ -43,6 +43,11 @@ interface PaginatedExamProps {
    * of silently wiping it. Cleared on pass and on deliberate retry.
    */
   storageKey?: string;
+  /**
+   * Link back to the lesson content, shown on the standing-result card. The
+   * Progress step used to host "Review lesson"; it lives here now.
+   */
+  reviewLessonHref?: string;
 }
 
 const DEFAULT_PASS_SCORE = 80;
@@ -72,6 +77,7 @@ export function PaginatedExam({
   previouslyPassed = false,
   previousScore = null,
   storageKey,
+  reviewLessonHref,
 }: PaginatedExamProps) {
   const bank = useMemo(
     () => questions.filter((q) => q.options?.length && typeof q.answer_index === "number"),
@@ -297,6 +303,11 @@ export function PaginatedExam({
                 >
                   Review questions
                 </button>
+                {reviewLessonHref && (
+                  <a href={reviewLessonHref} className="btn-secondary">
+                    Review lesson
+                  </a>
+                )}
                 <button
                   type="button"
                   onClick={reset}
@@ -391,14 +402,15 @@ export function PaginatedExam({
                       {completionAction ? (
                         <>
                           <p className="mt-1 text-sm text-emerald-700/80 dark:text-emerald-200/80">
-                            Great work — that finishes this module.
+                            {`Great work. This ${label.toLowerCase()} is complete.`}
                           </p>
+                          {/* The forward action lives here now — nothing
+                              auto-navigates off the learner's own result. */}
                           <div className="mt-4">{completionAction}</div>
                         </>
                       ) : (
                         <p className="mt-1 text-sm text-emerald-700/80 dark:text-emerald-200/80">
-                          Great work. This {label.toLowerCase()} is complete. Taking you to
-                          progress…
+                          {`Great work. This ${label.toLowerCase()} is complete.`}
                         </p>
                       )}
                     </div>

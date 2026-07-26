@@ -4,8 +4,7 @@ import {
   assessmentLabelForLessonType,
   entryStepForLessonType,
   isExamLessonType,
-  lessonStepPosition,
-  lessonStepSequence,
+  lessonStepHref,
   STEP_AFTER_LESSON,
 } from "@/lib/lesson-steps";
 
@@ -29,57 +28,23 @@ describe("entryStepForLessonType", () => {
   });
 });
 
-describe("lesson step sequence", () => {
-  it("never treats video as its own destination", () => {
-    expect(lessonStepSequence({ isExam: false })).toEqual(["content", "quiz", "progress"]);
-    expect(lessonStepSequence({ isExam: false })).not.toContain("video");
+describe("lesson steps after deleting the Progress step", () => {
+  const base = "/dashboard/courses/module-1-introduction-to-ai/lessons/what-is-ai";
+
+  it("routes from the lesson straight to the assessment", () => {
     expect(STEP_AFTER_LESSON).toBe("quiz");
   });
 
-  it("drops the lesson step for exams", () => {
-    expect(lessonStepSequence({ isExam: true })).toEqual(["quiz", "progress"]);
-  });
-});
-
-describe("lessonStepPosition", () => {
-  const base = "/dashboard/courses/module-1-introduction-to-ai/lessons/what-is-ai";
-
-  it("counts a standard lesson as three steps", () => {
-    expect(lessonStepPosition(`${base}/content`, { isExam: false })).toEqual({
-      current: 1,
-      total: 3,
-      label: "Lesson",
-    });
-    expect(lessonStepPosition(`${base}/quiz`, { isExam: false })).toEqual({
-      current: 2,
-      total: 3,
-      label: "Quiz",
-    });
-    expect(lessonStepPosition(`${base}/progress`, { isExam: false })).toEqual({
-      current: 3,
-      total: 3,
-      label: "Summary",
-    });
-  });
-
-  it("treats the retired /video path as the lesson step", () => {
-    expect(lessonStepPosition(`${base}/video`, { isExam: false })).toEqual({
-      current: 1,
-      total: 3,
-      label: "Lesson",
-    });
-  });
-
-  it("counts an exam as two steps starting at the quiz", () => {
-    expect(lessonStepPosition(`${base}/quiz`, { isExam: true })).toEqual({
-      current: 1,
-      total: 2,
-      label: "Quiz",
-    });
-    expect(lessonStepPosition(`${base}/progress`, { isExam: true })).toEqual({
-      current: 2,
-      total: 2,
-      label: "Summary",
-    });
+  it("no longer builds links to a progress step", () => {
+    // Progress was a report wearing a step's clothes. The type no longer
+    // admits it, so a stray link cannot be written by accident.
+    expect(lessonStepHref("module-1-introduction-to-ai", "what-is-ai", "content")).toBe(
+      `${base}/content`
+    );
+    expect(lessonStepHref("module-1-introduction-to-ai", "what-is-ai", "quiz")).toBe(
+      `${base}/quiz`
+    );
+    // @ts-expect-error "progress" is not a LessonStep any more
+    expect(() => lessonStepHref("c", "l", "progress")).not.toThrow();
   });
 });

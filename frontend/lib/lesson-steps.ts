@@ -17,7 +17,7 @@ export const LESSON_STATUS_UI = {
 
 export type LessonStatusKey = keyof typeof LESSON_STATUS_UI;
 
-export type LessonStep = "content" | "video" | "quiz" | "progress";
+export type LessonStep = "content" | "video" | "quiz";
 
 function isQuestion(value: unknown): value is CheckpointQuestion {
   return (
@@ -131,47 +131,15 @@ export function statusUiFor(status: LessonStatus | string) {
  */
 export const STEP_AFTER_LESSON: LessonStep = "quiz";
 
-/** Labels used by the "Step N of M" indicator. */
-export const LESSON_STEP_LABELS: Record<LessonStep, string> = {
-  content: "Lesson",
-  video: "Lesson",
-  quiz: "Quiz",
-  progress: "Summary",
-};
+/*
+  The "Step N of M" indicator is gone with the Progress step.
 
-/**
- * Ordered destinations a learner actually moves through, for orientation only.
- * `video` never appears — it is part of the lesson step.
- */
-export function lessonStepSequence(opts: { isExam: boolean }): LessonStep[] {
-  return opts.isExam ? ["quiz", "progress"] : ["content", "quiz", "progress"];
-}
-
-/** Which step a pathname is on. `/video` is treated as the lesson step. */
-export function activeLessonStep(
-  pathname: string,
-  opts: { isExam: boolean }
-): LessonStep {
-  if (pathname.endsWith("/progress")) return "progress";
-  if (pathname.endsWith("/quiz")) return "quiz";
-  if (opts.isExam) return "quiz";
-  return "content";
-}
-
-/** 1-based position of the active step, for "Step 2 of 3". */
-export function lessonStepPosition(
-  pathname: string,
-  opts: { isExam: boolean }
-): { current: number; total: number; label: string } {
-  const sequence = lessonStepSequence(opts);
-  const active = activeLessonStep(pathname, opts);
-  const index = sequence.indexOf(active);
-  return {
-    current: index < 0 ? 1 : index + 1,
-    total: sequence.length,
-    label: LESSON_STEP_LABELS[active],
-  };
-}
+  It existed to number content → quiz → progress. With Progress deleted a
+  lesson is two screens, and each already reports its own position: the player
+  shows "beat 3 / 8", the assessment shows "2 / 5". A third counter saying
+  "step 2 of 2" was the position-label roulette the audit flagged (B1/B2) —
+  two counters on one screen with different units.
+*/
 
 type StepProgressInput = {
   status: LessonStatus | string;
