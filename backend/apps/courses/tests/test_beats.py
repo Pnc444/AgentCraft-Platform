@@ -374,15 +374,39 @@ def test_required_video_leads_and_supplementary_video_trails():
     assert beats_from_markdown(MD, title="T", video_url="https://v/x")[1]["title"] == "Watch the video"
 
 
-def test_module_1_5_context_lesson_ships_the_video_ungated():
-    from apps.courses.curriculum import CURRICULUM, MODULE_1_5_CONTEXT_VIDEO_URL
+def test_explicit_video_position_counts_learner_visible_beats():
+    """video_position is 1-based over the FINAL sequence, so it matches the
+    numbers the player shows. Insertion happens after merging and check
+    distribution for exactly that reason."""
+    md = "Intro.\n\n## A\n\n" + ("x" * 700) + "\n\n## B\n\n" + ("y" * 700)
+    seams = [{"prompt": "q?", "options": ["a", "b"], "answer_index": 0}]
+    beats = beats_from_markdown(
+        md, title="T", video_url="https://v/x", seam_checks=seams, video_position=3
+    )
+    kinds = [b.get("action") or b["type"] for b in beats]
+    assert kinds == ["explain", "check", "video", "explain"]
+    assert beats[2]["action"] == "video"
+
+
+def test_module_1_5_videos_share_one_position_and_stay_ungated():
+    from apps.courses.curriculum import (
+        CURRICULUM,
+        MODULE_1_5_CONTEXT_VIDEO_URL,
+        MODULE_1_5_TOKENS_VIDEO_URL,
+        MODULE_1_5_VIDEO_POSITION,
+    )
 
     module = next(m for m in CURRICULUM if m["slug"] == "module-1-5-how-llms-work")
-    spec = next(l for l in module["lessons"] if l[1] == "context-windows")
-    config = spec[4]
-    assert config["video_url"] == MODULE_1_5_CONTEXT_VIDEO_URL
-    assert "?si=" not in config["video_url"], "share tracking param must not be stored"
-    # Supplementary: the prose teaches the concept, so the recap quiz is not
-    # gated behind watching a demo of one specific tool.
-    assert config["require_full_watch"] is False
-    assert config["video_title"]
+    expected = {
+        "context-windows": MODULE_1_5_CONTEXT_VIDEO_URL,
+        "tokens": MODULE_1_5_TOKENS_VIDEO_URL,
+    }
+    for slug, url in expected.items():
+        config = next(l for l in module["lessons"] if l[1] == slug)[4]
+        assert config["video_url"] == url
+        assert "?si=" not in config["video_url"], f"{slug}: share param must not be stored"
+        # Both videos illustrate prose that already teaches the concept, so
+        # neither gates the recap quiz.
+        assert config["require_full_watch"] is False
+        # Same place in both lessons, so the module reads consistently.
+        assert config["video_position"] == MODULE_1_5_VIDEO_POSITION

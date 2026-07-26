@@ -489,6 +489,12 @@ MODULE_6_EXAM_QUESTIONS = [
 # the lesson prose teaches the concept; the video shows one real tool doing it.
 # Stored without the ?si= share parameter, matching every other video here.
 MODULE_1_5_CONTEXT_VIDEO_URL = "https://www.youtube-nocookie.com/embed/eW3oTyfeWZ0"
+MODULE_1_5_TOKENS_VIDEO_URL = "https://www.youtube-nocookie.com/embed/OjrGu0L5K7M"
+
+# Both Module 1.5 videos sit at the same place in their lesson: beat 3, after the
+# opening explanation and its check, before the second teaching beat. Position is
+# 1-based and counts the beats the learner sees, matching the player's "3 / 8".
+MODULE_1_5_VIDEO_POSITION = 3
 
 MODULE_1_WHAT_IS_AI_VIDEO_URL = "https://www.youtube-nocookie.com/embed/c0m6yaGlZh4"
 MODULE_1_WHAT_ARE_LLMS_VIDEO_URL = "https://www.youtube-nocookie.com/embed/qMxuthTIQq4"
@@ -2874,6 +2880,7 @@ CURRICULUM = [
                     "video_url": MODULE_1_5_CONTEXT_VIDEO_URL,
                     # "Watch the video" says nothing. Name what it shows.
                     "video_title": "Watch: context management in Claude Code",
+                    "video_position": MODULE_1_5_VIDEO_POSITION,
                     # Supplementary, so it does NOT gate the recap quiz. Module 1's
                     # videos ARE the lesson and require full playback; here the
                     # prose carries the teaching and the video shows an example,
@@ -2890,6 +2897,14 @@ CURRICULUM = [
                 {
                     "questions": MODULE_1_5_RECAP["tokens"],
                     "checkpoint_questions": MODULE_1_5_SEAM_CHECKS["tokens"],
+                    "video_url": MODULE_1_5_TOKENS_VIDEO_URL,
+                    "video_position": MODULE_1_5_VIDEO_POSITION,
+                    # Supplementary, like the context-windows video: the prose
+                    # teaches tokens, so the recap quiz is not gated on playback.
+                    "require_full_watch": False,
+                    # Deliberately NOT given a descriptive title: nobody has told
+                    # me what this video shows, and inventing one would be a claim
+                    # I cannot verify. Falls back to "Watch the video".
                 },
             ),
             (

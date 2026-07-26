@@ -242,6 +242,7 @@ def beats_from_markdown(
     seam_checks: list[dict] | None = None,
     video_title: str = "",
     video_required: bool = True,
+    video_position: int | None = None,
 ) -> list[dict]:
     """Mechanical markdown → beats conversion (the generic fallback, §3).
 
@@ -274,6 +275,11 @@ def beats_from_markdown(
             }
         )
 
+    # The recap bank is NOT appended here. It belongs to the recap quiz; adding
+    # it to the content step made the learner answer the identical five
+    # questions twice in a row (verified across 30+ lessons).
+    beats = distribute_checks(merge_adjacent_explains(beats), seam_checks or [])
+
     if video_url:
         video_beat = {
             "type": "do",
@@ -282,18 +288,22 @@ def beats_from_markdown(
             "video_url": video_url,
             "source": "fallback",
         }
-        if video_required:
-            # The video IS the lesson (Module 1's stubs): it leads, right after
-            # the short framing paragraph.
-            beats.insert(1 if beats else 0, video_beat)
+        # Inserted AFTER merging and check distribution, so `video_position`
+        # counts the beats a learner actually sees — the same numbers the player
+        # shows ("3 / 8"). Without an explicit position: a required video leads
+        # (Module 1's stubs, where the video IS the lesson) and a supplementary
+        # one trails the reading.
+        if video_position is not None:
+            index = max(0, min(int(video_position) - 1, len(beats)))
+        elif video_required:
+            index = 1 if beats else 0
         else:
-            # Supplementary: an example of a concept the prose already taught,
-            # so it follows the reading instead of pre-empting it.
-            beats.append(video_beat)
+            index = len(beats)
+        beats.insert(index, video_beat)
 
     if sandbox:
         # The practice terminal is a real action, not an appendix below the
-        # prose — it becomes a do-beat before the checks (plan step 5).
+        # prose — it becomes the lesson's closing do-beat (plan step 5).
         beats.append(
             {
                 "type": "do",
@@ -303,10 +313,7 @@ def beats_from_markdown(
             }
         )
 
-    # The recap bank is NOT appended here. It belongs to the recap quiz; adding
-    # it to the content step made the learner answer the identical five
-    # questions twice in a row (verified across 30+ lessons).
-    return distribute_checks(merge_adjacent_explains(beats), seam_checks or [])
+    return beats
 
 
 def beats_from_guided_blocks(
@@ -482,4 +489,7 @@ def derive_beats(
         seam_checks=seam_checks if isinstance(seam_checks, list) else None,
         video_title=str(config.get("video_title") or ""),
         video_required=bool(require_full_watch),
+        video_position=(
+            int(config["video_position"]) if config.get("video_position") is not None else None
+        ),
     )
