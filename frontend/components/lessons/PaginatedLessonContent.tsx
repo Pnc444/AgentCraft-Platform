@@ -402,7 +402,8 @@ export function PaginatedLessonContent({
             <span className={slideHeaderColor}>{slideHeaderIcon}</span>
             <h2 className="text-base font-bold text-craft-ink">{slideTitle}</h2>
           </div>
-          <span className="text-xs font-medium uppercase tracking-[0.18em] text-craft-faint">
+          {/* nowrap: this wrapped onto two lines at 375px (audit E1) */}
+          <span className="whitespace-nowrap text-xs font-medium uppercase tracking-[0.18em] text-craft-faint">
             Step {currentIndex + 1} / {totalSlides}
           </span>
         </div>

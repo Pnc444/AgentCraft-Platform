@@ -131,7 +131,10 @@ describe("PaginatedExam", () => {
       });
 
       expect(container.textContent).toContain("Question 1");
-      expect(container.textContent).toContain("Step 1 / 3");
+      // Counter counts questions (2 here), never slides — the review slide is
+      // a state, not a step (audit B8).
+      expect(container.textContent).toContain("1 / 2");
+      expect(container.textContent).not.toContain("1 / 3");
       expect(container.textContent).toContain("What is AI?");
       expect(container.textContent).not.toContain("What is an LLM?");
       expect(container.textContent).toContain("Select an answer to continue");

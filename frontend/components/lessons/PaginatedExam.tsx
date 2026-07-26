@@ -289,8 +289,12 @@ export function PaginatedExam({
             <span className="hidden text-xs text-craft-muted sm:inline">
               {answeredCount}/{bank.length} answered
             </span>
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-craft-faint">
-              Step {currentIndex + 1} / {totalSlides}
+            {/*
+              Counts questions, not slides — "Step 1 / 6" on a 5-question quiz
+              read as a lie (audit B8). The review slide is a state, not a step.
+            */}
+            <span className="whitespace-nowrap text-xs font-medium uppercase tracking-[0.18em] text-craft-faint">
+              {isReviewSlide ? "Review" : `${currentIndex + 1} / ${bank.length}`}
             </span>
           </div>
         </div>

@@ -80,12 +80,12 @@ export default function LessonQuizPage() {
             nextModule ? (
               <Link href={nextModule.href} className="btn-primary">
                 Start {nextModule.title}
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4 shrink-0" />
               </Link>
             ) : (
               <Link href="/dashboard" className="btn-primary">
                 You finished the course — back to dashboard
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4 shrink-0" />
               </Link>
             )
           ) : undefined

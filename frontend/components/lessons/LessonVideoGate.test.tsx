@@ -75,6 +75,7 @@ vi.mock("@/components/lessons/LessonVideo", () => ({
 
 vi.mock("@/components/lessons/LessonContent", () => ({
   LessonContent: ({ content }: { content: string }) => createElement("div", null, content),
+  stripDuplicateTitle: (content: string) => content,
 }));
 
 vi.mock("@/components/lessons/CheckpointQuiz", () => ({

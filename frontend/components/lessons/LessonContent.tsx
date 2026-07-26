@@ -151,6 +151,23 @@ function MarkdownLink({
   );
 }
 
+/**
+ * Drop a leading `# Heading` when it just repeats the page's own h1.
+ * Nearly every lesson .md opens with its own title, so the old render showed
+ * the same words twice ~100px apart (audit B3). A leading h1 that says
+ * something different is kept — only the duplicate dies.
+ */
+export function stripDuplicateTitle(content: string, title: string): string {
+  const lines = content.split("\n");
+  const first = lines.findIndex((line) => line.trim() !== "");
+  if (first === -1) return content;
+  const heading = lines[first].match(/^#\s+(.+?)\s*$/);
+  if (!heading) return content;
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  if (norm(heading[1]) !== norm(title)) return content;
+  return lines.slice(first + 1).join("\n").replace(/^\s*\n+/, "");
+}
+
 /** Renders existing lesson Markdown without altering the source string. */
 export function LessonContent({ content }: LessonContentProps) {
   return (

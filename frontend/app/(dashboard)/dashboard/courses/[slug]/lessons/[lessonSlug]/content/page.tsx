@@ -23,7 +23,7 @@ import { CheckpointQuiz } from "@/components/lessons/CheckpointQuiz";
 import type { CheckpointQuestion } from "@/components/lessons/CheckpointQuiz";
 import { LessonArtifactPack } from "@/components/lessons/LessonArtifactPack";
 import { LessonCapstoneStudio } from "@/components/lessons/LessonCapstoneStudio";
-import { LessonContent } from "@/components/lessons/LessonContent";
+import { LessonContent, stripDuplicateTitle } from "@/components/lessons/LessonContent";
 import { LessonSandbox } from "@/components/lessons/LessonSandbox";
 import { LessonSection } from "@/components/lessons/LessonSection";
 import { LessonVideo } from "@/components/lessons/LessonVideo";
@@ -548,7 +548,8 @@ export default function LessonContentPage() {
         })
       ) : lesson.content ? (
         <LessonSection title="Lesson Content" icon={<BookOpen className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />}>
-          <LessonContent content={lesson.content} />
+          {/* The page h1 already shows the title — don't render it twice (B3). */}
+          <LessonContent content={stripDuplicateTitle(lesson.content, lesson.title)} />
         </LessonSection>
       ) : (
         <LessonSection

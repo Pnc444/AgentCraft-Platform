@@ -225,7 +225,11 @@ export default function LessonProgressPage() {
             )}
             {lesson.status === "completed" && (
               <>
-                <span className="inline-flex items-center gap-2 rounded-full bg-teal-600 px-3 py-2 text-sm font-medium text-white shadow-soft dark:bg-teal-500 dark:text-teal-950">
+                {/*
+                  Status, not a control — this was styled like the buttons
+                  beside it and begged to be clicked (audit D1).
+                */}
+                <span className="inline-flex items-center gap-1.5 self-center text-sm font-semibold text-emerald-700 dark:text-emerald-300">
                   <CheckCircle2 className="h-4 w-4" />
                   Lesson complete
                 </span>

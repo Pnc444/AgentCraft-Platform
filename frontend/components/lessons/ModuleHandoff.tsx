@@ -41,7 +41,7 @@ export function ModuleHandoff({ courseTitle, nextModule, isExam }: ModuleHandoff
             </p>
             <Link href="/dashboard" className="btn-primary mt-4">
               Back to dashboard
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4 shrink-0" />
             </Link>
           </div>
         </div>
@@ -65,7 +65,7 @@ export function ModuleHandoff({ courseTitle, nextModule, isExam }: ModuleHandoff
           </p>
           <Link href={nextModule.href} className="btn-primary mt-4">
             Start {nextModule.title}
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4 shrink-0" />
           </Link>
         </div>
       </div>
