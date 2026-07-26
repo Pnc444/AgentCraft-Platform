@@ -55,6 +55,8 @@ export default function LessonQuizPage() {
         // it is a safe signal that a result already stands.
         previouslyPassed={lesson.status === "completed"}
         previousScore={lesson.score}
+        // Mid-attempt answers survive navigation (audit F1).
+        storageKey={`agentcraft-quiz-draft:${lesson.id}`}
         locked={needsVideo && !videoDone}
         lockedReason={`Watch the lesson video to the end before taking the ${assessmentLabel}.`}
         onLockedAction={() => {

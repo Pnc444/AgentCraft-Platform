@@ -37,6 +37,12 @@ interface PaginatedExamProps {
   previouslyPassed?: boolean;
   /** Score from that earlier pass, when the server recorded one. */
   previousScore?: number | null;
+  /**
+   * sessionStorage key for the in-progress draft (answers + position). With a
+   * key set, navigating away and back mid-attempt restores the attempt instead
+   * of silently wiping it. Cleared on pass and on deliberate retry.
+   */
+  storageKey?: string;
 }
 
 const DEFAULT_PASS_SCORE = 80;
@@ -66,6 +72,7 @@ export function PaginatedExam({
   completionAction,
   previouslyPassed = false,
   previousScore = null,
+  storageKey,
 }: PaginatedExamProps) {
   const bank = useMemo(
     () => questions.filter((q) => q.options?.length && typeof q.answer_index === "number"),
@@ -76,12 +83,40 @@ export function PaginatedExam({
   const totalSlides = bank.length + 1;
   const reviewIndex = bank.length;
 
-  const [currentIndex, setCurrentIndex] = useState(0);
+  /*
+    Mid-attempt answers survive navigation (audit F1). Answering 15 of 20 and
+    glancing at Progress used to wipe everything silently. The draft lives in
+    sessionStorage under `storageKey`, restored once on mount, cleared on pass
+    or on a deliberate retry. Not hydrated over an already-passed exam — the
+    standing result stays the entry state.
+  */
+  const draft = useMemo(() => {
+    if (!storageKey || previouslyPassed || typeof window === "undefined") return null;
+    try {
+      const raw = window.sessionStorage.getItem(storageKey);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as { answers?: Record<string, number>; index?: number };
+      const valid: Record<string, number> = {};
+      for (const q of bank) {
+        if (typeof parsed.answers?.[q.id] === "number") valid[q.id] = parsed.answers[q.id];
+      }
+      return {
+        answers: valid,
+        index: Math.min(Math.max(parsed.index ?? 0, 0), bank.length),
+      };
+    } catch {
+      return null;
+    }
+    // One-time read; the bank is stable for the life of the mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const [currentIndex, setCurrentIndex] = useState(draft?.index ?? 0);
   const [animClass, setAnimClass] = useState<"slide-active" | "slide-enter" | "slide-enter-back">(
     "slide-active"
   );
   const slideRef = useRef<HTMLDivElement>(null);
-  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [answers, setAnswers] = useState<Record<string, number>>(draft?.answers ?? {});
   // Entry state is decided once, on mount: an already-passed exam opens on its
   // result, never on a blank question 1.
   const [phase, setPhase] = useState<Phase>(previouslyPassed ? "completed" : "answering");
@@ -133,6 +168,23 @@ export function PaginatedExam({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex, totalSlides, currentAnswered, isReviewSlide]);
 
+  // Write the draft through; drop it the moment the attempt passes (F1).
+  useEffect(() => {
+    if (!storageKey) return;
+    try {
+      if (passed) {
+        window.sessionStorage.removeItem(storageKey);
+      } else if (phase === "answering" && Object.keys(answers).length > 0) {
+        window.sessionStorage.setItem(
+          storageKey,
+          JSON.stringify({ answers, index: currentIndex })
+        );
+      }
+    } catch {
+      // Storage blocked or full — degrade silently to non-persistent behavior.
+    }
+  }, [answers, currentIndex, phase, passed, storageKey]);
+
   useEffect(() => {
     if (phase !== "result" || !passed || score === null || notifiedPass.current) return;
     const t = window.setTimeout(() => {
@@ -158,6 +210,14 @@ export function PaginatedExam({
   }
 
   function reset() {
+    // Deliberate fresh start — the draft goes with it.
+    if (storageKey) {
+      try {
+        window.sessionStorage.removeItem(storageKey);
+      } catch {
+        /* ignore */
+      }
+    }
     setAnswers({});
     setPhase("answering");
     setScore(null);

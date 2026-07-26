@@ -120,6 +120,43 @@ describe("PaginatedExam", () => {
     }
   });
 
+  it("restores a mid-attempt draft after unmount instead of wiping it (F1)", async () => {
+    sessionStorage.clear();
+    const key = "agentcraft-quiz-draft:test";
+
+    // First mount: answer question 1.
+    const first = render(createElement(PaginatedExam, { questions, storageKey: key }));
+    try {
+      await act(async () => {
+        first.root.render(createElement(PaginatedExam, { questions, storageKey: key }));
+      });
+      const option = Array.from(first.container.querySelectorAll("ul li button")).find((b) =>
+        b.textContent?.includes("Human-like judgment software")
+      );
+      expect(option).toBeDefined();
+      await act(async () => {
+        option!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      });
+      expect(first.container.textContent).toContain("1/2 answered");
+    } finally {
+      first.root.unmount();
+      first.container.remove();
+    }
+
+    // Simulated navigation away and back: a fresh mount restores the draft.
+    const second = render(createElement(PaginatedExam, { questions, storageKey: key }));
+    try {
+      await act(async () => {
+        second.root.render(createElement(PaginatedExam, { questions, storageKey: key }));
+      });
+      expect(second.container.textContent).toContain("1/2 answered");
+    } finally {
+      second.root.unmount();
+      second.container.remove();
+      sessionStorage.clear();
+    }
+  });
+
   it("shows one question at a time with step chrome", async () => {
     const { container, root } = render(
       createElement(PaginatedExam, { questions, label: "Exam" })
