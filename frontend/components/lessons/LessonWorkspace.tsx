@@ -66,13 +66,16 @@ type LessonWorkspaceValue = {
   next: { slug: string; title: string } | null;
   /** True when this is the module's final lesson — i.e. there is no `next`. */
   atModuleEnd: boolean;
-  /** The module that follows this one, or null at the end of the course. */
+  /**
+   * The module that follows this one. undefined while the course list is
+   * still loading (unknown); null when this is genuinely the last module.
+   */
   nextModule: {
     slug: string;
     title: string;
     totalLessons: number;
     href: string;
-  } | null;
+  } | null | undefined;
   progressPending: boolean;
   updateProgress: (data: ProgressPayload) => void;
   markVideoWatched: (details: VideoCompletionDetails) => void;
@@ -156,6 +159,9 @@ export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
   });
 
   const nextModule = useMemo(() => {
+    // undefined = course list not loaded yet (unknown); null = genuinely the
+    // last module. Callers must never claim "course complete" on unknown.
+    if (!allCourses) return undefined;
     if (!nextCourseSummary) return null;
     const firstLesson = nextCourseDetail?.lessons?.[0];
     return {
@@ -172,7 +178,7 @@ export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
           )
         : `/dashboard/courses/${nextCourseSummary.slug}`,
     };
-  }, [nextCourseSummary, nextCourseDetail]);
+  }, [allCourses, nextCourseSummary, nextCourseDetail]);
 
   // Prefetch neighbor lessons for snappy prev/next
   useEffect(() => {

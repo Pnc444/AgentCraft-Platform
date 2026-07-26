@@ -6,8 +6,12 @@ import { ArrowRight, PartyPopper, Trophy } from "lucide-react";
 interface ModuleHandoffProps {
   /** Module just finished. */
   courseTitle: string;
-  /** Null when this was the last module in the course. */
-  nextModule: { slug: string; title: string; totalLessons: number; href: string } | null;
+  /**
+   * Null only when the course list confirmed this is the last module;
+   * undefined while that is still unknown — never claim "course complete"
+   * on unknown data.
+   */
+  nextModule: { slug: string; title: string; totalLessons: number; href: string } | null | undefined;
   /** Exams get a louder headline than an ordinary final lesson. */
   isExam: boolean;
 }
@@ -25,6 +29,20 @@ interface ModuleHandoffProps {
  * out what happens next.
  */
 export function ModuleHandoff({ courseTitle, nextModule, isExam }: ModuleHandoffProps) {
+  if (nextModule === undefined) {
+    return (
+      <div className="rounded-2xl border border-craft-border bg-craft-surface px-5 py-5 shadow-soft">
+        <p className="text-base font-bold text-craft-ink">
+          {isExam ? `${courseTitle} — exam passed.` : `${courseTitle} complete.`}
+        </p>
+        <Link href="/dashboard" className="btn-primary mt-4">
+          Back to dashboard
+          <ArrowRight className="h-4 w-4 shrink-0" />
+        </Link>
+      </div>
+    );
+  }
+
   if (!nextModule) {
     return (
       <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-50 to-craft-surface px-5 py-5 shadow-soft dark:from-amber-500/10 dark:to-craft-surface">

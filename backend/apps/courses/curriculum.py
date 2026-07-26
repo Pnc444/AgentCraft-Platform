@@ -91,7 +91,7 @@ def _structured_lesson_spec(lesson_pack: dict) -> tuple:
     )
 
 
-def _structured_course_entry(course_slug: str) -> dict:
+def _structured_course_entry(course_slug: str, extra_lessons: tuple = ()) -> dict:
     course_pack = cast(dict[str, Any], STRUCTURED_COURSE_PACKS_BY_SLUG[course_slug])
     return {
         "order": course_pack["order"],
@@ -100,7 +100,8 @@ def _structured_course_entry(course_slug: str) -> dict:
         "description": course_pack["description"],
         "difficulty": course_pack["difficulty"],
         "published": course_pack.get("published", True),
-        "lessons": [_structured_lesson_spec(lesson_pack) for lesson_pack in course_pack["lessons"]],
+        "lessons": [_structured_lesson_spec(lesson_pack) for lesson_pack in course_pack["lessons"]]
+        + list(extra_lessons),
     }
 
 
@@ -164,6 +165,148 @@ def default_recap_questions(title: str, slug: str) -> list[dict]:
             "answer_index": 0,
         },
     ]
+
+
+# Module 4 exam — the authoring standard-setter (plan §6). Every item combines
+# at least two lessons or applies one to a novel scenario; none appears in any
+# recap bank (machine-checked by sync_content); wrong answers explain why and
+# name the lesson that teaches the idea.
+MODULE_4_EXAM_QUESTIONS = [
+    {
+        "id": "m4-exam-1",
+        "prompt": "Mid-errand, one of Juno's searches hits a paywalled article it cannot read. According to the loop, what happens next?",
+        "options": [
+            "Juno stops and reports that the errand failed",
+            "The failed step becomes information for the next decision, and the plan adjusts",
+            "Juno asks the human to pay for the article before continuing",
+        ],
+        "answer_index": 1,
+        "explanation": "In the loop (The Loop: Watch Juno Work), a failed step is just information for the next step — the paywall was not a crisis.",
+    },
+    {
+        "id": "m4-exam-2",
+        "prompt": "A support tool answers every customer question with a single reply and never takes steps on its own. What is it?",
+        "options": [
+            "An agent, because it uses AI to answer",
+            "A workflow, because customers follow steps to reach it",
+            "A chatbot — it answers, but it does not plan, act, and check",
+        ],
+        "answer_index": 2,
+        "explanation": "Answering well is not agency (Agents vs Chatbots): an agent plans steps, acts, and checks its own work.",
+    },
+    {
+        "id": "m4-exam-3",
+        "prompt": "Your research agent keeps re-reading the same article it already summarized. Which of the six questions did you skip when designing it?",
+        "options": [
+            "Memory — it is not tracking what it has already done",
+            "Goal — it does not know what the human wants",
+            "Tools — it is not allowed to read articles",
+        ],
+        "answer_index": 0,
+        "explanation": "Memory is the notebook (Notebook, Hands, Judgment): what the agent keeps track of so it never redoes finished work.",
+    },
+    {
+        "id": "m4-exam-4",
+        "prompt": "The support helper drafts replies, but a person clicks send. Why is the boundary drawn there?",
+        "options": [
+            "Because agents cannot write complete replies on their own",
+            "That is its stop rule: the agent's job ends at a draft, and a human decides what reaches the customer",
+            "Because email tools cannot be given to agents",
+        ],
+        "answer_index": 1,
+        "explanation": "Stop rules draw the finish line before the race (Checks and Stop Rules); the support helper from Four Agents stops at a draft on purpose.",
+    },
+    {
+        "id": "m4-exam-5",
+        "prompt": "The coding helper's check is the project's test suite. What makes that a strong check?",
+        "options": [
+            "It is an automatic judge that does not rely on the agent's own opinion of its work",
+            "Running tests makes the agent finish faster",
+            "A test suite means the agent no longer needs a stop rule",
+        ],
+        "answer_index": 0,
+        "explanation": "A check is how the agent doubts itself (Checks and Stop Rules); the test suite is an automatic judge built into the job (Four Agents).",
+    },
+    {
+        "id": "m4-exam-6",
+        "prompt": "You design a grocery-planning agent and answer five of the six questions — but skip Stop. What is the likely failure?",
+        "options": [
+            "It never starts, because it has no first step",
+            "It forgets which items it already added to the list",
+            "It keeps working past done — revising a finished list because nothing tells it it is finished",
+        ],
+        "answer_index": 2,
+        "explanation": "Without a stop rule the finish line does not exist (Checks and Stop Rules) — done never means done.",
+    },
+    {
+        "id": "m4-exam-7",
+        "prompt": "Match the everyday objects to the agent parts: the notebook, the hands, the judgment.",
+        "options": [
+            "Notebook = tools, hands = memory, judgment = reasoning",
+            "Notebook = memory, hands = tools, judgment = reasoning",
+            "Notebook = reasoning, hands = tools, judgment = memory",
+        ],
+        "answer_index": 1,
+        "explanation": "Memory keeps, tools do, reasoning decides what is next (Notebook, Hands, Judgment).",
+    },
+    {
+        "id": "m4-exam-8",
+        "prompt": "A task runs the exact same three steps every time, with nothing to decide. What should you build?",
+        "options": [
+            "An agent, because agents are always the smarter choice",
+            "A chatbot, so a human can ask it to do the steps",
+            "A checklist workflow — when nothing needs deciding, the boring choice is the right one",
+        ],
+        "answer_index": 2,
+        "explanation": "Agents earn their keep only when steps must be chosen (Agents vs Chatbots — permission to choose the boring one).",
+    },
+    {
+        "id": "m4-exam-9",
+        "prompt": "Juno's check rejects a summary. What decides what happens next?",
+        "options": [
+            "Judgment — reasoning picks the next step using what memory holds",
+            "The human, who must approve every retry",
+            "The search tool, which automatically reruns itself",
+        ],
+        "answer_index": 0,
+        "explanation": "After a check, reasoning decides the next move (Notebook, Hands, Judgment meets The Loop).",
+    },
+    {
+        "id": "m4-exam-10",
+        "prompt": "The support helper's tool is the company knowledge base. Which of the six questions do tools answer?",
+        "options": [
+            "What is the agent allowed to do and use to act?",
+            "How does the agent know its work is good?",
+            "What does the human actually want?",
+        ],
+        "answer_index": 0,
+        "explanation": "Tools are the hands — what the agent may use to act (What an Agent Actually Is; Four Agents).",
+    },
+    {
+        "id": "m4-exam-11",
+        "prompt": "Grown-up Juno delivers summaries where claims cite no sources, yet declares the errand complete. Which question was designed too weakly?",
+        "options": [
+            "Plan — it should have searched differently",
+            "Check — 'every claim traces back to a source' would have caught it before 'done'",
+            "Goal — summarizing was the wrong job",
+        ],
+        "answer_index": 1,
+        "explanation": "The research helper's check is that every claim traces to a source (Four Agents); a weak check lets bad work pass as done.",
+    },
+    {
+        "id": "m4-exam-12",
+        "prompt": "Your new agent's first search returns junk. As its designer, what should you conclude?",
+        "options": [
+            "Nothing is wrong — the first plan is a starting point, and the loop revises it",
+            "The goal was wrong and the errand should be restarted from scratch",
+            "The agent needs more tools before it can continue",
+        ],
+        "answer_index": 0,
+        "explanation": "Agents are built on the assumption that plans get revised (The Loop; Design Your Own Juno).",
+    },
+]
+
+MODULE_4_EXAM = {"questions": MODULE_4_EXAM_QUESTIONS}
 
 
 MODULE_1_WHAT_IS_AI_VIDEO_URL = "https://www.youtube-nocookie.com/embed/c0m6yaGlZh4"
@@ -1728,7 +1871,10 @@ CURRICULUM = [
             ("Hands-on Prompt Exercises", "hands-on-prompt-exercises", "interactive", 15, {"questions": MODULE_3_RECAP["hands-on-prompt-exercises"]}),
         ],
     },
-    _structured_course_entry("module-4-ai-agents"),
+    _structured_course_entry(
+        "module-4-ai-agents",
+        extra_lessons=(("Module 4 Exam", "module-4-exam", "quiz", 12, MODULE_4_EXAM),),
+    ),
     {
         "order": 6,
         "title": "Module 4.5: Docker and Environments",

@@ -9,6 +9,8 @@ export interface CheckpointQuestion {
   prompt: string;
   options: string[];
   answer_index: number;
+  /** Shown after answering: why the right answer is right, naming the lesson. */
+  explanation?: string;
 }
 
 interface CheckpointQuizProps {

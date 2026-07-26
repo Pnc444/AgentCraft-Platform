@@ -131,3 +131,20 @@ def test_derive_prefers_blocks_over_markdown():
     beats = derive_beats(content=MD, sandbox_config=config, title="T")
     assert beats[0]["source"] == "blocks"
     assert all(b["type"] != "explain" or "Hello, world" not in b.get("title", "") for b in beats)
+
+
+def test_module_4_exam_meets_the_authoring_standard():
+    """Plan §6: 12 items, none recycled from any Module 4 recap bank, every
+    item explains itself. This is the standard the other eight banks follow."""
+    from apps.courses.curriculum import CURRICULUM, MODULE_4_EXAM_QUESTIONS
+    from apps.courses.management.commands.sync_content import _module_assessment_problems
+
+    assert len(MODULE_4_EXAM_QUESTIONS) == 12
+    assert all(q.get("explanation") for q in MODULE_4_EXAM_QUESTIONS)
+    ids = [q["id"] for q in MODULE_4_EXAM_QUESTIONS]
+    assert len(set(ids)) == 12
+
+    module = next(m for m in CURRICULUM if m["slug"] == "module-4-ai-agents")
+    assert module["lessons"][-1][2] == "quiz", "the exam must be the module's last lesson"
+    problems = _module_assessment_problems(module)
+    assert problems == [], f"validator flags module 4: {problems}"

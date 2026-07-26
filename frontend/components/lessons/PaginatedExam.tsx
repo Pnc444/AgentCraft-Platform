@@ -562,6 +562,13 @@ export function PaginatedExam({
                   Select an answer to continue to the next question.
                 </p>
               )}
+              {/* After submission, say WHY the right answer is right and which
+                  lesson teaches it — never a bare score (plan §6). */}
+              {showResult && currentQuestion.explanation && (
+                <div className="rounded-xl bg-craft-soft px-4 py-3 text-sm text-craft-ink ring-1 ring-craft-border">
+                  {currentQuestion.explanation}
+                </div>
+              )}
             </div>
           ) : null}
         </div>

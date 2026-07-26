@@ -84,9 +84,17 @@ export default function LessonQuizPage() {
                 Start {nextModule.title}
                 <ArrowRight className="h-4 w-4 shrink-0" />
               </Link>
-            ) : (
+            ) : nextModule === null ? (
+              // Genuinely the last module — the course list confirmed it.
               <Link href="/dashboard" className="btn-primary">
                 You finished the course — back to dashboard
+                <ArrowRight className="h-4 w-4 shrink-0" />
+              </Link>
+            ) : (
+              // Course list still loading: never claim "course complete" on
+              // unknown data. A neutral exit is honest and always correct.
+              <Link href="/dashboard" className="btn-primary">
+                Back to dashboard
                 <ArrowRight className="h-4 w-4 shrink-0" />
               </Link>
             )
