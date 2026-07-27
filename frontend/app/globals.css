@@ -402,12 +402,27 @@ body {
     @apply mb-4;
   }
 
+  /*
+    Bold has to earn its emphasis. Lesson body text is craft-muted, and with no
+    rule of its own `strong` inherited that colour and leaned on font-weight
+    alone — which the eye barely registers against a paragraph. Lifting it to
+    craft-ink means bold is a colour step as well as a weight step, so the term
+    being defined actually reads as the term being defined.
+  */
+  .prose-lesson strong {
+    @apply font-bold text-craft-ink;
+  }
+
+  /*
+    Markers in the accent colour: a bulleted list is usually the densest thing
+    on a card, and muted discs left it looking like one undifferentiated block.
+  */
   .prose-lesson ul {
-    @apply mb-4 list-disc space-y-1 pl-5;
+    @apply mb-4 list-disc space-y-1.5 pl-5 marker:font-bold marker:text-cyan-500 dark:marker:text-cyan-400;
   }
 
   .prose-lesson ol {
-    @apply mb-4 list-decimal space-y-1 pl-5;
+    @apply mb-4 list-decimal space-y-1.5 pl-5 marker:font-bold marker:text-cyan-600 dark:marker:text-cyan-400;
   }
 
   .prose-lesson code {
