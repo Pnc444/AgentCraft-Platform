@@ -45,7 +45,7 @@ Mixing everything into one blob works in casual chat; **separating roles** makes
 
 ## Mini example (conceptual)
 
-**System:** `You are AgentCraft’s lesson tutor. Be encouraging, cite the lesson topic, stay under 150 words.`
+**System:** `You are Knight’s Academy’s lesson tutor. Be encouraging, cite the lesson topic, stay under 150 words.`
 
 **User:** `I don’t understand what a context window is.`
 

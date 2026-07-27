@@ -23,7 +23,7 @@ Strong prompts often answer:
 3. **What** material should it use?
 4. **How** should the answer look?
 
-We call this **CRAFT** in AgentCraft:
+We call this checklist **CRAFT**:
 
 - **C**ontext — background, source text, constraints
 - **R**ole — “act as a senior reviewer,” “explain like a teacher”

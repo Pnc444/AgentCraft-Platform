@@ -86,4 +86,4 @@ Products you use are often **base model + fine-tuning + safety layers + UI**. Wh
 
 ## Takeaway
 
-**Training** builds the engine once. **Inference** runs the engine on your input every time. As an AgentCraft builder you live in inference — and you design prompts, context, tools, and memory around that fact.
+**Training** builds the engine once. **Inference** runs the engine on your input every time. As an agent builder you live in inference — and you design prompts, context, tools, and memory around that fact.
