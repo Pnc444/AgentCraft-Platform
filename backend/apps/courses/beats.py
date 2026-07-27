@@ -190,10 +190,13 @@ def distribute_checks(beats: list[dict], questions: list[dict]) -> list[dict]:
 
     out: list[dict] = []
     for beat in beats:
+        # A recap closes the same seam an explain does: without this, retyping a
+        # trailing "## Takeaway" into a recap beat quietly retired the authored
+        # question that used to sit in front of it. Answer, then summarise.
         if (
             out
             and out[-1].get("type") == "explain"
-            and beat.get("type") == "explain"
+            and beat.get("type") in ("explain", "recap")
             and spare
         ):
             out.append(
@@ -221,6 +224,61 @@ def _strip_leading_title(content: str, title: str) -> str:
                 return "\n".join(lines[i + 1 :]).lstrip("\n")
         break
     return content
+
+
+# A closing section under one of these headings is a recap, not a fourth thing
+# to read. 23 lessons end this way and every one of them rendered as a
+# two-sentence explain card with a Next button — or, worse, got merged into the
+# wall of prose above it and stopped being a summary at all.
+_RECAP_HEADING = re.compile(
+    r"^(takeaways?|recap|summary|in short|what you now know)\b[:\s]*$",
+    re.IGNORECASE,
+)
+
+# Recap bullets render as plain text, so markdown emphasis would show its
+# own punctuation. Strip the markers, keep the words.
+_EMPHASIS = re.compile(r"(\*\*|__|\*|_|`)")
+_SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+")
+
+MAX_RECAP_BULLETS = 3
+
+
+def _recap_bullets(body: str) -> list[str]:
+    """Turn a closing section's prose into recap bullets, losing nothing.
+
+    Existing markdown list items are used as-is. Otherwise the prose is split
+    into sentences. If that yields more than ``MAX_RECAP_BULLETS``, the tail is
+    folded back into the last bullet rather than dropped — a summary that
+    silently loses its last sentence is worse than a long final bullet.
+    """
+    text = (body or "").strip()
+    if not text:
+        return []
+
+    items = [
+        _EMPHASIS.sub("", line.strip()[2:]).strip()
+        for line in text.split("\n")
+        if line.strip()[:2] in ("- ", "* ")
+    ]
+    if not items:
+        flat = _EMPHASIS.sub("", " ".join(text.split()))
+        items = [s.strip() for s in _SENTENCE_SPLIT.split(flat) if s.strip()]
+
+    items = [i for i in items if i]
+    if len(items) > MAX_RECAP_BULLETS:
+        head = items[: MAX_RECAP_BULLETS - 1]
+        items = head + [" ".join(items[MAX_RECAP_BULLETS - 1 :])]
+    return items
+
+
+def _as_recap(beat: dict) -> dict:
+    """Retype a closing explain beat as the recap it already was."""
+    return {
+        "type": "recap",
+        "title": beat.get("title") or "What you now know",
+        "bullets": _recap_bullets(beat.get("body") or ""),
+        "source": beat.get("source") or "fallback",
+    }
 
 
 def _section_title(section: str, fallback: str) -> tuple[str, str]:
@@ -274,6 +332,15 @@ def beats_from_markdown(
                 "source": "fallback",
             }
         )
+
+    # A closing "## Takeaway" is the lesson's recap, so it becomes the beat type
+    # that exists for it. Done before merging, or the summary gets swallowed by
+    # the prose it is meant to summarise. Never when it is the only section —
+    # a lesson that is nothing but a recap is a lesson with no content.
+    if len(beats) >= 2 and _RECAP_HEADING.match((beats[-1].get("title") or "").strip()):
+        recap = _as_recap(beats[-1])
+        if recap["bullets"]:
+            beats[-1] = recap
 
     # The recap bank is NOT appended here. It belongs to the recap quiz; adding
     # it to the content step made the learner answer the identical five

@@ -227,6 +227,70 @@ def test_two_long_sections_never_merge_into_one_wall():
     assert "x" * 700 not in beats[1]["body"]
 
 
+TAKEAWAY_MD = """# Why Docker?
+
+## The problem Docker solves
+
+""" + ("x" * 600) + """
+
+## Takeaway
+
+Docker gives every agent a clean, disposable, identical environment. Modules 5 and 6 run their agents inside Docker, so we set it up now.
+"""
+
+
+def test_trailing_takeaway_becomes_a_recap_beat():
+    """23 lessons close with '## Takeaway'. It was rendering as a two-sentence
+    explain card — or being merged into the wall of prose it summarises."""
+    beats = beats_from_markdown(TAKEAWAY_MD, title="Why Docker?")
+    assert [b["type"] for b in beats] == ["explain", "recap"]
+    assert beats[-1]["bullets"] == [
+        "Docker gives every agent a clean, disposable, identical environment.",
+        "Modules 5 and 6 run their agents inside Docker, so we set it up now.",
+    ]
+    # the summary is not also left sitting in the prose beat
+    assert "disposable" not in beats[0]["body"]
+
+
+def test_recap_bullets_drop_markdown_emphasis_but_keep_the_words():
+    """Recap bullets render as plain text, so '**System**' would show its own
+    asterisks."""
+    md = "Intro.\n\n## A\n\n" + ("x" * 600) + "\n\n## Takeaway\n\n**System** = behaviour. Use `docker --version` to check."
+    beats = beats_from_markdown(md, title="T")
+    bullets = beats[-1]["bullets"]
+    assert bullets == ["System = behaviour.", "Use docker --version to check."]
+    assert not any("*" in b or "`" in b for b in bullets)
+
+
+def test_recap_uses_existing_list_items_when_the_section_has_them():
+    md = "Intro.\n\n## A\n\n" + ("x" * 600) + "\n\n## Takeaway\n\n- First thing.\n- Second thing.\n"
+    beats = beats_from_markdown(md, title="T")
+    assert beats[-1]["bullets"] == ["First thing.", "Second thing."]
+
+
+def test_a_long_takeaway_folds_its_tail_rather_than_dropping_it():
+    """Capping at three bullets must not silently lose the fourth sentence."""
+    md = "Intro.\n\n## A\n\n" + ("x" * 600) + "\n\n## Takeaway\n\nOne. Two. Three. Four. Five."
+    beats = beats_from_markdown(md, title="T")
+    bullets = beats[-1]["bullets"]
+    assert len(bullets) == 3
+    assert bullets[-1] == "Three. Four. Five."
+
+
+def test_a_lesson_that_is_only_a_takeaway_keeps_its_content():
+    """Retyping the sole section would leave a lesson with no reading at all."""
+    beats = beats_from_markdown("## Takeaway\n\nThat's all.", title="T")
+    assert [b["type"] for b in beats] == ["explain"]
+
+
+def test_a_seam_check_still_lands_in_front_of_the_recap():
+    """The authored question that used to sit before the Takeaway must not be
+    retired just because the Takeaway changed type."""
+    seam = [{"prompt": "Which?", "options": ["a", "b"], "answer_index": 0}]
+    beats = beats_from_markdown(TAKEAWAY_MD, title="Why Docker?", seam_checks=seam)
+    assert [b["type"] for b in beats] == ["explain", "check", "recap"]
+
+
 def test_distribute_checks_never_reuses_a_question_already_asked():
     from apps.courses.beats import distribute_checks
 
