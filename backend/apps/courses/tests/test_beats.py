@@ -429,3 +429,41 @@ def test_module_1_5_videos_share_one_position_and_stay_ungated():
         assert config["require_full_watch"] is False
         # Same place in both lessons, so the module reads consistently.
         assert config["video_position"] == MODULE_1_5_VIDEO_POSITION
+
+
+def test_module_3_opening_lesson_video_sits_before_its_quick_check():
+    """The request was "before the quick check", which in this lesson is beat 2 —
+    a different index from Module 1.5's beat 3 because the seam check falls
+    earlier here. video_position counts learner-visible beats, so the number
+    means the same thing in both places."""
+    from apps.courses.beats import derive_beats
+    from apps.courses.curriculum import (
+        MODULE_3_PROMPTS_VIDEO_URL,
+        MODULE_3_RECAP,
+        MODULE_3_SEAM_CHECKS,
+        CURRICULUM,
+        load_content,
+    )
+
+    module = next(m for m in CURRICULUM if m["slug"] == "module-3-prompting")
+    config = next(l for l in module["lessons"] if l[1] == "what-prompts-are")[4]
+    assert config["video_url"] == MODULE_3_PROMPTS_VIDEO_URL
+    assert "?si=" not in config["video_url"]
+    assert config["require_full_watch"] is False
+
+    beats = derive_beats(
+        content=load_content("module-3-prompting", "what-prompts-are", "What Prompts Are"),
+        sandbox_config={
+            "questions": MODULE_3_RECAP["what-prompts-are"],
+            "checkpoint_questions": MODULE_3_SEAM_CHECKS["what-prompts-are"],
+            "video_position": config["video_position"],
+        },
+        # video_url is its own parameter: sync_content pops it out of the spec
+        # config and the serializer reads it off the model column.
+        video_url=config["video_url"],
+        title="What Prompts Are",
+        require_full_watch=False,
+    )
+    kinds = [b.get("action") or b["type"] for b in beats]
+    assert kinds[1] == "video", f"video must be beat 2, got {kinds}"
+    assert kinds[2] == "check", "the quick check must follow the video"

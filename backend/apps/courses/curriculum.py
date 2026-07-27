@@ -492,6 +492,11 @@ MODULE_1_5_CONTEXT_VIDEO_URL = "https://www.youtube-nocookie.com/embed/eW3oTyfeW
 MODULE_1_5_TOKENS_VIDEO_URL = "https://www.youtube-nocookie.com/embed/OjrGu0L5K7M"
 MODULE_1_5_TRAINING_VIDEO_URL = "https://www.youtube-nocookie.com/embed/gZYrSZHHZns"
 
+# Module 3: prompting overview, on the opening lesson. Position 2 rather than 1.5's
+# 3 because this lesson's seam check falls earlier — the request was "before the
+# quick check", and video_position counts the beats the learner sees.
+MODULE_3_PROMPTS_VIDEO_URL = "https://www.youtube-nocookie.com/embed/LAF-lACf2QY"
+
 # All three Module 1.5 videos sit at the same place in their lesson: beat 3, after the
 # opening explanation and its check, before the second teaching beat. Position is
 # 1-based and counts the beats the learner sees, matching the player's "3 / 8".
@@ -2951,6 +2956,14 @@ CURRICULUM = [
             ("What Prompts Are", "what-prompts-are", "theory", 8, {
                     "questions": MODULE_3_RECAP["what-prompts-are"],
                     "checkpoint_questions": MODULE_3_SEAM_CHECKS["what-prompts-are"],
+                    "video_url": MODULE_3_PROMPTS_VIDEO_URL,
+                    "video_position": 2,
+                    # Supplementary, like every video outside Module 1: the prose
+                    # teaches prompting, so the recap quiz is not gated on it.
+                    "require_full_watch": False,
+                    # No video_title yet — nobody has said what this one shows,
+                    # and a title I invent is a claim I cannot verify. Falls back
+                    # to "Watch the video".
                 }),
             ("How Context Affects Responses", "how-context-affects-responses", "theory", 10, {
                     "questions": MODULE_3_RECAP["how-context-affects-responses"],
