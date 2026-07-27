@@ -8,6 +8,8 @@ export interface User {
   role: "student" | "ai_instructor";
   skill_profile: Record<string, number>;
   avatar: string | null;
+  /** Staff bypass every lesson gate — see `canBypassGates`. Read-only from the API. */
+  is_staff?: boolean;
 }
 
 export type LessonStatus = "not_started" | "in_progress" | "completed" | "stuck";

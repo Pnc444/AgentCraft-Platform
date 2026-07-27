@@ -85,8 +85,14 @@ class UserSerializer(serializers.ModelSerializer):
             "role",
             "skill_profile",
             "avatar",
+            # Staff bypass the lesson gates (module locks, video-before-quiz)
+            # so content can be reviewed without playing the course through.
+            # READ-ONLY IS LOAD-BEARING: this endpoint accepts PATCH, so a
+            # writable is_staff would let any student grant themselves the
+            # bypass — and Django staff also opens /admin/.
+            "is_staff",
         ]
-        read_only_fields = ["id", "role", "skill_profile"]
+        read_only_fields = ["id", "role", "skill_profile", "is_staff"]
 
     def validate_username(self, value):
         username = (value or "").strip()

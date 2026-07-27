@@ -6,6 +6,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Award, Lock, ScrollText } from "lucide-react";
 import { getCourses } from "@/lib/api/courses";
 import { usePageChrome } from "@/stores/pageChrome";
+import { useCanBypassGates } from "@/lib/gates";
 import {
   TRACK_LESSON_TITLE,
   currentModule,
@@ -20,6 +21,7 @@ import {
  * Badge awards stay on Profile. Certificate artwork + typed name overlay come later.
  */
 export default function CertificatesPage() {
+  const canBypassGates = useCanBypassGates();
   const setChrome = usePageChrome((s) => s.setChrome);
   const clearChrome = usePageChrome((s) => s.clearChrome);
   const queryClient = useQueryClient();
@@ -37,7 +39,9 @@ export default function CertificatesPage() {
 
   const modules = useMemo(() => trackModulesFrom(allCourses ?? []), [allCourses]);
   const hasLesson = modules.length > 0;
-  const unlocked = hasLesson && modules.every(isModuleComplete);
+  // Staff see the certificate slot open so the finished state can be reviewed
+  // without completing all ten modules first.
+  const unlocked = hasLesson && (canBypassGates || modules.every(isModuleComplete));
   const unlockedCount = unlocked ? 1 : 0;
   const total = hasLesson ? 1 : 0;
   const continueModule = currentModule(modules) ?? modules[0];

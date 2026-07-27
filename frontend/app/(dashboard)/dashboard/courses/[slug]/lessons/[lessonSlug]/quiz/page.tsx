@@ -11,6 +11,7 @@ import {
   isExamLessonType,
   lessonStepHref,
 } from "@/lib/lesson-steps";
+import { useCanBypassGates } from "@/lib/gates";
 
 /**
  * The assessment step, and the last screen of a lesson.
@@ -23,6 +24,7 @@ import {
  */
 export default function LessonQuizPage() {
   const router = useRouter();
+  const canBypassGates = useCanBypassGates();
   const {
     slug,
     lessonSlug,
@@ -96,7 +98,7 @@ export default function LessonQuizPage() {
           previouslyPassed={lesson.status === "completed"}
           previousScore={lesson.score}
           storageKey={`agentcraft-quiz-draft:${lesson.id}`}
-          locked={needsVideo && !videoDone}
+          locked={needsVideo && !videoDone && !canBypassGates}
           lockedReason={`Watch the lesson video to the end before taking the ${assessmentLabel}.`}
           onLockedAction={() => {
             setNotice(

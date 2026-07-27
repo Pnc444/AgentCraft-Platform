@@ -20,6 +20,7 @@ import { LessonCapstoneStudio } from "@/components/lessons/LessonCapstoneStudio"
 import { LessonSandbox } from "@/components/lessons/LessonSandbox";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 import { getCapstoneAssignment, lessonStepHref } from "@/lib/lesson-steps";
+import { useCanBypassGates } from "@/lib/gates";
 import type { Beat, CheckpointQuestion, LessonArtifact, SandboxSpec } from "@/types";
 
 /**
@@ -28,6 +29,7 @@ import type { Beat, CheckpointQuestion, LessonArtifact, SandboxSpec } from "@/ty
  */
 export function LessonPlayer() {
   const router = useRouter();
+  const canBypassGates = useCanBypassGates();
   const { slug, lessonSlug, lesson, course, needsVideo, videoDone, markVideoWatched, artifactBundle } =
     useLessonWorkspace();
   const beats = (lesson?.beats ?? []) as Beat[];
@@ -80,8 +82,13 @@ export function LessonPlayer() {
   const pickedCorrect =
     !!checkQuestion && picks[index] === checkQuestion.answer_index;
 
+  // Staff step through beats freely. Every condition below is a teaching
+  // device — commit a guess, answer correctly, watch to the end, open the
+  // files — and all of them are obstacles when the job is reading the lesson
+  // rather than learning it.
   const satisfied =
     !beat ||
+    canBypassGates ||
     (beat.type === "predict"
       ? !!revealed[index]
       : beat.type === "check"

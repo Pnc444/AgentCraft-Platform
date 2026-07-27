@@ -12,6 +12,7 @@ import { entryStepForLessonType, lessonStepHref } from "@/lib/lesson-steps";
 import { nextModule } from "@/components/dashboard/LessonFeatureCard";
 import { Reveal } from "@/components/shared/Reveal";
 import { usePageChrome } from "@/stores/pageChrome";
+import { useCanBypassGates } from "@/lib/gates";
 import {
   TRACK_LESSON_TITLE,
   currentModule,
@@ -27,8 +28,14 @@ function resumeHref(course: CourseDetail) {
   return lessonStepHref(course.slug, step.slug, entryStepForLessonType(step.lesson_type));
 }
 
-/** Module is unlocked if it's the first, or the previous module is complete. */
-function isModuleUnlocked(modules: CourseDetail[], index: number) {
+/**
+ * Module is unlocked if it's the first, or the previous module is complete.
+ *
+ * `bypass` is the staff exemption: reviewing Module 7 should not require
+ * playing Modules 1-6 through first.
+ */
+function isModuleUnlocked(modules: CourseDetail[], index: number, bypass = false) {
+  if (bypass) return true;
   if (index <= 0) return true;
   return isModuleComplete(modules[index - 1]);
 }
@@ -36,6 +43,7 @@ function isModuleUnlocked(modules: CourseDetail[], index: number) {
 /** Module overview for Creating an AI Agent — status per module. */
 export default function ModuleOverviewPage() {
   const { slug } = useParams<{ slug: string }>();
+  const canBypassGates = useCanBypassGates();
   const setChrome = usePageChrome((s) => s.setChrome);
   const clearChrome = usePageChrome((s) => s.clearChrome);
   const queryClient = useQueryClient();
@@ -104,7 +112,7 @@ export default function ModuleOverviewPage() {
       <ul className="mt-4 space-y-2">
         {trackModules.map((mod, i) => {
           const done = isModuleComplete(mod);
-          const unlocked = isModuleUnlocked(trackModules, i);
+          const unlocked = isModuleUnlocked(trackModules, i, canBypassGates);
           const started = moduleHasStarted(mod);
           const activeMod = mod.slug === active?.slug;
           const href = unlocked ? resumeHref(mod) : undefined;
