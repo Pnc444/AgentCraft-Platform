@@ -1483,6 +1483,28 @@ MODULE_7_SEAM_CHECKS = {
             "answer_index": 1,
             "explanation": "The prompt shows the working directory, and that directory is the agent's default territory — so the first run happens in an empty practice folder, not your real files.",
         },
+        {
+            "id": "m7-inst-seam4",
+            "prompt": "The installer finishes and prints where it put `claude`. Why does the lesson tell you to close that terminal and open a new one before verifying?",
+            "options": [
+                "So the download finishes writing to disk",
+                "PATH changes only apply to terminals opened afterwards, so the window you installed from cannot find the command",
+                "Because the installer locks the terminal until it is closed",
+            ],
+            "answer_index": 1,
+            "explanation": "A terminal reads PATH when it starts. The install window was opened before the change, so it never sees it — the new terminal does.",
+        },
+        {
+            "id": "m7-inst-seam5",
+            "prompt": "`claude --version` comes back with \"command not found\". According to the troubleshooting section, what has actually gone wrong?",
+            "options": [
+                "The install failed and has to be run again from scratch",
+                "The account has no credits yet, so the command is disabled",
+                "Nothing is missing — the program is on disk and the terminal just does not know where to look",
+            ],
+            "answer_index": 2,
+            "explanation": "It is a PATH problem, not a failed install. Restart the terminal first; if it still fails, add the installer's folder to PATH yourself.",
+        },
     ],
     "claudemd-and-skills": [
         {
@@ -1517,6 +1539,28 @@ MODULE_7_SEAM_CHECKS = {
             ],
             "answer_index": 1,
             "explanation": "If the second run rewrites the file, step 4 was not clear enough. Editing the prose *is* the debugging — that is what programming an agent looks like here.",
+        },
+        {
+            "id": "m7-cmd-seam4",
+            "prompt": "This lesson has you ask the agent to write CLAUDE.md instead of typing it yourself. What does it tell you to do the moment the file lands?",
+            "options": [
+                "Open it and check it says what you asked — read what the agent wrote before you trust it",
+                "Immediately start a new session; reading it back wastes context",
+                "Nothing — the permission prompt already confirmed the content",
+            ],
+            "answer_index": 0,
+            "explanation": "Approving a write is not the same as verifying it. If the agent paraphrased or reformatted, you tell it to fix it before the test proves anything.",
+        },
+        {
+            "id": "m7-cmd-seam5",
+            "prompt": "Your skill fires correctly from a natural phrase, but the `/` command list says \"No skills found\". What does the lesson say to try?",
+            "options": [
+                "Rename the folder to `skills/daily-log/` without the leading dot",
+                "Rewrite the `description:` line until the list picks it up",
+                "Close the terminal completely and open a new one — `/exit` alone is not always enough",
+            ],
+            "answer_index": 2,
+            "explanation": "A newly created skill does not always register in the `/` list until the terminal itself restarts. The path and description are fine if the skill already triggers.",
         },
     ],
     "custom-subagents": [
