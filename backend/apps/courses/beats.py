@@ -126,6 +126,20 @@ def explain_streak_problems(beats: list[dict], *, lesson_label: str = "lesson") 
 MERGE_MAX_CHARS = 1100
 
 
+_LEADING_HEADING = re.compile(r"^#{1,6}\s+.*?$\n*", re.MULTILINE)
+
+
+def _body_without_heading(body: str) -> str:
+    """The body minus the heading the fallback keeps at the top of it.
+
+    Used wherever the heading is chrome rather than content: measuring how much
+    prose a screen holds, and turning a closing section into recap bullets.
+    """
+    text = (body or "").lstrip()
+    match = _LEADING_HEADING.match(text)
+    return text[match.end() :] if match else text
+
+
 def _is_plain_explain(beat: dict) -> bool:
     """An explain beat carrying nothing but a title and body."""
     return (
@@ -149,12 +163,21 @@ def merge_adjacent_explains(beats: list[dict], *, limit: int = MERGE_MAX_CHARS) 
             previous is not None
             and _is_plain_explain(previous)
             and _is_plain_explain(beat)
-            and len(previous.get("body") or "") + len(beat.get("body") or "") <= limit
+            # Measured on prose, not on the headings the fallback keeps inline.
+            # Counting those made a section's own title push it over the screen
+            # budget, un-merging pairs that had always fitted before.
+            and len(_body_without_heading(previous.get("body") or ""))
+            + len(_body_without_heading(beat.get("body") or "")) <= limit
         ):
             merged = dict(previous)
             body = (merged.get("body") or "").rstrip()
             heading = (beat.get("title") or "").strip()
             addition = (beat.get("body") or "").lstrip()
+            # The absorbed body may already lead with its own heading (the
+            # markdown fallback now keeps it there). Adding a second copy is
+            # how you get "## Tokens" twice in a row on one screen.
+            if heading and addition.startswith(f"## {heading}"):
+                heading = ""
             merged["body"] = "\n\n".join(
                 part for part in (body, f"## {heading}" if heading else "", addition) if part
             )
@@ -251,7 +274,7 @@ def _recap_bullets(body: str) -> list[str]:
     folded back into the last bullet rather than dropped — a summary that
     silently loses its last sentence is worse than a long final bullet.
     """
-    text = (body or "").strip()
+    text = _body_without_heading(body).strip()
     if not text:
         return []
 
@@ -279,6 +302,22 @@ def _as_recap(beat: dict) -> dict:
         "bullets": _recap_bullets(beat.get("body") or ""),
         "source": beat.get("source") or "fallback",
     }
+
+
+def _with_inline_heading(section: str, section_title: str, section_body: str) -> str:
+    """Keep a real section heading at the top of the beat body.
+
+    The card chrome shows the beat title too. That repetition is deliberate:
+    the chrome line is a label in a bar the learner reads as navigation, so on
+    its own it left the content pane starting cold on body text.
+
+    Returns the body unchanged when the section had no heading of its own —
+    ``_section_title`` invents one for chrome in that case, and echoing an
+    invented "Read" into the prose would be noise.
+    """
+    if not section_title or not _H_LINE.match(section.strip()):
+        return section_body
+    return f"## {section_title}\n\n{section_body}".rstrip()
 
 
 def _section_title(section: str, fallback: str) -> tuple[str, str]:
@@ -324,11 +363,17 @@ def beats_from_markdown(
         section_title, section_body = _section_title(section, "Read" if index else (title or "Read"))
         if not section_body and not section_title:
             continue
+        # The heading stays in the body as well as going to the card chrome.
+        # Promoting it out left the content pane opening on a bare wall of
+        # prose with nothing to catch the eye — and it made the first section
+        # the odd one out, since every *absorbed* section already keeps its
+        # heading inline when beats merge. Only real headings are echoed: the
+        # fallback titles ("Read", the lesson name) are chrome, not content.
         beats.append(
             {
                 "type": "explain",
                 "title": section_title,
-                "body": section_body,
+                "body": _with_inline_heading(section, section_title, section_body),
                 "source": "fallback",
             }
         )

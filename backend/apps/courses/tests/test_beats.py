@@ -227,6 +227,43 @@ def test_two_long_sections_never_merge_into_one_wall():
     assert "x" * 700 not in beats[1]["body"]
 
 
+def test_section_heading_stays_in_the_body_as_well_as_the_chrome():
+    """The content pane was opening on bare prose: the heading had been
+    promoted out to the card's title bar, so a card began with no anchor for
+    the eye. It now appears in both places, on purpose."""
+    beats = beats_from_markdown(MD, title="Your First Containers")
+    body = beats[0]["body"]
+    assert body.lstrip().startswith("## 1. Hello, world") or "## 1. Hello, world" in body
+    # and the chrome title is unchanged
+    assert beats[0]["title"] == "Your First Containers"
+
+
+def test_an_invented_section_title_is_not_echoed_into_the_prose():
+    """A section with no heading of its own gets one invented for the chrome.
+    Writing 'Read' into the body would be noise."""
+    beats = beats_from_markdown("Just prose, no headings at all.", title="T")
+    assert beats[0]["title"] == "T"
+    assert beats[0]["body"] == "Just prose, no headings at all."
+    assert not beats[0]["body"].startswith("##")
+
+
+def test_a_merged_section_heading_is_not_written_twice():
+    """The absorbed body already leads with its heading, so the merge must not
+    add a second copy."""
+    beats = beats_from_markdown(MD, title="Your First Containers")
+    assert len(beats) == 1
+    assert beats[0]["body"].count("## 1. Hello, world") == 1
+    assert beats[0]["body"].count("## 2. A real web server") == 1
+
+
+def test_headings_do_not_count_against_the_merge_budget():
+    """Keeping the heading inline lengthened every body. Counting those
+    characters un-merged pairs that had always fitted on one screen."""
+    md = "## A\n\n" + ("x" * 549) + "\n\n## B\n\n" + ("y" * 549)
+    beats = beats_from_markdown(md, title="T")
+    assert [b["type"] for b in beats] == ["explain"]
+
+
 TAKEAWAY_MD = """# Why Docker?
 
 ## The problem Docker solves
@@ -248,6 +285,8 @@ def test_trailing_takeaway_becomes_a_recap_beat():
         "Docker gives every agent a clean, disposable, identical environment.",
         "Modules 5 and 6 run their agents inside Docker, so we set it up now.",
     ]
+    # the inline heading the fallback keeps is chrome, not a bullet
+    assert not any(b.startswith("#") or b == "Takeaway" for b in beats[-1]["bullets"])
     # the summary is not also left sitting in the prose beat
     assert "disposable" not in beats[0]["body"]
 
