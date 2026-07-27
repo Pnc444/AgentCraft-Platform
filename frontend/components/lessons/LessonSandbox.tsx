@@ -182,7 +182,7 @@ export function LessonSandbox({
                 complete
                   ? "border-emerald-500/30 bg-emerald-50/60 dark:bg-emerald-500/10"
                   : active
-                    ? "border-cyan-500/40 bg-craft-surface shadow-soft"
+                    ? "border-violet-500/40 bg-craft-surface shadow-soft"
                     : "border-craft-border bg-craft-surface/50 opacity-70"
               )}
             >
@@ -194,7 +194,7 @@ export function LessonSandbox({
                     className={clsx(
                       "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[10px] font-bold",
                       active
-                        ? "bg-cyan-500 text-white"
+                        ? "bg-violet-500 text-white"
                         : "bg-craft-soft text-craft-faint"
                     )}
                   >
@@ -224,7 +224,7 @@ export function LessonSandbox({
                         <button
                           type="button"
                           onClick={() => setHintFor(task.id)}
-                          className="text-xs font-medium text-cyan-700 underline underline-offset-2 dark:text-cyan-300"
+                          className="text-xs font-medium text-violet-700 underline underline-offset-2 dark:text-violet-300"
                         >
                           Show hint
                         </button>
@@ -240,7 +240,7 @@ export function LessonSandbox({
 
       <div className="overflow-hidden rounded-xl border border-craft-border bg-craft-navy shadow-elevated">
         <div className="flex items-center gap-2 border-b border-white/10 px-3.5 py-2">
-          <TerminalSquare className="h-3.5 w-3.5 text-cyan-300" />
+          <TerminalSquare className="h-3.5 w-3.5 text-violet-300" />
           <p className="text-xs font-medium text-slate-200">Practice terminal</p>
           <p className="ml-auto text-[11px] text-slate-400">
             Simulated · nothing runs on your machine
@@ -260,7 +260,7 @@ export function LessonSandbox({
             if (line.kind === "command") {
               return (
                 <p key={i} className="text-slate-100">
-                  <span className="select-none text-cyan-400">$ </span>
+                  <span className="select-none text-violet-400">$ </span>
                   {line.text}
                 </p>
               );
@@ -294,7 +294,7 @@ export function LessonSandbox({
           }}
           className="flex items-center gap-2 border-t border-white/10 px-3.5 py-2.5"
         >
-          <span className="select-none font-mono text-xs text-cyan-400">$</span>
+          <span className="select-none font-mono text-xs text-violet-400">$</span>
           <input
             ref={inputRef}
             value={draft}

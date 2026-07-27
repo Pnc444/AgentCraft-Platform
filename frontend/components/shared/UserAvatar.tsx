@@ -30,7 +30,7 @@ export function UserAvatar({ size = "sm", className, src, username }: UserAvatar
         src={avatar}
         alt=""
         className={clsx(
-          "shrink-0 rounded-full object-cover ring-1 ring-cyan-400/30",
+          "shrink-0 rounded-full object-cover ring-1 ring-violet-400/30",
           sizeCls[size],
           className
         )}
@@ -41,7 +41,7 @@ export function UserAvatar({ size = "sm", className, src, username }: UserAvatar
   return (
     <span
       className={clsx(
-        "flex shrink-0 items-center justify-center rounded-full bg-cyan-500/15 font-bold text-cyan-700 dark:text-cyan-300",
+        "flex shrink-0 items-center justify-center rounded-full bg-violet-500/15 font-bold text-violet-700 dark:text-violet-300",
         sizeCls[size],
         className
       )}

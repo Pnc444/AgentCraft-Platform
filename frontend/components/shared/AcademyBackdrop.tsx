@@ -30,7 +30,7 @@ export function AcademyBackdrop({ className, subtle = false }: AcademyBackdropPr
       <div
         className={clsx(
           "academy-glow absolute rounded-full blur-3xl",
-          "bg-cyan-200/40 dark:bg-cyan-400/15",
+          "bg-violet-200/40 dark:bg-violet-400/15",
           subtle
             ? "right-[-4rem] top-0 h-[22rem] w-[22rem]"
             : "right-0 top-24 h-[28rem] w-[28rem]"

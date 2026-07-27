@@ -1,4 +1,4 @@
-# AgentCraft
+# Knight's Academy
 
 A hands-on course platform that takes someone with no AI background and gets
 them building real AI agents. Ten modules, 57 lessons, three agent builds

@@ -333,6 +333,18 @@ export function LessonVideo({
             }
 
             if (event.data === ended) {
+              const duration = player?.getDuration?.() ?? durationSecondsRef.current;
+              if (Number.isFinite(duration) && duration > 0) {
+                durationSecondsRef.current = duration;
+                maxWatchedSecondsRef.current = Math.max(
+                  maxWatchedSecondsRef.current,
+                  duration
+                );
+              } else {
+                // ENDED without a usable duration still means the video finished.
+                durationSecondsRef.current = Math.max(durationSecondsRef.current, 1);
+                maxWatchedSecondsRef.current = durationSecondsRef.current;
+              }
               if (emitCompletion("youtube")) {
                 return;
               }

@@ -25,11 +25,11 @@ export function ThemeToggle({ className, compact = false, inverted = false }: Th
       disabled={!ready || transitioning}
       className={clsx(
         "inline-flex items-center justify-center gap-2 rounded-full border transition duration-300",
-        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500",
+        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500",
         "disabled:opacity-60",
         inverted
-          ? "border-cyan-300/50 bg-cyan-400/15 text-cyan-100 shadow-[0_0_0_1px_rgba(103,232,249,0.25)] hover:border-cyan-200 hover:bg-cyan-400/25"
-          : "border-craft-border bg-craft-surface text-craft-ink shadow-soft hover:border-cyan-400/50 hover:shadow-card",
+          ? "border-violet-300/50 bg-violet-400/15 text-violet-100 shadow-[0_0_0_1px_rgba(103,232,249,0.25)] hover:border-violet-200 hover:bg-violet-400/25"
+          : "border-craft-border bg-craft-surface text-craft-ink shadow-soft hover:border-violet-400/50 hover:shadow-card",
         compact ? "h-9 w-9" : "px-3 py-2 text-sm font-medium",
         className
       )}
@@ -37,9 +37,9 @@ export function ThemeToggle({ className, compact = false, inverted = false }: Th
       title={isDark ? "Light mode" : "Dark mode"}
     >
       {isDark ? (
-        <Sun className="h-4 w-4 text-cyan-200" />
+        <Sun className="h-4 w-4 text-violet-200" />
       ) : (
-        <Moon className={clsx("h-4 w-4", inverted ? "text-cyan-100" : "text-cyan-700")} />
+        <Moon className={clsx("h-4 w-4", inverted ? "text-violet-100" : "text-violet-700")} />
       )}
       {!compact && <span>{isDark ? "Light" : "Dark"}</span>}
     </button>

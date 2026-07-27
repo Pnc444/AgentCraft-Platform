@@ -138,8 +138,8 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "AgentCraft API",
-    "DESCRIPTION": "Learn AI agents from zero — API for the AgentCraft learning platform",
+    "TITLE": "Knight's Academy API",
+    "DESCRIPTION": "Learn AI agents from zero — API for the Knight's Academy learning platform",
     "VERSION": "1.0.0",
 }
 

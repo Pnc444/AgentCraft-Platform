@@ -76,8 +76,8 @@ export function LessonWorkbench({ artifacts, paths, instructions, onAllOpened }:
   return (
     <div className="space-y-3">
       {instructions.length > 0 && (
-        <div className="rounded-xl border border-cyan-500/25 px-4 py-3">
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
+        <div className="rounded-xl border border-violet-500/25 px-4 py-3">
+          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-violet-700 dark:text-violet-300">
             <ListChecks className="h-3.5 w-3.5 shrink-0" />
             Try this now
           </p>
@@ -104,7 +104,7 @@ export function LessonWorkbench({ artifacts, paths, instructions, onAllOpened }:
                   className={clsx(
                     "flex w-full items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-1.5 text-left font-mono text-xs transition",
                     active === file.path
-                      ? "bg-craft-accent-soft text-cyan-800 dark:text-cyan-200"
+                      ? "bg-craft-accent-soft text-violet-800 dark:text-violet-200"
                       : "text-craft-ink hover:bg-craft-soft"
                   )}
                 >

@@ -3,7 +3,7 @@ from __future__ import annotations
 STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the six questions that describe any agent, and '
                  'design your own on paper. No installs, no jargon, one idea at a time.',
   'difficulty': 2,
-  'lessons': [{'ai_tutor_prompt': 'You are the AgentCraft course tutor for the lesson "What an '
+  'lessons': [{'ai_tutor_prompt': 'You are the Knight\'s Academy course tutor for the lesson "What an '
                                   'Agent Actually Is".\n'
                                   '\n'
                                   'Who you are teaching: an intelligent adult beginner with zero '
@@ -175,7 +175,7 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                'skill_templates': [],
                'slug': 'what-an-ai-agent-is',
                'title': 'What an Agent Actually Is'},
-              {'ai_tutor_prompt': 'You are the AgentCraft course tutor for the lesson "Answerer, '
+              {'ai_tutor_prompt': 'You are the Knight\'s Academy course tutor for the lesson "Answerer, '
                                   'Checklist, or Agent?".\n'
                                   '\n'
                                   'Who you are teaching: an intelligent adult beginner with zero '
@@ -337,7 +337,7 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                'skill_templates': [],
                'slug': 'agents-vs-chatbots',
                'title': 'Answerer, Checklist, or Agent?'},
-              {'ai_tutor_prompt': 'You are the AgentCraft course tutor for the lesson "The Loop: '
+              {'ai_tutor_prompt': 'You are the Knight\'s Academy course tutor for the lesson "The Loop: '
                                   'Watch Juno Work".\n'
                                   '\n'
                                   'Who you are teaching: an intelligent adult beginner with zero '
@@ -500,7 +500,7 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                'skill_templates': [],
                'slug': 'basic-agent-workflow',
                'title': 'The Loop: Watch Juno Work'},
-              {'ai_tutor_prompt': 'You are the AgentCraft course tutor for the lesson "Checks and '
+              {'ai_tutor_prompt': 'You are the Knight\'s Academy course tutor for the lesson "Checks and '
                                   'Stop Rules".\n'
                                   '\n'
                                   'Who you are teaching: an intelligent adult beginner with zero '
@@ -658,7 +658,7 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                'skill_templates': [],
                'slug': 'knowing-when-to-stop',
                'title': 'Checks and Stop Rules'},
-              {'ai_tutor_prompt': 'You are the AgentCraft course tutor for the lesson "Notebook, '
+              {'ai_tutor_prompt': 'You are the Knight\'s Academy course tutor for the lesson "Notebook, '
                                   'Hands, Judgment".\n'
                                   '\n'
                                   'Who you are teaching: an intelligent adult beginner with zero '
@@ -811,7 +811,7 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                'skill_templates': [],
                'slug': 'memory-tools-reasoning',
                'title': 'Notebook, Hands, Judgment'},
-              {'ai_tutor_prompt': 'You are the AgentCraft course tutor for the lesson "Four Agents '
+              {'ai_tutor_prompt': 'You are the Knight\'s Academy course tutor for the lesson "Four Agents '
                                   'You Already Understand".\n'
                                   '\n'
                                   'Who you are teaching: an intelligent adult beginner with zero '
@@ -975,7 +975,7 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                'skill_templates': [],
                'slug': 'examples-of-real-ai-agents',
                'title': 'Four Agents You Already Understand'},
-              {'ai_tutor_prompt': 'You are the AgentCraft course tutor for the lesson "Design Your '
+              {'ai_tutor_prompt': 'You are the Knight\'s Academy course tutor for the lesson "Design Your '
                                   'Own Juno (On Paper)".\n'
                                   '\n'
                                   'Who you are teaching: an intelligent adult beginner with zero '
@@ -1155,7 +1155,7 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                  'Everything is reversible, and one command always tells you the system is '
                  'healthy.',
   'difficulty': 2,
-  'lessons': [{'ai_tutor_prompt': 'You are the AgentCraft course tutor for the lesson "Set Up the '
+  'lessons': [{'ai_tutor_prompt': 'You are the Knight\'s Academy course tutor for the lesson "Set Up the '
                                   'Home Base".\n'
                                   '\n'
                                   'Who you are teaching: an intelligent adult beginner with zero '
@@ -1376,7 +1376,7 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                'skill_templates': [],
                'slug': 'configuration',
                'title': 'Set Up the Home Base'},
-              {'ai_tutor_prompt': 'You are the AgentCraft course tutor for the lesson "Teach It '
+              {'ai_tutor_prompt': 'You are the Knight\'s Academy course tutor for the lesson "Teach It '
                                   'Skills".\n'
                                   '\n'
                                   'Who you are teaching: an intelligent adult beginner with zero '
@@ -1582,7 +1582,7 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                                    'security-audit-helper'],
                'slug': 'adding-skills',
                'title': 'Teach It Skills'},
-              {'ai_tutor_prompt': 'You are the AgentCraft course tutor for the lesson "Open the '
+              {'ai_tutor_prompt': 'You are the Knight\'s Academy course tutor for the lesson "Open the '
                                   'Front Door (Just a Crack)".\n'
                                   '\n'
                                   'Who you are teaching: an intelligent adult beginner with zero '
@@ -1781,7 +1781,7 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                'skill_templates': [],
                'slug': 'channel',
                'title': 'Open the Front Door (Just a Crack)'},
-              {'ai_tutor_prompt': 'You are the AgentCraft course tutor for the lesson "The Safety '
+              {'ai_tutor_prompt': 'You are the Knight\'s Academy course tutor for the lesson "The Safety '
                                   'Sweep".\n'
                                   '\n'
                                   'Who you are teaching: an intelligent adult beginner with zero '
@@ -2005,7 +2005,7 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                  'guardrails and permissions around it, gather four kinds of evidence, and make a '
                  'clear, final release decision. This module ends with a decision, not a feeling.',
   'difficulty': 3,
-  'lessons': [{'ai_tutor_prompt': 'You are the AgentCraft course tutor for the lesson "Work That '
+  'lessons': [{'ai_tutor_prompt': 'You are the Knight\'s Academy course tutor for the lesson "Work That '
                                   'Runs While You\'re Away".\n'
                                   '\n'
                                   'Who you are teaching: an intelligent adult beginner with zero '
@@ -2185,7 +2185,7 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                'skill_templates': [],
                'slug': 'automation-examples',
                'title': "Work That Runs While You're Away"},
-              {'ai_tutor_prompt': 'You are the AgentCraft course tutor for the lesson "Guardrails: '
+              {'ai_tutor_prompt': 'You are the Knight\'s Academy course tutor for the lesson "Guardrails: '
                                   'Values and Seatbelts".\n'
                                   '\n'
                                   'Who you are teaching: an intelligent adult beginner with zero '
@@ -2378,7 +2378,7 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                'skill_templates': [],
                'slug': 'guardrails',
                'title': 'Guardrails: Values and Seatbelts'},
-              {'ai_tutor_prompt': 'You are the AgentCraft course tutor for the lesson '
+              {'ai_tutor_prompt': 'You are the Knight\'s Academy course tutor for the lesson '
                                   '"Permissions: Three Kinds of Doors".\n'
                                   '\n'
                                   'Who you are teaching: an intelligent adult beginner with zero '
@@ -2574,7 +2574,7 @@ STRUCTURED_COURSE_PACKS = [{'description': 'Meet one small AI helper, learn the 
                'skill_templates': [],
                'slug': 'permissions',
                'title': 'Permissions: Three Kinds of Doors'},
-              {'ai_tutor_prompt': 'You are the AgentCraft course tutor for the lesson "The Release '
+              {'ai_tutor_prompt': 'You are the Knight\'s Academy course tutor for the lesson "The Release '
                                   'Decision".\n'
                                   '\n'
                                   'Who you are teaching: an intelligent adult beginner with zero '

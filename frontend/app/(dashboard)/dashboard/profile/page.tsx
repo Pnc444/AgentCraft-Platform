@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
@@ -11,54 +11,75 @@ import { UserAvatar } from "@/components/shared/UserAvatar";
 import { Reveal } from "@/components/shared/Reveal";
 import { getDashboardStats } from "@/lib/api/courses";
 import { useAuthStore } from "@/stores/authStore";
+import { usePageChrome } from "@/stores/pageChrome";
 import type { Badge } from "@/types";
 
 type Tab = "profile" | "settings";
 
 export default function ProfilePage() {
   const user = useAuthStore((s) => s.user);
+  const setChrome = usePageChrome((s) => s.setChrome);
+  const clearChrome = usePageChrome((s) => s.clearChrome);
   const [tab, setTab] = useState<Tab>("profile");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("tab") === "settings") setTab("settings");
+  }, []);
 
   const { data: stats } = useQuery({ queryKey: ["dashboard-stats"], queryFn: getDashboardStats });
 
   const equippedBadge = stats?.badges.find((b) => b.equipped);
 
+  const handleTabChange = useCallback((id: string) => {
+    setTab(id as Tab);
+  }, []);
+
+  useEffect(() => {
+    setChrome({
+      title: "Profile",
+      subtitle: tab === "settings" ? "Account settings" : "Account and progress",
+      showAskTutor: false,
+      onAskTutor: null,
+      headerTabs: [
+        { id: "profile", label: "Profile" },
+        { id: "settings", label: "Settings" },
+      ],
+      activeTab: tab,
+      onTabChange: handleTabChange,
+    });
+    return () => clearChrome();
+  }, [clearChrome, handleTabChange, setChrome, tab]);
+
   return (
-    <div className="mx-auto max-w-5xl">
-      <Reveal>
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-craft-ink">Profile</h1>
-            <p className="mt-0.5 text-sm text-craft-muted">Account and progress</p>
-          </div>
-          <div className="flex rounded-full border border-craft-border bg-craft-surface p-0.5 text-sm font-medium">
-            {(["profile", "settings"] as Tab[]).map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setTab(t)}
-                className={clsx(
-                  "rounded-full px-3.5 py-1.5 capitalize transition",
-                  tab === t
-                    ? "bg-craft-soft text-craft-ink"
-                    : "text-craft-muted hover:text-craft-ink"
-                )}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-        </div>
-      </Reveal>
+    <div className="mx-auto max-w-4xl">
+      <div className="mb-4 flex rounded-full border border-craft-border bg-craft-surface p-0.5 text-sm font-medium sm:hidden">
+        {(["profile", "settings"] as Tab[]).map((t) => (
+          <button
+            key={t}
+            type="button"
+            onClick={() => setTab(t)}
+            className={clsx(
+              "flex-1 rounded-full px-3 py-2 capitalize transition",
+              tab === t
+                ? "bg-craft-soft text-craft-ink"
+                : "text-craft-muted hover:text-craft-ink"
+            )}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
 
       {tab === "profile" && (
-        <div className="mt-5 space-y-4">
+        <div className="space-y-4">
           <Reveal delay={60} variant="scale">
             <div className="card flex flex-wrap items-center gap-4 p-4">
               {user?.avatar ? (
                 <UserAvatar size="lg" />
               ) : equippedBadge ? (
-                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-cyan-50 text-cyan-600 dark:text-cyan-400">
+                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-violet-50 text-violet-600 dark:text-violet-400">
                   <BadgeIcon name={equippedBadge.icon} className="h-7 w-7" />
                 </span>
               ) : (
@@ -68,7 +89,7 @@ export default function ProfilePage() {
                 <h2 className="truncate text-base font-semibold text-craft-ink">{user?.username}</h2>
                 <p className="truncate text-sm text-craft-muted">{user?.email}</p>
                 {equippedBadge && (
-                  <p className="mt-1 flex items-center gap-1 text-xs font-medium text-cyan-600 dark:text-cyan-400">
+                  <p className="mt-1 flex items-center gap-1 text-xs font-medium text-violet-600 dark:text-violet-400">
                     <BadgeIcon name={equippedBadge.icon} className="h-3 w-3" />
                     {equippedBadge.name}
                   </p>
@@ -95,7 +116,7 @@ export default function ProfilePage() {
       )}
 
       {tab === "settings" && (
-        <div className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <Reveal delay={60}>
             <AvatarForm />
           </Reveal>
@@ -152,30 +173,37 @@ function BadgesGrid({ badges }: { badges: Badge[] }) {
 
   return (
     <div className="mt-4">
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid auto-rows-fr gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {visible.map((badge, i) => (
-          <Reveal key={badge.id} delay={Math.min(i * 50, 200)} variant="scale">
+          <Reveal
+            key={badge.id}
+            className="h-full"
+            delay={Math.min(i * 50, 200)}
+            variant="scale"
+          >
             <div
               className={clsx(
-                "card p-4 text-center",
-                badge.unlocked ? "border-cyan-400/30" : "opacity-50"
+                "card flex h-full min-h-[11.5rem] flex-col p-4 text-center",
+                badge.unlocked ? "border-violet-400/30" : "opacity-50"
               )}
               title={badge.description}
             >
               <BadgeIcon
                 name={badge.icon}
                 className={
-                  "mx-auto h-8 w-8 " +
-                  (badge.unlocked ? "text-cyan-600 dark:text-cyan-400" : "text-craft-muted")
+                  "mx-auto h-8 w-8 shrink-0 " +
+                  (badge.unlocked ? "text-violet-600 dark:text-violet-400" : "text-craft-muted")
                 }
               />
-              <p className="mt-2 text-sm font-medium text-craft-ink">{badge.name}</p>
-              <p className="mt-1 text-xs text-craft-muted">{badge.description}</p>
-              {badge.equipped && (
-                <p className="mt-2 text-xs font-semibold text-cyan-600 dark:text-cyan-400">
-                  Equipped
-                </p>
-              )}
+              <p className="mt-2 line-clamp-2 text-sm font-medium text-craft-ink">{badge.name}</p>
+              <p className="mt-1 line-clamp-3 text-xs text-craft-muted">{badge.description}</p>
+              <div className="mt-auto pt-2">
+                {badge.equipped && (
+                  <p className="text-xs font-semibold text-violet-600 dark:text-violet-400">
+                    Equipped
+                  </p>
+                )}
+              </div>
             </div>
           </Reveal>
         ))}
@@ -207,14 +235,28 @@ function FormMessage({ message, error }: { message: string | null; error: string
 function ProfileForm() {
   const user = useAuthStore((s) => s.user);
   const queryClient = useQueryClient();
+  const [username, setUsername] = useState(user?.username ?? "");
   const [firstName, setFirstName] = useState(user?.first_name ?? "");
   const [lastName, setLastName] = useState(user?.last_name ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    setUsername(user?.username ?? "");
+    setFirstName(user?.first_name ?? "");
+    setLastName(user?.last_name ?? "");
+    setEmail(user?.email ?? "");
+  }, [user?.username, user?.first_name, user?.last_name, user?.email]);
+
   const mutation = useMutation({
-    mutationFn: () => updateProfile({ first_name: firstName, last_name: lastName, email }),
+    mutationFn: () =>
+      updateProfile({
+        username: username.trim(),
+        first_name: firstName,
+        last_name: lastName,
+        email,
+      }),
     onSuccess: () => {
       setMessage("Saved.");
       setError(null);
@@ -238,6 +280,20 @@ function ProfileForm() {
         <FormMessage message={message} error={error} />
       </div>
       <div className="grid flex-1 grid-cols-2 gap-2 content-start">
+        <div className="col-span-2">
+          <Field label="Username" id="username">
+            <input
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username"
+              required
+              autoComplete="username"
+              maxLength={150}
+              className="input-field px-3 py-2 text-sm"
+            />
+          </Field>
+        </div>
         <Field label="First name" id="firstName">
           <input
             id="firstName"

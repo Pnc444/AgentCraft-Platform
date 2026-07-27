@@ -5,68 +5,68 @@
 :root {
   color-scheme: light;
 
-  --craft-canvas: #f8fafc;
+  --craft-canvas: #f6f5f8;
   --craft-surface: #ffffff;
   --craft-card: #ffffff;
-  --craft-soft: #f1f5f9;
-  --craft-border: #e2e8f0;
-  --craft-ink: #0f172a;
-  --craft-muted: #64748b;
-  --craft-faint: #94a3b8;
-  --craft-accent: #06b6d4;
-  --craft-secondary: #0891b2;
-  --craft-accent-soft: #ecfeff;
-  --craft-cyan: #22d3ee;
-  --craft-glow: #22d3ee;
-  --craft-navy: #0f172a;
-  --craft-navy-soft: #1e293b;
+  --craft-soft: #f1eff6;
+  --craft-border: #e4e0ec;
+  --craft-ink: #14121a;
+  --craft-muted: #6b6578;
+  --craft-faint: #9b94a8;
+  --craft-accent: #7c3aed;
+  --craft-secondary: #6d28d9;
+  --craft-accent-soft: #f3e8ff;
+  --craft-cyan: #8b5cf6;
+  --craft-glow: #a78bfa;
+  --craft-navy: #1e1233;
+  --craft-navy-soft: #2e1f4a;
   --craft-success: #10b981;
   --craft-warning: #f59e0b;
-  --craft-hero: #0f172a;
+  --craft-hero: #1e1233;
   --craft-inverse: #ffffff;
-  --craft-inverse-muted: #94a3b8;
-  --craft-grid: #e2e8f0;
-  --craft-ring: rgba(15, 23, 42, 0.03);
+  --craft-inverse-muted: #c4b5fd;
+  --craft-grid: #e4e0ec;
+  --craft-ring: rgba(124, 58, 237, 0.06);
 
-  --shadow-soft: 0 2px 4px rgba(15, 23, 42, 0.04), 0 12px 28px rgba(15, 23, 42, 0.08);
-  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.05), 0 8px 20px rgba(15, 23, 42, 0.06),
-    0 20px 40px rgba(15, 23, 42, 0.05);
-  --shadow-elevated: 0 2px 4px rgba(15, 23, 42, 0.04), 0 12px 28px rgba(15, 23, 42, 0.08),
-    0 28px 56px rgba(15, 23, 42, 0.07);
-  --shadow-float: 0 4px 8px rgba(15, 23, 42, 0.05), 0 18px 40px rgba(15, 23, 42, 0.1),
-    0 40px 72px rgba(15, 23, 42, 0.08);
-  --shadow-btn: 0 1px 2px rgba(15, 23, 42, 0.1), 0 6px 16px rgba(6, 182, 212, 0.32);
-  --shadow-btn-hover: 0 2px 4px rgba(15, 23, 42, 0.12), 0 10px 24px rgba(6, 182, 212, 0.4);
-  --shadow-navy: 0 4px 12px rgba(15, 23, 42, 0.22), 0 18px 44px rgba(15, 23, 42, 0.2);
-  --shadow-header: 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 24px rgba(15, 23, 42, 0.18);
+  --shadow-soft: 0 2px 4px rgba(20, 18, 26, 0.04), 0 12px 28px rgba(20, 18, 26, 0.08);
+  --shadow-card: 0 1px 2px rgba(20, 18, 26, 0.05), 0 8px 20px rgba(20, 18, 26, 0.06),
+    0 20px 40px rgba(20, 18, 26, 0.05);
+  --shadow-elevated: 0 2px 4px rgba(20, 18, 26, 0.04), 0 12px 28px rgba(20, 18, 26, 0.08),
+    0 28px 56px rgba(20, 18, 26, 0.07);
+  --shadow-float: 0 4px 8px rgba(20, 18, 26, 0.05), 0 18px 40px rgba(20, 18, 26, 0.1),
+    0 40px 72px rgba(20, 18, 26, 0.08);
+  --shadow-btn: 0 1px 2px rgba(20, 18, 26, 0.1), 0 6px 16px rgba(124, 58, 237, 0.35);
+  --shadow-btn-hover: 0 2px 4px rgba(20, 18, 26, 0.12), 0 10px 24px rgba(124, 58, 237, 0.42);
+  --shadow-navy: 0 4px 12px rgba(30, 18, 51, 0.22), 0 18px 44px rgba(30, 18, 51, 0.2);
+  --shadow-header: 0 1px 0 rgba(255, 255, 255, 0.06), 0 8px 24px rgba(20, 18, 26, 0.12);
 }
 
 .dark {
   color-scheme: dark;
 
-  /* Deep navy academy — cyan accents, not purple */
-  --craft-canvas: #0a101c;
-  --craft-surface: #111827;
-  --craft-card: #151d2e;
-  --craft-soft: #1a2336;
-  --craft-border: #2a3548;
-  --craft-ink: #f1f5f9;
-  --craft-muted: #94a3b8;
-  --craft-faint: #64748b;
-  --craft-accent: #22d3ee;
-  --craft-secondary: #06b6d4;
-  --craft-accent-soft: #0e2a35;
-  --craft-cyan: #67e8f9;
-  --craft-glow: #22d3ee;
-  --craft-navy: #060b16;
-  --craft-navy-soft: #0f172a;
+  /* Knight's Academy — deep charcoal + purple accents */
+  --craft-canvas: #0b0e14;
+  --craft-surface: #12151c;
+  --craft-card: #171a22;
+  --craft-soft: #1c2029;
+  --craft-border: #2a2f3a;
+  --craft-ink: #f1f0f5;
+  --craft-muted: #9ca3af;
+  --craft-faint: #6b7280;
+  --craft-accent: #8b5cf6;
+  --craft-secondary: #a78bfa;
+  --craft-accent-soft: #2e1f4a;
+  --craft-cyan: #c4b5fd;
+  --craft-glow: #8b5cf6;
+  --craft-navy: #080a10;
+  --craft-navy-soft: #12151c;
   --craft-success: #34d399;
   --craft-warning: #fbbf24;
-  --craft-hero: #060b16;
+  --craft-hero: #080a10;
   --craft-inverse: #f8fafc;
-  --craft-inverse-muted: #94a3b8;
-  --craft-grid: #1e293b;
-  --craft-ring: rgba(255, 255, 255, 0.04);
+  --craft-inverse-muted: #a78bfa;
+  --craft-grid: #1c2029;
+  --craft-ring: rgba(139, 92, 246, 0.12);
 
   --shadow-soft: 0 2px 4px rgba(0, 0, 0, 0.25), 0 12px 28px rgba(0, 0, 0, 0.35);
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35),
@@ -75,8 +75,8 @@
     0 28px 56px rgba(0, 0, 0, 0.3);
   --shadow-float: 0 4px 8px rgba(0, 0, 0, 0.35), 0 20px 44px rgba(0, 0, 0, 0.45),
     0 40px 72px rgba(0, 0, 0, 0.35);
-  --shadow-btn: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 20px rgba(34, 211, 238, 0.28);
-  --shadow-btn-hover: 0 2px 4px rgba(0, 0, 0, 0.4), 0 12px 28px rgba(34, 211, 238, 0.38);
+  --shadow-btn: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 20px rgba(139, 92, 246, 0.32);
+  --shadow-btn-hover: 0 2px 4px rgba(0, 0, 0, 0.4), 0 12px 28px rgba(139, 92, 246, 0.42);
   --shadow-navy: 0 4px 12px rgba(0, 0, 0, 0.45), 0 18px 44px rgba(0, 0, 0, 0.5);
   --shadow-header: 0 1px 0 rgba(255, 255, 255, 0.04), 0 10px 28px rgba(0, 0, 0, 0.45);
 }
@@ -92,7 +92,7 @@ body {
 }
 
 .landing .btn-landing-primary {
-  @apply inline-flex items-center justify-center gap-2 rounded-full bg-cyan-500 px-6 py-3 text-sm font-semibold text-white shadow-btn transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-600 hover:shadow-btn-hover;
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-btn transition duration-300 hover:-translate-y-0.5 hover:bg-violet-700 hover:shadow-btn-hover;
 }
 
 .landing .btn-landing-secondary {
@@ -113,17 +113,17 @@ body {
 }
 
 .btn-glow {
-  @apply inline-flex items-center justify-center gap-2 rounded-full bg-cyan-600 px-4 py-2 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-500;
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-violet-600 px-4 py-2 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-violet-500;
   animation: btn-glow-pulse 3.5s ease-in-out infinite;
 }
 
 @keyframes btn-glow-pulse {
   0%,
   100% {
-    box-shadow: 0 0 6px rgba(34, 211, 238, 0.2), 0 0 14px rgba(34, 211, 238, 0.12);
+    box-shadow: 0 0 6px rgba(124, 58, 237, 0.2), 0 0 14px rgba(124, 58, 237, 0.12);
   }
   50% {
-    box-shadow: 0 0 10px rgba(34, 211, 238, 0.35), 0 0 20px rgba(34, 211, 238, 0.18);
+    box-shadow: 0 0 10px rgba(124, 58, 237, 0.35), 0 0 20px rgba(124, 58, 237, 0.18);
   }
 }
 
@@ -318,11 +318,11 @@ body {
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-cyan-500 px-5 py-2.5 text-sm font-semibold text-white shadow-btn transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-600 hover:shadow-btn-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500 disabled:translate-y-0 disabled:opacity-50 disabled:shadow-btn;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-btn transition duration-300 hover:-translate-y-0.5 hover:bg-violet-700 hover:shadow-btn-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 disabled:translate-y-0 disabled:opacity-50 disabled:shadow-btn;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border border-craft-border bg-craft-surface px-5 py-2.5 text-sm font-semibold text-craft-ink shadow-soft transition duration-300 hover:-translate-y-0.5 hover:border-craft-faint hover:bg-craft-soft hover:shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500 disabled:translate-y-0 disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-craft-border bg-craft-surface px-5 py-2.5 text-sm font-semibold text-craft-ink shadow-soft transition duration-300 hover:-translate-y-0.5 hover:border-craft-faint hover:bg-craft-soft hover:shadow-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 disabled:translate-y-0 disabled:opacity-50;
   }
 
   .card {
@@ -331,8 +331,8 @@ body {
   }
 
   .input-field {
-    @apply w-full rounded-xl border border-craft-border bg-craft-surface px-4 py-2.5 text-craft-ink placeholder:text-craft-faint transition focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20;
-    box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.04);
+    @apply w-full rounded-xl border border-craft-border bg-craft-surface px-4 py-2.5 text-craft-ink placeholder:text-craft-faint transition focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-500/20;
+    box-shadow: inset 0 1px 2px rgba(20, 18, 26, 0.04);
   }
 
   .dark .input-field {
@@ -367,7 +367,7 @@ body {
   }
 
   .prose-tutor a {
-    @apply font-medium text-cyan-700 underline underline-offset-2 dark:text-cyan-300;
+    @apply font-medium text-violet-700 underline underline-offset-2 dark:text-violet-300;
   }
 
   .prose-tutor code {
@@ -411,7 +411,7 @@ body {
   }
 
   .prose-lesson code {
-    @apply rounded-md bg-craft-soft px-1.5 py-0.5 font-mono text-[13px] text-cyan-700 dark:text-cyan-300;
+    @apply rounded-md bg-craft-soft px-1.5 py-0.5 font-mono text-[13px] text-violet-700 dark:text-violet-300;
   }
 
   .prose-lesson pre {
@@ -423,7 +423,7 @@ body {
   }
 
   .prose-lesson a {
-    @apply font-medium text-cyan-600 underline-offset-2 hover:underline dark:text-cyan-400;
+    @apply font-medium text-violet-600 underline-offset-2 hover:underline dark:text-violet-400;
   }
 
   /* Tables: full lines + boxed cells */

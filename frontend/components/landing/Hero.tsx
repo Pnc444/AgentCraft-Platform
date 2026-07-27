@@ -33,15 +33,15 @@ export function Hero() {
 
       <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-6 lg:grid-cols-2">
         <Reveal variant="left">
-          <p className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-cyan-600 dark:text-cyan-400">
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.22em] text-violet-600 dark:text-violet-400">
             AI Agent Building Academy
           </p>
           <h1 className="text-4xl font-bold leading-[1.12] tracking-tight text-craft-ink sm:text-5xl lg:text-[3.15rem]">
             Learn AI agents from zero,{" "}
-            <span className="text-cyan-600 dark:text-cyan-400">one step at a time.</span>
+            <span className="text-violet-600 dark:text-violet-400">one step at a time.</span>
           </h1>
           <p className="mt-6 max-w-lg text-lg leading-relaxed text-craft-muted">
-            AgentCraft helps students progress from beginner concepts to real AI agent projects
+            Knight's Academy helps students progress from beginner concepts to real AI agent projects
             through guided lessons, hands-on practice, and a structured learning roadmap.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
@@ -66,7 +66,7 @@ export function Hero() {
               {WORKFLOW.map(({ label, icon: Icon, blurb }, i) => (
                 <div key={label} className="text-center">
                   <span
-                    className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-craft-accent-soft text-cyan-700 shadow-soft ring-1 ring-cyan-500/20 float-soft dark:text-cyan-300"
+                    className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-craft-accent-soft text-violet-700 shadow-soft ring-1 ring-violet-500/20 float-soft dark:text-violet-300"
                     style={{ animationDelay: `${i * 0.4}s` }}
                   >
                     <Icon className="h-4 w-4" />
@@ -115,7 +115,7 @@ export function Hero() {
                   <p className="text-xs text-craft-faint">Current Module</p>
                   <p className="mt-0.5 text-sm font-semibold text-white">Module 3: Prompting</p>
                   <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-700">
-                    <div className="hero-bar-fill h-full w-1/3 rounded-full bg-cyan-400" />
+                    <div className="hero-bar-fill h-full w-1/3 rounded-full bg-violet-400" />
                   </div>
                   {/* Module 3 really has 5 lessons — the mock must not lie
                       about the actual curriculum (audit F3). */}
@@ -125,12 +125,12 @@ export function Hero() {
                 <div className="hero-progress-item shrink-0">
                   <p className="text-xs text-craft-faint">Next Up</p>
                   <p className="mt-0.5 flex items-center gap-1 text-sm font-semibold text-white">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-cyan-400" />
+                    <CheckCircle2 className="h-3.5 w-3.5 text-violet-400" />
                     AI Agents
                   </p>
                   <Link
                     href={isAuthed ? "/dashboard" : "/register"}
-                    className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-cyan-400 hover:text-cyan-300"
+                    className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-violet-400 hover:text-violet-300"
                   >
                     Continue <ArrowRight className="hero-continue-arrow h-3 w-3" />
                   </Link>

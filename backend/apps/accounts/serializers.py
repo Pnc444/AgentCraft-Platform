@@ -86,7 +86,18 @@ class UserSerializer(serializers.ModelSerializer):
             "skill_profile",
             "avatar",
         ]
-        read_only_fields = ["id", "username", "role", "skill_profile"]
+        read_only_fields = ["id", "role", "skill_profile"]
+
+    def validate_username(self, value):
+        username = (value or "").strip()
+        if not username:
+            raise serializers.ValidationError("Username is required.")
+        qs = User.objects.filter(username__iexact=username)
+        if self.instance is not None:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError("A user with this username already exists.")
+        return username
 
     def validate_avatar(self, value):
         if value is None:

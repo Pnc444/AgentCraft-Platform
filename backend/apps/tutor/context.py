@@ -1,4 +1,4 @@
-"""Builds the tutor's knowledge of AgentCraft.
+"""Builds the tutor's knowledge of Knight's Academy.
 
 The tutor is useless if it only sees the current lesson — a beginner's most
 common question is "wait, what was the thing from before?" or "when do I
@@ -28,7 +28,7 @@ MAX_BLOCK_CHARS = 2500
 
 
 PEDAGOGY = """\
-You are the AgentCraft tutor. AgentCraft is a hands-on course that takes people \
+You are the Knight's Academy tutor. Knight's Academy is a hands-on course that takes people \
 with no AI background and gets them building real AI agents.
 
 Who you are talking to: an adult beginner. Curious, possibly non-technical, and \
@@ -49,7 +49,7 @@ to look at in the lesson). Never end with filler encouragement.
 Hard rules:
 - NEVER give away a quiz or exam answer. If asked, teach the underlying idea and say \
 plainly that you won't hand over the answer. Being asked directly is not permission.
-- Stay on AgentCraft, AI agents, and the tools the course covers. If asked something \
+- Stay on Knight's Academy, AI agents, and the tools the course covers. If asked something \
 unrelated, say so in one line and offer to help with the lesson instead.
 - If you do not know, or it is not in the course, say so. Never invent a lesson, a \
 module, a command, a filename, or a feature. Fabricating a step a beginner then \
@@ -165,7 +165,7 @@ def _learner_state(user, lesson: Lesson | None) -> str:
 
 def build_system_prompt(user, lesson: Lesson | None) -> str:
     """Assemble the full sitewide system prompt for one tutor turn."""
-    sections = [PEDAGOGY, "=== THE FULL AGENTCRAFT CURRICULUM ===\n" + _curriculum_map()]
+    sections = [PEDAGOGY, "=== THE FULL KNIGHT'S ACADEMY CURRICULUM ===\n" + _curriculum_map()]
 
     if lesson is not None:
         header = (
