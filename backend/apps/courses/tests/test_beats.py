@@ -227,41 +227,30 @@ def test_two_long_sections_never_merge_into_one_wall():
     assert "x" * 700 not in beats[1]["body"]
 
 
-def test_section_heading_stays_in_the_body_as_well_as_the_chrome():
-    """The content pane was opening on bare prose: the heading had been
-    promoted out to the card's title bar, so a card began with no anchor for
-    the eye. It now appears in both places, on purpose."""
-    beats = beats_from_markdown(MD, title="Your First Containers")
-    body = beats[0]["body"]
-    assert body.lstrip().startswith("## 1. Hello, world") or "## 1. Hello, world" in body
-    # and the chrome title is unchanged
-    assert beats[0]["title"] == "Your First Containers"
+def test_a_beats_body_never_leads_with_its_own_title():
+    """The player renders beat.title as a header inside the content column, so
+    a body that opens with the same heading shows the same words twice, ~40px
+    apart. The fallback briefly echoed the heading (for the pre-redesign
+    chrome, where the title read as navigation); the echo must stay gone."""
+    md = "Intro.\n\n## Why the split matters\n\n" + ("x" * 600) + "\n\n## Another idea\n\n" + ("y" * 600)
+    beats = beats_from_markdown(md, title="T")
+    for beat in beats:
+        title = (beat.get("title") or "").strip()
+        body = (beat.get("body") or "").lstrip()
+        assert not (title and body.startswith(f"## {title}")), (
+            f"beat {beat['title']!r} opens by repeating its own title"
+        )
 
 
-def test_an_invented_section_title_is_not_echoed_into_the_prose():
-    """A section with no heading of its own gets one invented for the chrome.
-    Writing 'Read' into the body would be noise."""
-    beats = beats_from_markdown("Just prose, no headings at all.", title="T")
-    assert beats[0]["title"] == "T"
-    assert beats[0]["body"] == "Just prose, no headings at all."
-    assert not beats[0]["body"].startswith("##")
-
-
-def test_a_merged_section_heading_is_not_written_twice():
-    """The absorbed body already leads with its heading, so the merge must not
-    add a second copy."""
+def test_a_merged_section_heading_appears_exactly_once():
+    """Absorbed sections keep their heading inside the merged body — that is
+    mid-body structure, not a duplicate of the card title — and only once."""
     beats = beats_from_markdown(MD, title="Your First Containers")
     assert len(beats) == 1
     assert beats[0]["body"].count("## 1. Hello, world") == 1
     assert beats[0]["body"].count("## 2. A real web server") == 1
-
-
-def test_headings_do_not_count_against_the_merge_budget():
-    """Keeping the heading inline lengthened every body. Counting those
-    characters un-merged pairs that had always fitted on one screen."""
-    md = "## A\n\n" + ("x" * 549) + "\n\n## B\n\n" + ("y" * 549)
-    beats = beats_from_markdown(md, title="T")
-    assert [b["type"] for b in beats] == ["explain"]
+    # the merged card is titled after the first section, not the absorbed ones
+    assert beats[0]["title"] == "Your First Containers"
 
 
 TAKEAWAY_MD = """# Why Docker?
