@@ -120,7 +120,7 @@ function ImageCarousel({ images, captions }: { images?: string; captions?: strin
                 aria-label={`Go to image ${i + 1}`}
                 onClick={() => setIndex(i)}
                 className={`h-2 w-2 rounded-full transition ${
-                  i === index ? "bg-cyan-500" : "bg-craft-border hover:bg-craft-faint"
+                  i === index ? "bg-violet-500" : "bg-craft-border hover:bg-craft-faint"
                 }`}
               />
             ))}

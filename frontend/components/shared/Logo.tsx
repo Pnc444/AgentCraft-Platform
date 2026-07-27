@@ -1,10 +1,7 @@
 import Link from "next/link";
 import clsx from "clsx";
 
-/**
- * Planet mark with a tilted orbit ring.
- * Paint order: back arc → planet → front arc (so the ring wraps around).
- */
+/** Purple shield mark with a K monogram. */
 export function LogoIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -14,31 +11,26 @@ export function LogoIcon({ className }: { className?: string }) {
       className={clsx("h-8 w-8", className)}
       aria-hidden
     >
-      <g transform="rotate(-18 24 24)">
-        {/* Back half of the ring (behind the planet) */}
-        <path
-          d="M3 24 A21 7.5 0 0 1 45 24"
-          stroke="#22D3EE"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        />
-      </g>
-
-      {/* Planet */}
-      <circle cx="24" cy="24" r="13" fill="#0b1230" stroke="#67E8F9" strokeWidth="1.5" />
-      <circle cx="19" cy="19" r="4.5" fill="#1e2a5e" />
-
-      <g transform="rotate(-18 24 24)">
-        {/* Front half of the ring (in front of the planet) */}
-        <path
-          d="M3 24 A21 7.5 0 0 0 45 24"
-          stroke="#22D3EE"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        />
-        {/* Satellite on the front arc */}
-        <circle cx="42" cy="20.5" r="3" fill="#22D3EE" />
-      </g>
+      <path
+        d="M24 4L40 10.5V22.5C40 32.2 33.2 40.6 24 43.5C14.8 40.6 8 32.2 8 22.5V10.5L24 4Z"
+        fill="#7C3AED"
+      />
+      <path
+        d="M24 7.2L36.5 12.2V22.5C36.5 30.4 31.1 37.4 24 40C16.9 37.4 11.5 30.4 11.5 22.5V12.2L24 7.2Z"
+        fill="#8B5CF6"
+      />
+      <text
+        x="24"
+        y="26.5"
+        textAnchor="middle"
+        dominantBaseline="middle"
+        fill="white"
+        fontSize="16"
+        fontWeight="800"
+        fontFamily="ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+      >
+        K
+      </text>
     </svg>
   );
 }
@@ -55,7 +47,7 @@ export function Logo({ href = "/", iconOnly = false, className, inverted = false
     <Link
       href={href}
       className={clsx("flex items-center gap-2.5", className)}
-      aria-label="AgentCraft"
+      aria-label="Knight's Academy"
     >
       <LogoIcon />
       {!iconOnly && (
@@ -65,8 +57,10 @@ export function Logo({ href = "/", iconOnly = false, className, inverted = false
             inverted ? "text-[#F8FAFC]" : "text-craft-ink"
           )}
         >
-          Agent
-          <span className={inverted ? "text-[#67E8F9]" : "text-[#22D3EE]"}>Craft</span>
+          Knight&apos;s{" "}
+          <span className={inverted ? "text-[#C4B5FD]" : "text-violet-600 dark:text-violet-400"}>
+            Academy
+          </span>
         </span>
       )}
     </Link>

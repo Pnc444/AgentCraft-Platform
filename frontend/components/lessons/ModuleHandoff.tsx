@@ -68,9 +68,9 @@ export function ModuleHandoff({ courseTitle, nextModule, isExam }: ModuleHandoff
   }
 
   return (
-    <div className="rounded-2xl border border-cyan-500/30 bg-gradient-to-br from-cyan-50 to-craft-surface px-5 py-5 shadow-soft dark:from-cyan-500/10 dark:to-craft-surface">
+    <div className="rounded-2xl border border-violet-500/30 bg-gradient-to-br from-violet-50 to-craft-surface px-5 py-5 shadow-soft dark:from-violet-500/10 dark:to-craft-surface">
       <div className="flex items-start gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cyan-500/15 text-cyan-600 dark:text-cyan-300">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-violet-500/15 text-violet-600 dark:text-violet-300">
           <PartyPopper className="h-5 w-5" />
         </span>
         <div className="min-w-0 flex-1">

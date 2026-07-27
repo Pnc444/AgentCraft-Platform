@@ -11,11 +11,12 @@ export function SiteFooter() {
           <p className="flex items-center gap-2">
             <LogoIcon className="h-5 w-5" />
             <span>
-              Agent<span className="text-cyan-600 dark:text-cyan-400">Craft</span> — learn AI agents
+              Knight&apos;s{" "}
+              <span className="text-violet-600 dark:text-violet-400">Academy</span> — learn AI agents
               from zero.
             </span>
           </p>
-          <p>© {new Date().getFullYear()} AgentCraft</p>
+          <p>© {new Date().getFullYear()} Knight's Academy</p>
         </div>
       </Reveal>
     </footer>

@@ -6,7 +6,7 @@ interface ProgressBarProps {
   barClassName?: string;
 }
 
-/** Outline track + fill that shifts blue → shiny cyan as progress grows. */
+/** Outline track + purple fill driven by a real 0–100 percentage. */
 export function ProgressBar({ value, className, barClassName }: ProgressBarProps) {
   const pct = Math.max(0, Math.min(100, value));
   const shine = 0.25 + (pct / 100) * 0.55;
@@ -14,7 +14,7 @@ export function ProgressBar({ value, className, barClassName }: ProgressBarProps
   return (
     <div
       className={clsx(
-        "h-1.5 overflow-hidden rounded-full border border-craft-border bg-craft-soft shadow-[inset_0_1px_3px_rgba(15,23,42,0.12)] dark:shadow-[inset_0_1px_3px_rgba(0,0,0,0.45)]",
+        "h-1.5 overflow-hidden rounded-full border border-craft-border bg-craft-soft shadow-[inset_0_1px_3px_rgba(20,18,26,0.12)] dark:shadow-[inset_0_1px_3px_rgba(0,0,0,0.45)]",
         className
       )}
       role="progressbar"
@@ -33,11 +33,11 @@ export function ProgressBar({ value, className, barClassName }: ProgressBarProps
             ? undefined
             : {
                 background: `linear-gradient(90deg,
-                  #1D4ED8 0%,
-                  #2563EB ${Math.max(20, 55 - pct * 0.25)}%,
-                  #06B6D4 ${65 + pct * 0.2}%,
-                  #A5F3FC 100%)`,
-                boxShadow: `0 0 ${6 + pct * 0.08}px rgba(34, 211, 238, ${shine})`,
+                  #6D28D9 0%,
+                  #7C3AED ${Math.max(20, 55 - pct * 0.25)}%,
+                  #8B5CF6 ${65 + pct * 0.2}%,
+                  #C4B5FD 100%)`,
+                boxShadow: `0 0 ${6 + pct * 0.08}px rgba(124, 58, 237, ${shine})`,
               }),
         }}
       />

@@ -172,7 +172,7 @@ export function LessonCapstoneStudio({
                 setSubmission((prev) => ({ ...prev, [section.key]: event.target.value }))
               }
               placeholder={section.placeholder}
-              className="min-h-[140px] w-full rounded-xl border border-craft-border bg-craft-soft/60 px-3 py-3 text-sm text-craft-ink shadow-soft focus:border-cyan-500 focus:outline-none"
+              className="min-h-[140px] w-full rounded-xl border border-craft-border bg-craft-soft/60 px-3 py-3 text-sm text-craft-ink shadow-soft focus:border-violet-500 focus:outline-none"
             />
           </label>
         ))}
@@ -180,7 +180,7 @@ export function LessonCapstoneStudio({
 
       <div className="rounded-xl border border-craft-border bg-craft-soft/60 p-4">
         <p className="flex items-center gap-2 text-sm font-semibold text-craft-ink">
-          <ClipboardCheck className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+          <ClipboardCheck className="h-4 w-4 text-violet-600 dark:text-violet-400" />
           Review checklist
         </p>
         <div className="mt-3 space-y-2">

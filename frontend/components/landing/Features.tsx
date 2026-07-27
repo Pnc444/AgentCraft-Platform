@@ -12,7 +12,7 @@ export function Features() {
           body="Students are not expected to understand everything at once. Lessons are broken into manageable chunks so each concept builds on the last."
           visual={
             <div className="space-y-2">
-              <div className="rounded-xl bg-craft-accent-soft px-4 py-3 text-sm font-medium text-cyan-800 shadow-soft ring-1 ring-cyan-500/20 dark:text-cyan-200">
+              <div className="rounded-xl bg-craft-accent-soft px-4 py-3 text-sm font-medium text-violet-800 shadow-soft ring-1 ring-violet-500/20 dark:text-violet-200">
                 Lesson 1 — What is an agent?
               </div>
               <div className="rounded-xl bg-craft-soft px-4 py-3 text-sm text-craft-muted shadow-soft ring-1 ring-craft-border">
@@ -28,10 +28,10 @@ export function Features() {
         <FeatureRow
           reverse
           title="Build real projects"
-          body="Learn by building, not just reading. AgentCraft guides you toward small working projects that build confidence step by step."
+          body="Learn by building, not just reading. Knight's Academy guides you toward small working projects that build confidence step by step."
           visual={
             <div>
-              <p className="font-mono text-sm font-medium text-cyan-600 dark:text-cyan-400">
+              <p className="font-mono text-sm font-medium text-violet-600 dark:text-violet-400">
                 mini_project.py
               </p>
               <pre className="mt-3 overflow-x-auto rounded-xl bg-craft-navy p-4 text-sm text-slate-200 shadow-navy ring-1 ring-white/10">
@@ -68,11 +68,11 @@ export function Features() {
             <div>
               <div className="flex items-center justify-between text-sm text-craft-muted">
                 <span>Level 4 of 9</span>
-                <span className="font-medium text-cyan-600 dark:text-cyan-400">Backend Basics</span>
+                <span className="font-medium text-violet-600 dark:text-violet-400">Backend Basics</span>
               </div>
               <div className="mt-4 h-2 overflow-hidden rounded-full bg-craft-soft shadow-[inset_0_1px_2px_rgba(15,23,42,0.08)] dark:shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)]">
                 <div
-                  className="h-full rounded-full bg-cyan-500 shadow-[0_0_12px_rgba(6,182,212,0.45)]"
+                  className="h-full rounded-full bg-violet-500 shadow-[0_0_12px_rgba(6,182,212,0.45)]"
                   style={{ width: "44%" }}
                 />
               </div>

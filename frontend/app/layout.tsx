@@ -17,9 +17,9 @@ const serif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "AgentCraft — Learn AI agents from zero",
+  title: "Knight's Academy — Learn AI agents from zero",
   description:
-    "AgentCraft helps students progress from beginner concepts to real AI agent projects through guided lessons, hands-on practice, and a structured learning roadmap.",
+    "Knight's Academy helps students progress from beginner concepts to real AI agent projects through guided lessons, hands-on practice, and a structured learning roadmap.",
 };
 
 /** Runs before paint to avoid a light→dark flash. */

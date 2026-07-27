@@ -69,7 +69,7 @@ def _request(model: str, messages: list[dict], max_tokens: int, temperature: flo
             "Content-Type": "application/json",
             # OpenRouter attribution headers — good citizenship, not required.
             "HTTP-Referer": settings.OPENROUTER_SITE_URL,
-            "X-Title": "AgentCraft",
+            "X-Title": "Knight's Academy",
         },
         method="POST",
     )

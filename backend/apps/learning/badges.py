@@ -1,4 +1,4 @@
-"""AgentCraft badge catalog + unlock evaluation."""
+"""Knight's Academy badge catalog + unlock evaluation."""
 
 from __future__ import annotations
 

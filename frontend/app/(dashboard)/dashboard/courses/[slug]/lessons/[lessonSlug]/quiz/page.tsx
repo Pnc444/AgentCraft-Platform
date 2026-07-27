@@ -88,43 +88,36 @@ export default function LessonQuizPage() {
   );
 
   return (
-    <div className="space-y-3">
-      {/*
-        Paginated one-question-per-slide UI — content-sized card (same as
-        Modules 4 / 6 / 8). One focused question, no full-screen empty space.
-      */}
-      <PaginatedExam
-        questions={recapQuestions}
-        label={assessmentLabel}
-        // Status only ever becomes "completed" by passing this assessment, so
-        // it is a safe signal that a result already stands.
-        previouslyPassed={lesson.status === "completed"}
-        previousScore={lesson.score}
-        // Mid-attempt answers survive navigation (audit F1).
-        storageKey={`agentcraft-quiz-draft:${lesson.id}`}
-        locked={needsVideo && !videoDone}
-        lockedReason={`Watch the lesson video to the end before taking the ${assessmentLabel}.`}
-        onLockedAction={() => {
-          setNotice(
-            `Watch the lesson video all the way through before taking the ${assessmentLabel}.`
-          );
-          router.push(lessonStepHref(slug, lessonSlug, "content"));
-        }}
-        onPassed={(score) => {
-          if (lesson.status !== "completed") {
-            updateProgress({ status: "completed", score });
+    <div className="flex h-full min-h-0 flex-col gap-3">
+      <div className="min-h-0 flex-1">
+        <PaginatedExam
+          questions={recapQuestions}
+          label={assessmentLabel}
+          previouslyPassed={lesson.status === "completed"}
+          previousScore={lesson.score}
+          storageKey={`agentcraft-quiz-draft:${lesson.id}`}
+          locked={needsVideo && !videoDone}
+          lockedReason={`Watch the lesson video to the end before taking the ${assessmentLabel}.`}
+          onLockedAction={() => {
+            setNotice(
+              `Watch the lesson video all the way through before taking the ${assessmentLabel}.`
+            );
+            router.push(lessonStepHref(slug, lessonSlug, "content"));
+          }}
+          onPassed={(score) => {
+            if (lesson.status !== "completed") {
+              updateProgress({ status: "completed", score });
+            }
+            setNotice(null);
+          }}
+          completionAction={forwardAction}
+          reviewLessonHref={
+            isExamLesson ? undefined : lessonStepHref(slug, lessonSlug, "content")
           }
-          setNotice(null);
-          // No auto-navigation. The learner leaves on their own terms, using
-          // the forward button on the result card.
-        }}
-        completionAction={forwardAction}
-        reviewLessonHref={
-          isExamLesson ? undefined : lessonStepHref(slug, lessonSlug, "content")
-        }
-      />
+        />
+      </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-2 pt-0.5">
+      <div className="flex shrink-0 flex-wrap items-center justify-between gap-2">
         {isExamLesson ? (
           prev ? (
             <Link

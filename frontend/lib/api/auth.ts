@@ -46,7 +46,9 @@ export function getMe(): Promise<User> {
   return apiClient<User>("/auth/me/");
 }
 
-export async function updateProfile(data: Partial<Pick<User, "first_name" | "last_name" | "email">>): Promise<User> {
+export async function updateProfile(
+  data: Partial<Pick<User, "username" | "first_name" | "last_name" | "email">>
+): Promise<User> {
   const user = await apiClient<User>("/auth/me/", {
     method: "PATCH",
     body: JSON.stringify(data),

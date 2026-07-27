@@ -23,15 +23,17 @@ import { getCapstoneAssignment, lessonStepHref } from "@/lib/lesson-steps";
 import type { Beat, CheckpointQuestion, LessonArtifact, SandboxSpec } from "@/types";
 
 /**
- * The zero-scroll lesson player (plan §3). One beat on screen; nothing renders
- * below the card. The card owns the viewport height minus the app chrome —
- * only the beat's own pane may scroll, never the page.
+ * The zero-scroll lesson player. One beat on screen; the card fills the
+ * available viewport under app chrome. Only the beat pane may scroll.
  */
 export function LessonPlayer() {
   const router = useRouter();
-  const { slug, lessonSlug, lesson, needsVideo, videoDone, markVideoWatched, artifactBundle } =
+  const { slug, lessonSlug, lesson, course, needsVideo, videoDone, markVideoWatched, artifactBundle } =
     useLessonWorkspace();
   const beats = (lesson?.beats ?? []) as Beat[];
+  const moduleSteps = course?.lessons ?? [];
+  const stepIndex = moduleSteps.findIndex((l) => l.slug === lessonSlug);
+  const stepOrdinal = stepIndex >= 0 ? stepIndex + 1 : 1;
   const storageKey = lesson ? `agentcraft-player:${lesson.id}` : "";
 
   const [index, setIndex] = useState(0);
@@ -114,96 +116,98 @@ export function LessonPlayer() {
   if (!beats.length) return <p className="text-craft-muted">This lesson has no content yet.</p>;
 
   return (
-    /*
-      Height is a CEILING, not a fixed size. A fixed height made a 200-character
-      beat render ~1100px of void below three lines of text — and it satisfied a
-      naive zero-scroll check (scrollHeight === clientHeight) precisely because
-      the card never grew. Sizing to content with a viewport cap gives compact
-      beats a compact card and long beats an internally-scrolling one, which is
-      what "no scrollbar, ever" actually meant.
-    */
-    <div className="card flex max-h-[calc(100dvh-17rem)] flex-col overflow-hidden sm:max-h-[calc(100dvh-14rem)]">
-      {/* Header: beat title + ONE position signal (segmented bar + count). */}
-      <div className="flex shrink-0 items-center justify-between gap-4 border-b border-craft-border px-5 py-3 sm:px-6">
-        <h2 className="min-w-0 truncate text-base font-bold text-craft-ink">
-          {beat.title || lesson.title}
-        </h2>
-        <div className="flex shrink-0 items-center gap-3">
-          <div className="hidden w-32 gap-1 sm:flex" aria-hidden>
-            {beats.map((_, i) => (
+    <div className="card flex h-full min-h-0 max-h-full flex-col overflow-hidden">
+      {/* Module step progress — all steps in this module, not beats inside one step. */}
+      <div className="flex shrink-0 items-center gap-3 border-b border-craft-border/80 px-3 py-2 sm:gap-4 sm:px-4">
+        <div className="flex min-w-0 flex-1 gap-1" aria-hidden>
+          {moduleSteps.map((step, i) => {
+            const done = step.status === "completed";
+            const current = i === stepIndex;
+            return (
               <span
-                key={i}
+                key={step.slug}
                 className={clsx(
-                  "h-1 flex-1 rounded-full",
-                  i < index ? "bg-cyan-500" : i === index ? "bg-cyan-300" : "bg-craft-border"
+                  "h-1.5 flex-1 rounded-full",
+                  done
+                    ? "bg-violet-500"
+                    : current
+                      ? "bg-violet-300"
+                      : "bg-craft-border"
                 )}
+                title={step.title}
               />
-            ))}
-          </div>
-          <span className="whitespace-nowrap text-xs font-medium uppercase tracking-[0.18em] text-craft-faint">
-            {index + 1} / {beats.length}
-          </span>
+            );
+          })}
         </div>
+        <span className="shrink-0 whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.14em] text-craft-faint sm:text-xs">
+          {stepOrdinal}/{moduleSteps.length || "—"}
+        </span>
       </div>
 
-      {/* One beat. The pane may scroll internally; the page never does. */}
-      <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-8 sm:py-6">
-        <div className="mx-auto max-w-2xl">
+      {/* One beat. Only this pane scrolls — the page never does. */}
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3 sm:px-5 sm:py-4 lg:px-6">
+        <div className="mx-auto w-full max-w-3xl">
+          <h2 className="mb-3 text-lg font-bold tracking-tight text-craft-ink sm:mb-4 sm:text-xl">
+            {beat.title || lesson.title}
+          </h2>
           {beat.type === "do" && beat.action === "terminal" ? (
-            /* The practice terminal persists task state via interaction_log;
-               the recap quiz gates completion, so the beat is ungated. */
             <TerminalBeat />
           ) : beat.type === "do" && beat.action === "studio" ? (
-            /*
-              The capstone studio is the lesson's spine (plan step 4). It has
-              its own verify machinery persisted via interaction_log, so the
-              beat itself is ungated — the recap quiz still gates completion.
-            */
             <StudioBeat beat={beat} />
           ) : (
-          <BeatView
-            beat={beat}
-            revealed={!!revealed[index]}
-            onReveal={() => setRevealed((r) => ({ ...r, [index]: true }))}
-            pick={picks[index]}
-            onPick={(option) => setPicks((p) => ({ ...p, [index]: option }))}
-            videoDone={videoDone}
-            markVideoWatched={markVideoWatched}
-            artifacts={artifactBundle}
-            onWorkDone={() => setWorkDone((w) => ({ ...w, [index]: true }))}
-          />
+            <BeatView
+              beat={beat}
+              revealed={!!revealed[index]}
+              onReveal={() => setRevealed((r) => ({ ...r, [index]: true }))}
+              pick={picks[index]}
+              onPick={(option) => setPicks((p) => ({ ...p, [index]: option }))}
+              videoDone={videoDone}
+              markVideoWatched={markVideoWatched}
+              artifacts={artifactBundle}
+              onWorkDone={() => setWorkDone((w) => ({ ...w, [index]: true }))}
+              needsVideo={needsVideo}
+              lessonVideoUrl={lesson.video_url || ""}
+            />
           )}
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center justify-between gap-3 border-t border-craft-border px-5 py-3 sm:px-6">
-        <button
-          type="button"
-          onClick={() => setIndex((i) => Math.max(i - 1, 0))}
-          disabled={index === 0}
-          className="btn-secondary disabled:pointer-events-none disabled:opacity-40"
-        >
-          <ChevronLeft className="h-4 w-4 shrink-0" />
-          Back
-        </button>
-        <button
-          type="button"
-          onClick={goForward}
-          disabled={!satisfied}
-          className="btn-primary disabled:pointer-events-none disabled:opacity-40"
-        >
-          {isLast ? (
-            <>
-              <ClipboardCheck className="h-4 w-4 shrink-0" />
-              Continue to Recap Quiz
-            </>
-          ) : (
-            <>
-              Continue
-              <ChevronRight className="h-4 w-4 shrink-0" />
-            </>
-          )}
-        </button>
+      <div className="flex shrink-0 flex-col gap-2 border-t border-craft-border px-3 py-2.5 sm:px-4 sm:py-3">
+        {!satisfied && beat?.type === "do" && beat.action === "video" ? (
+          <p className="text-center text-xs text-amber-700 dark:text-amber-300">
+            Watch the video all the way through to unlock the Recap Quiz.
+          </p>
+        ) : null}
+        <div className="flex items-center justify-between gap-2">
+          <button
+            type="button"
+            onClick={() => setIndex((i) => Math.max(i - 1, 0))}
+            disabled={index === 0}
+            className="btn-secondary min-h-[40px] px-3 text-xs disabled:pointer-events-none disabled:opacity-40 sm:min-h-[44px] sm:px-5 sm:text-sm"
+          >
+            <ChevronLeft className="h-4 w-4 shrink-0" />
+            <span className="hidden sm:inline">Back</span>
+          </button>
+          <button
+            type="button"
+            onClick={goForward}
+            disabled={!satisfied}
+            className="btn-primary min-h-[40px] px-3 text-xs disabled:pointer-events-none disabled:opacity-40 sm:min-h-[44px] sm:px-5 sm:text-sm"
+          >
+            {isLast ? (
+              <>
+                <ClipboardCheck className="h-4 w-4 shrink-0" />
+                <span className="sm:hidden">Quiz</span>
+                <span className="hidden sm:inline">Continue to Recap Quiz</span>
+              </>
+            ) : (
+              <>
+                Continue
+                <ChevronRight className="h-4 w-4 shrink-0" />
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -219,6 +223,8 @@ function BeatView({
   markVideoWatched,
   artifacts,
   onWorkDone,
+  needsVideo,
+  lessonVideoUrl,
 }: {
   beat: Beat;
   revealed: boolean;
@@ -229,6 +235,8 @@ function BeatView({
   markVideoWatched: Parameters<typeof LessonVideo>[0]["onWatched"];
   artifacts: LessonArtifact[];
   onWorkDone: () => void;
+  needsVideo: boolean;
+  lessonVideoUrl: string;
 }) {
   if (beat.type === "do" && beat.action === "workbench") {
     return (
@@ -244,8 +252,8 @@ function BeatView({
   if (beat.type === "predict") {
     return (
       <div className="space-y-4">
-        <div className="rounded-xl border-2 border-cyan-500/30 bg-cyan-50/60 px-4 py-4 dark:bg-cyan-500/10">
-          <p className="flex items-center gap-2 text-sm font-semibold text-cyan-800 dark:text-cyan-200">
+        <div className="rounded-xl border-2 border-violet-500/30 bg-violet-50/60 px-4 py-4 dark:bg-violet-500/10">
+          <p className="flex items-center gap-2 text-sm font-semibold text-violet-800 dark:text-violet-200">
             <Lightbulb className="h-4 w-4 shrink-0" />
             Think first
           </p>
@@ -310,7 +318,7 @@ function BeatView({
     return (
       <div className="space-y-3">
         <p className="flex items-center gap-2 text-sm font-semibold text-craft-ink">
-          <Sparkles className="h-4 w-4 shrink-0 text-cyan-600 dark:text-cyan-400" />
+          <Sparkles className="h-4 w-4 shrink-0 text-violet-600 dark:text-violet-400" />
           What you now know
         </p>
         <ul className="space-y-2">
@@ -328,9 +336,10 @@ function BeatView({
   if (beat.type === "do" && beat.action === "video") {
     return (
       <LessonVideo
-        url={beat.video_url ?? ""}
+        url={(beat.video_url || lessonVideoUrl || "").trim()}
         title={beat.title}
         watched={videoDone}
+        requireFullWatch={needsVideo}
         onWatched={markVideoWatched}
       />
     );
@@ -354,8 +363,8 @@ function ExplainBody({ beat }: { beat: Beat }) {
         </div>
       ) : null}
       {beat.try_this?.length ? (
-        <div className="rounded-xl border border-cyan-500/25 px-4 py-3">
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-300">
+        <div className="rounded-xl border border-violet-500/25 px-4 py-3">
+          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-violet-700 dark:text-violet-300">
             <ListChecks className="h-3.5 w-3.5 shrink-0" />
             Try this now
           </p>

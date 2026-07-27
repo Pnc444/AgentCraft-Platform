@@ -193,7 +193,7 @@ export function AvatarForm() {
               step={0.05}
               value={zoom}
               onChange={(e) => setZoom(Number(e.target.value))}
-              className="w-full accent-cyan-500"
+              className="w-full accent-violet-500"
               disabled={busy}
             />
           </label>

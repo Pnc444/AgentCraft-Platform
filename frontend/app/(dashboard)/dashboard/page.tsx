@@ -1,24 +1,53 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowRight, BookOpen, CheckCircle2, ChevronDown, Clock, Inbox } from "lucide-react";
-import { getCourses, getDashboardStats } from "@/lib/api/courses";
+import {
+  ArrowRight,
+  BookOpen,
+  Flame,
+  GraduationCap,
+  Sparkles,
+} from "lucide-react";
+import { getCourses } from "@/lib/api/courses";
 import { deriveLearningPath, lessonHref, type LessonRef } from "@/lib/learning-path";
 import { prefetchLessonNav } from "@/lib/prefetch-lesson";
+import { peekVisitStreak, recordAndGetVisitStreak } from "@/lib/visit-streak";
 import { useAuthStore } from "@/stores/authStore";
+import { usePageChrome } from "@/stores/pageChrome";
+import {
+  TRACK_LESSON_BLURB,
+  TRACK_LESSON_TITLE,
+  currentModule,
+  formatModuleProgress,
+  isModuleComplete,
+  lessonProgressPct,
+  moduleDisplayTitle,
+  moduleHasStarted,
+  modulesCompletedCount,
+  trackModulesFrom,
+} from "@/lib/learning-track";
+import {
+  LessonFeatureCard,
+  courseHasStarted,
+} from "@/components/dashboard/LessonFeatureCard";
 import { DifficultyBadge } from "@/components/dashboard/DifficultyBadge";
-import { ProgressBar } from "@/components/shared/ProgressBar";
+import { ProgressRing } from "@/components/shared/ProgressRing";
 import { Reveal } from "@/components/shared/Reveal";
+import { UserAvatar } from "@/components/shared/UserAvatar";
+import type { CourseDetail } from "@/types";
 
 export default function StudentDashboardPage() {
   const user = useAuthStore((s) => s.user);
+  const setChrome = usePageChrome((s) => s.setChrome);
+  const clearChrome = usePageChrome((s) => s.clearChrome);
   const queryClient = useQueryClient();
   const router = useRouter();
-  const [pathOpen, setPathOpen] = useState(false);
-  const { data: courses, isLoading } = useQuery({
+  const [streak, setStreak] = useState(0);
+
+  const { data: allCourses, isLoading } = useQuery({
     queryKey: ["courses"],
     queryFn: async () => {
       const list = await getCourses();
@@ -28,259 +57,313 @@ export default function StudentDashboardPage() {
       return list;
     },
   });
-  const { data: stats } = useQuery({ queryKey: ["dashboard-stats"], queryFn: getDashboardStats });
 
-  const path = courses ? deriveLearningPath(courses, courses) : null;
-  const detailsReady = !!courses;
+  const courses = useMemo(() => trackModulesFrom(allCourses ?? []), [allCourses]);
 
-  // Warm continue + upcoming lessons so Continue feels instant
+  const path = courses.length ? deriveLearningPath(courses, courses) : null;
+  const detailsReady = !!allCourses;
+
+  const primaryTarget = path?.continueTarget ?? null;
+  const featuredCourse =
+    (currentModule(courses) as CourseDetail | null) ??
+    ((path?.currentModule ?? courses[0] ?? null) as CourseDetail | null);
+  const hasStartedAnything = courses.some(courseHasStarted);
+  const showStart = !hasStartedAnything;
+
+  const lessonsHref = useMemo(() => {
+    const target = currentModule(courses) ?? courses[0];
+    if (target) return `/dashboard/courses/${target.slug}`;
+    return "/dashboard";
+  }, [courses]);
+
+  const completedModules = modulesCompletedCount(courses);
+  const lessonPct = lessonProgressPct(courses);
+  const inProgressMod =
+    courses.find((m) => moduleHasStarted(m) && !isModuleComplete(m)) ?? null;
+  const certificatesEarned = courses.every(isModuleComplete) && courses.length ? 1 : 0;
+
   useEffect(() => {
-    if (!path?.continueTarget) return;
-    prefetchLessonNav(queryClient, path.continueTarget, router);
-    for (const ref of path.upcoming.slice(0, 2)) {
-      prefetchLessonNav(queryClient, ref, router);
-    }
-    // Only re-run when the continue lesson identity changes
+    setStreak(recordAndGetVisitStreak() || peekVisitStreak());
+  }, []);
+
+  useEffect(() => {
+    setChrome({
+      title: "Dashboard",
+      subtitle: user?.username ? `Welcome back, ${user.username}` : "Your learning home",
+      showAskTutor: false,
+      onAskTutor: null,
+      headerTabs: null,
+      activeTab: null,
+      onTabChange: null,
+    });
+    return () => clearChrome();
+  }, [clearChrome, setChrome, user?.username]);
+
+  useEffect(() => {
+    if (!primaryTarget) return;
+    prefetchLessonNav(queryClient, primaryTarget, router);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    path?.continueTarget?.courseSlug,
-    path?.continueTarget?.lesson.slug,
-    queryClient,
-    router,
-  ]);
+  }, [primaryTarget?.courseSlug, primaryTarget?.lesson.slug, queryClient, router]);
 
   function warm(ref: LessonRef) {
     prefetchLessonNav(queryClient, ref, router);
   }
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div className="mx-auto w-full max-w-6xl">
       <Reveal>
-        <h1 className="text-3xl font-bold tracking-tight text-craft-ink">
-          Hello, {user?.username}
-        </h1>
-        <p className="mt-1 text-craft-muted">Pick up where you left off</p>
-      </Reveal>
-
-      <div className="mt-8 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.65fr)]">
-        <Reveal className="lg:col-span-2" delay={60}>
-          <div className="card h-full p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-craft-faint">
-              Continue learning
-            </p>
-            {!detailsReady && <p className="mt-4 animate-pulse text-sm text-craft-faint">Loading…</p>}
-            {detailsReady && path?.continueTarget ? (
-              <div className="mt-3">
-                <p className="text-sm text-craft-muted">{path.continueTarget.courseTitle}</p>
-                <h2 className="mt-1 text-xl font-bold text-craft-ink">
-                  {path.continueTarget.lesson.title}
-                </h2>
-                <p className="mt-2 text-sm text-craft-muted">
-                  {path.continueTarget.lesson.estimated_minutes} min ·{" "}
-                  {path.continueTarget.lesson.type_label}
-                </p>
-                <Link
-                  href={lessonHref(path.continueTarget)}
-                  className="btn-primary mt-5"
-                  onMouseEnter={() => warm(path.continueTarget!)}
-                  onFocus={() => warm(path.continueTarget!)}
-                  onTouchStart={() => warm(path.continueTarget!)}
-                >
-                  Continue <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            ) : null}
-            {detailsReady && !path?.continueTarget && (
-              <p className="mt-4 text-sm text-craft-muted">
-                {courses?.length
-                  ? "All available lessons are complete."
-                  : "No lessons available yet."}
-              </p>
-            )}
-          </div>
-        </Reveal>
-
-        <Reveal delay={140} variant="scale">
-          <div className="card h-full p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-craft-faint">
-              Overall progress
-            </p>
-            <p className="mt-3 text-4xl font-bold text-craft-ink">
-              {stats?.overall_progress_pct ?? 0}%
-            </p>
-            <ProgressBar className="mt-4" value={stats?.overall_progress_pct ?? 0} />
-            <p className="mt-3 text-sm text-craft-faint">
-              {stats
-                ? `${stats.lessons_completed} completed · ${stats.lessons_in_progress} in progress`
-                : "—"}
-            </p>
-          </div>
-        </Reveal>
-      </div>
-
-      <div className="mt-4 grid gap-4 md:grid-cols-2">
-        <Reveal delay={100}>
-          <div className="card h-full p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-craft-faint">
-              Current module
-            </p>
-            {path?.currentModule ? (
-              <div className="mt-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="font-bold text-craft-ink">{path.currentModule.title}</h3>
-                  <DifficultyBadge difficulty={path.currentModule.difficulty} />
-                </div>
-                <ProgressBar className="mt-4" value={path.currentModule.completion_pct} />
-                <p className="mt-2 text-sm text-craft-muted">
-                  {path.currentModule.completed_lessons} of {path.currentModule.total_lessons}{" "}
-                  lessons
-                </p>
-                <Link
-                  href={`/dashboard/courses/${path.currentModule.slug}`}
-                  className="mt-4 inline-flex text-sm font-semibold text-cyan-600 hover:underline dark:text-cyan-400"
-                >
-                  View module
-                </Link>
-              </div>
-            ) : (
-              <p className="mt-4 text-sm text-craft-muted">No module in progress.</p>
-            )}
-          </div>
-        </Reveal>
-
-        <Reveal delay={180}>
-          <div className="card h-full p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-craft-faint">
-              Recently completed
-            </p>
-            {detailsReady && path && path.recentCompleted.length > 0 ? (
-              <ul className="mt-3 space-y-2">
-                {path.recentCompleted.map((ref) => (
-                  <li key={`${ref.courseSlug}-${ref.lesson.id}`}>
-                    <Link
-                      href={lessonHref(ref)}
-                      onMouseEnter={() => warm(ref)}
-                      onFocus={() => warm(ref)}
-                      className="flex items-start gap-2 rounded-xl px-2 py-2 text-sm transition hover:bg-craft-soft"
-                    >
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
-                      <span>
-                        <span className="font-medium text-craft-ink">{ref.lesson.title}</span>
-                        <span className="block text-xs text-craft-faint">{ref.courseTitle}</span>
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="mt-4 text-sm text-craft-muted">No completed lessons yet.</p>
-            )}
-          </div>
-        </Reveal>
-      </div>
-
-      <Reveal delay={120} className="mt-4">
-        <div className="card p-6">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-craft-faint">
-            Upcoming lessons
-          </p>
-          {detailsReady && path && path.upcoming.length > 0 ? (
-            <ul className="mt-3 divide-y divide-craft-border">
-              {path.upcoming.map((ref) => (
-                <li key={`${ref.courseSlug}-${ref.lesson.id}`}>
-                  <Link
-                    href={lessonHref(ref)}
-                    onMouseEnter={() => warm(ref)}
-                    onFocus={() => warm(ref)}
-                    className="flex items-center justify-between gap-4 py-3 transition hover:opacity-80"
-                  >
-                    <span>
-                      <span className="font-medium text-craft-ink">{ref.lesson.title}</span>
-                      <span className="mt-0.5 block text-xs text-craft-faint">{ref.courseTitle}</span>
-                    </span>
-                    <span className="shrink-0 text-xs text-craft-faint">
-                      {ref.lesson.estimated_minutes} min
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="mt-4 text-sm text-craft-muted">No upcoming lessons.</p>
-          )}
-        </div>
-      </Reveal>
-
-      <Reveal className="mt-10" delay={80}>
-        <button
-          type="button"
-          onClick={() => setPathOpen((open) => !open)}
-          aria-expanded={pathOpen}
-          className="flex w-full items-center justify-between gap-3 rounded-2xl border border-craft-border bg-craft-surface/60 px-4 py-3 text-left transition hover:bg-craft-soft/70"
-        >
-          <h2 className="flex items-center gap-2 text-lg font-bold text-craft-ink">
-            <BookOpen className="h-5 w-5 text-cyan-600 dark:text-cyan-400" /> Create an AI Agent
-          </h2>
-          <span className="flex shrink-0 items-center gap-1.5 text-sm font-medium text-craft-muted">
-            {courses?.length ?? 0} modules
-            <ChevronDown
-              className={`h-5 w-5 text-craft-faint transition-transform ${
-                pathOpen ? "rotate-180" : ""
-              }`}
-            />
-          </span>
-        </button>
-      </Reveal>
-
-        {pathOpen && (
-          <div className="mt-1">
-            <p className="text-sm text-craft-muted">Modules in this learning path</p>
-
-            {isLoading && <p className="mt-6 animate-pulse text-craft-faint">Loading courses…</p>}
-
-            <div className="mt-4 space-y-3">
-              {courses?.map((course, i) => (
-                <Reveal key={course.slug} delay={i * 60}>
-                  <div className="card flex flex-col gap-4 p-5 sm:flex-row sm:items-center">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-3">
-                        <h3 className="font-bold text-craft-ink">{course.title}</h3>
-                        <DifficultyBadge difficulty={course.difficulty} />
-                      </div>
-                      <p className="mt-2 text-sm text-craft-muted">
-                        {course.description || "No description yet."}
-                      </p>
-                      <div className="mt-3 flex items-center gap-4 text-xs text-craft-faint">
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3.5 w-3.5" /> {course.total_minutes ?? "—"} min
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <BookOpen className="h-3.5 w-3.5" /> {course.total_lessons} lessons
-                        </span>
-                      </div>
-                      <ProgressBar className="mt-3" value={course.completion_pct} />
-                    </div>
-                    <Link
-                      href={`/dashboard/courses/${course.slug}`}
-                      className="btn-primary shrink-0"
-                    >
-                      {course.completion_pct > 0 ? "Continue" : "Start"}
-                    </Link>
-                  </div>
-                </Reveal>
-              ))}
-
-              {courses?.length === 0 && (
-                <div className="card p-12 text-center">
-                  <Inbox className="mx-auto h-10 w-10 text-craft-faint" />
-                  <p className="mt-3 text-craft-muted">
-                    No courses available yet. Check back soon!
+        <div className="card overflow-hidden p-0">
+          <div className="grid grid-cols-[minmax(0,1fr)_minmax(8.5rem,10rem)] items-stretch sm:grid-cols-[minmax(0,1.3fr)_minmax(12.5rem,15rem)] lg:grid-cols-[minmax(0,1.45fr)_minmax(17rem,19rem)]">
+            <div className="min-w-0 p-3 sm:p-6 lg:p-8">
+              <div className="flex items-start gap-2.5 sm:gap-4">
+                <UserAvatar size="md" className="shrink-0 sm:hidden" />
+                <UserAvatar size="lg" className="hidden shrink-0 sm:flex" />
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-xl font-bold tracking-tight text-craft-ink sm:text-3xl">
+                    {hasStartedAnything ? "Hello," : "Welcome,"}{" "}
+                    <span className="break-all">{user?.username ?? "learner"}</span>
+                  </h1>
+                  <p className="mt-1 line-clamp-2 text-xs leading-snug text-craft-muted sm:line-clamp-none sm:text-sm">
+                    {featuredCourse
+                      ? hasStartedAnything
+                        ? `You are on ${TRACK_LESSON_TITLE} · ${moduleDisplayTitle(featuredCourse)}${
+                            primaryTarget ? ` · ${primaryTarget.lesson.title}` : ""
+                          }`
+                        : `Start ${TRACK_LESSON_TITLE} — first module: ${moduleDisplayTitle(featuredCourse)}.`
+                      : "Your learning path is loading…"}
                   </p>
+                </div>
+              </div>
+
+              {isLoading && (
+                <p className="mt-4 animate-pulse text-sm text-craft-faint sm:mt-6">
+                  Loading your path…
+                </p>
+              )}
+
+              {detailsReady && featuredCourse && primaryTarget ? (
+                <div className="mt-4 border-t border-craft-border pt-4 sm:mt-6 sm:pt-6">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-craft-faint sm:text-[11px]">
+                    {showStart ? "Start lesson" : "Continue learning"}
+                  </p>
+                  <div className="mt-2 sm:mt-3">
+                    <h2 className="text-base font-bold text-craft-ink sm:text-2xl">
+                      {TRACK_LESSON_TITLE}
+                    </h2>
+                  </div>
+                  <p className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-craft-muted sm:mt-2 sm:text-sm">
+                    <span className="line-clamp-2 sm:line-clamp-none">
+                      Module · {moduleDisplayTitle(featuredCourse)}
+                      {primaryTarget ? ` · Next: ${primaryTarget.lesson.title}` : null}
+                    </span>
+                    <DifficultyBadge difficulty={featuredCourse.difficulty} />
+                  </p>
+                  <p className="mt-1.5 hidden text-sm leading-relaxed text-craft-muted sm:mt-2 sm:block">
+                    {TRACK_LESSON_BLURB}
+                  </p>
+
+                  <div className="mt-4 flex flex-col gap-3 sm:mt-5 sm:gap-5">
+                    <div className="flex items-center gap-3 sm:gap-5">
+                      <ProgressRing
+                        value={lessonPct}
+                        size={56}
+                        stroke={6}
+                        sublabel="Lesson"
+                        className="shrink-0 sm:hidden"
+                      />
+                      <ProgressRing
+                        value={lessonPct}
+                        size={80}
+                        stroke={7}
+                        sublabel="Lesson"
+                        className="hidden shrink-0 sm:block"
+                      />
+                      <ul className="min-w-0 flex-1 space-y-1.5 text-xs text-craft-muted sm:space-y-2 sm:text-sm">
+                        <LegendRow
+                          color="bg-emerald-500"
+                          label="Completed"
+                          detail={formatModuleProgress(completedModules, courses.length)}
+                        />
+                        <LegendRow
+                          color="bg-violet-500"
+                          label="In Progress"
+                          detail={
+                            inProgressMod ? moduleDisplayTitle(inProgressMod) : "—"
+                          }
+                        />
+                      </ul>
+                    </div>
+                    <div className="flex w-full flex-col items-stretch gap-2">
+                      <Link
+                        href={lessonHref(primaryTarget)}
+                        className="btn-primary min-h-[44px] w-full sm:min-h-[48px]"
+                        onMouseEnter={() => warm(primaryTarget)}
+                        onFocus={() => warm(primaryTarget)}
+                        onTouchStart={() => warm(primaryTarget)}
+                      >
+                        {showStart ? "Start" : "Continue"}
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                      <Link
+                        href={`/dashboard/courses/${featuredCourse.slug}`}
+                        className="text-center text-sm font-semibold text-violet-600 hover:underline dark:text-violet-400"
+                      >
+                        View lesson
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
+
+              {detailsReady && !primaryTarget && (
+                <div className="mt-4 border-t border-craft-border pt-4 sm:mt-6 sm:pt-6">
+                  <p className="text-sm text-craft-muted">
+                    {courses.length
+                      ? "All available lessons are complete — nice work."
+                      : "No lessons available yet."}
+                  </p>
+                  {courses.length > 0 ? (
+                    <Link href={lessonsHref} className="btn-secondary mt-4 min-h-[44px]">
+                      View lessons
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  ) : null}
                 </div>
               )}
             </div>
+
+            <div className="grid grid-cols-2 gap-px self-stretch border-l border-craft-border bg-craft-border">
+              <MetricTile
+                icon={<Flame className="h-4 w-4 text-orange-400 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />}
+                label="Streak"
+                labelFull="Daily streak"
+                value={`${streak}d`}
+                valueFull={`${streak} day${streak === 1 ? "" : "s"}`}
+              />
+              <MetricTile
+                icon={<BookOpen className="h-4 w-4 text-violet-400 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />}
+                label="Progress"
+                labelFull="Lesson progress"
+                value={`${lessonPct}%`}
+                valueFull={`${lessonPct}% complete`}
+              />
+              <MetricTile
+                href="/dashboard/certificates"
+                icon={<Sparkles className="h-4 w-4 text-violet-400 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />}
+                label="Certs"
+                labelFull="Certificates"
+                value={`${certificatesEarned}`}
+                valueFull={`${certificatesEarned} earned`}
+              />
+              <MetricTile
+                href={lessonsHref}
+                icon={<GraduationCap className="h-4 w-4 text-sky-400 sm:h-5 sm:w-5 lg:h-6 lg:w-6" />}
+                label="Modules"
+                labelFull="Modules done"
+                value={`${completedModules}/${courses.length || 10}`}
+              />
+            </div>
           </div>
-        )}
+        </div>
+      </Reveal>
+
+      {detailsReady && !hasStartedAnything ? (
+        <div className="card mt-5 p-8 text-center sm:p-10">
+          <BookOpen className="mx-auto h-10 w-10 text-craft-faint" />
+          <p className="mt-3 text-craft-muted">
+            You haven&apos;t started a lesson yet. Explore the catalog to begin.
+          </p>
+          <Link href={lessonsHref} className="btn-primary mt-6 min-h-[44px]">
+            View lessons
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      ) : null}
+
+      {detailsReady && hasStartedAnything && featuredCourse ? (
+        <div className="mt-5 space-y-4">
+          <h2 className="text-lg font-bold tracking-tight text-craft-ink sm:text-xl">
+            Current lesson
+          </h2>
+          <Reveal delay={80}>
+            <LessonFeatureCard
+              course={featuredCourse}
+              trackModules={courses}
+              overviewHref={`/dashboard/courses/${featuredCourse.slug}/modules`}
+              onWarm={() => {
+                if (primaryTarget) warm(primaryTarget);
+              }}
+            />
+          </Reveal>
+        </div>
+      ) : null}
     </div>
+  );
+}
+
+function MetricTile({
+  icon,
+  label,
+  labelFull,
+  value,
+  valueFull,
+  href,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  labelFull?: string;
+  value: string;
+  valueFull?: string;
+  href?: string;
+}) {
+  const content = (
+    <>
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center sm:h-9 sm:w-9 lg:h-10 lg:w-10">
+        {icon}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[10px] font-semibold uppercase leading-tight tracking-wide text-craft-faint sm:text-[11px] lg:text-xs">
+          <span className="sm:hidden">{label}</span>
+          <span className="hidden sm:inline">{labelFull ?? label}</span>
+        </p>
+        <p className="mt-1 text-base font-bold leading-tight text-craft-ink sm:text-lg lg:mt-1.5 lg:text-xl">
+          <span className="sm:hidden">{value}</span>
+          <span className="hidden sm:inline">{valueFull ?? value}</span>
+        </p>
+      </div>
+    </>
+  );
+
+  const className =
+    "flex min-h-[4.5rem] flex-col justify-center gap-1.5 overflow-hidden bg-craft-surface p-2.5 transition hover:bg-craft-soft sm:min-h-0 sm:gap-2 sm:p-3.5 lg:gap-2.5 lg:p-5";
+
+  if (href) {
+    return (
+      <Link href={href} className={className}>
+        {content}
+      </Link>
+    );
+  }
+
+  return <div className={className}>{content}</div>;
+}
+
+function LegendRow({
+  color,
+  label,
+  detail,
+}: {
+  color: string;
+  label: string;
+  detail: string;
+}) {
+  return (
+    <li className="flex items-start gap-2 text-craft-muted">
+      <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${color}`} />
+      <span>
+        {label}{" "}
+        <span className="font-medium text-craft-ink">{detail}</span>
+      </span>
+    </li>
   );
 }

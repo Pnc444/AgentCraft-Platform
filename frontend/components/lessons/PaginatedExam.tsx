@@ -352,45 +352,43 @@ export function PaginatedExam({
       : "Next";
 
   return (
-    <div>
+    <div className="flex h-full min-h-0 flex-col">
       <ConfettiBurst active={showConfetti} />
 
-      <div className="card flex flex-col overflow-hidden">
+      <div className="card flex min-h-0 flex-1 flex-col overflow-hidden">
         {/* Header: title + step counter */}
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-craft-border px-5 py-2.5 sm:px-6">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-craft-border px-5 py-3 sm:px-6 sm:py-3.5">
           <div className="flex items-center gap-2">
-            <span className="text-cyan-600 dark:text-cyan-400">
-              <ClipboardCheck className="h-4 w-4" />
+            <span className="text-violet-600 dark:text-violet-400">
+              <ClipboardCheck className="h-4 w-4 sm:h-5 sm:w-5" />
             </span>
-            <h2 className="text-base font-bold text-craft-ink">{slideTitle}</h2>
+            <h2 className="text-base font-bold text-craft-ink sm:text-lg">{slideTitle}</h2>
           </div>
           <div className="flex items-center gap-3">
-            <span className="hidden text-xs text-craft-muted sm:inline">
+            <span className="hidden text-xs text-craft-muted sm:inline sm:text-sm">
               {reviewing ? "Reviewing — answers shown" : `${answeredCount}/${bank.length} answered`}
             </span>
-            {/*
-              Counts questions, not slides — "Step 1 / 6" on a 5-question quiz
-              read as a lie (audit B8). The review slide is a state, not a step.
-            */}
-            <span className="whitespace-nowrap text-xs font-medium uppercase tracking-[0.18em] text-craft-faint">
+            <span className="whitespace-nowrap text-xs font-medium uppercase tracking-[0.18em] text-craft-faint sm:text-sm">
               {isReviewSlide ? "Review" : `${currentIndex + 1} / ${bank.length}`}
             </span>
           </div>
         </div>
 
         {/*
-          Slide body — no max-height, no inner scrollbar at normal size.
-          Card grows with content; page/browser scroll only when zoomed or
-          content truly exceeds the viewport.
+          Slide body fills remaining card height; content stays readable with
+          generous padding that scales up on larger screens.
         */}
         <div
           ref={slideRef}
-          className={clsx("px-5 py-4 sm:px-6 sm:py-5", animClass)}
+          className={clsx(
+            "min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10",
+            animClass
+          )}
         >
           {isReviewSlide ? (
-            <div className="mx-auto max-w-2xl space-y-4">
+            <div className="mx-auto max-w-3xl space-y-4 sm:space-y-5">
               {showResult && passed && (
-                <div className="overflow-hidden rounded-2xl border border-emerald-400/40 bg-gradient-to-br from-emerald-50 to-cyan-50 p-5 shadow-elevated dark:from-emerald-500/15 dark:to-cyan-500/10 animate-fade-up">
+                <div className="overflow-hidden rounded-2xl border border-emerald-400/40 bg-gradient-to-br from-emerald-50 to-violet-50 p-5 shadow-elevated dark:from-emerald-500/15 dark:to-violet-500/10 animate-fade-up">
                   <div className="flex items-start gap-3">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white shadow-soft">
                       <Sparkles className="h-5 w-5" />
@@ -542,12 +540,12 @@ export function PaginatedExam({
               </div>
             </div>
           ) : currentQuestion ? (
-            <div className="mx-auto max-w-2xl space-y-4">
-              <p className="text-base font-medium leading-relaxed text-craft-ink sm:text-lg">
+            <div className="mx-auto flex h-full max-w-3xl flex-col justify-center space-y-5 sm:space-y-6 lg:space-y-7">
+              <p className="text-lg font-medium leading-relaxed text-craft-ink sm:text-xl lg:text-2xl">
                 <span className="mr-2 text-craft-faint">{currentIndex + 1}.</span>
                 {currentQuestion.prompt}
               </p>
-              <ul className="space-y-2">
+              <ul className="space-y-3 sm:space-y-3.5">
                 {currentQuestion.options.map((option, index) => {
                   const chosen = answers[currentQuestion.id] === index;
                   const isCorrect = index === currentQuestion.answer_index;
@@ -558,10 +556,10 @@ export function PaginatedExam({
                         disabled={passed}
                         onClick={() => selectAnswer(currentQuestion.id, index)}
                         className={clsx(
-                          "w-full rounded-xl border px-4 py-3 text-left text-sm transition sm:text-base",
+                          "w-full rounded-xl border px-4 py-3.5 text-left text-sm transition sm:px-5 sm:py-4 sm:text-base lg:text-lg",
                           chosen &&
                             !showResult &&
-                            "border-cyan-400 bg-craft-accent-soft text-craft-ink ring-1 ring-cyan-400/30",
+                            "border-violet-400 bg-craft-accent-soft text-craft-ink ring-1 ring-violet-400/30",
                           showResult &&
                             chosen &&
                             isCorrect &&
@@ -576,7 +574,7 @@ export function PaginatedExam({
                             "border-emerald-300 bg-emerald-50/70 dark:bg-emerald-500/10",
                           !chosen &&
                             !showResult &&
-                            "border-craft-border bg-craft-surface hover:border-cyan-400/50 hover:bg-craft-soft"
+                            "border-craft-border bg-craft-surface hover:border-violet-400/50 hover:bg-craft-soft"
                         )}
                       >
                         {option}
@@ -586,19 +584,17 @@ export function PaginatedExam({
                 })}
               </ul>
               {!currentAnswered && !reviewing && (
-                <p className="text-xs text-craft-faint">
+                <p className="text-sm text-craft-faint">
                   Select an answer to continue to the next question.
                 </p>
               )}
               {reviewing && (
-                <p className="text-xs text-craft-faint">
+                <p className="text-sm text-craft-faint">
                   The correct answer is highlighted. Use Next and Back to page through.
                 </p>
               )}
-              {/* After submission, say WHY the right answer is right and which
-                  lesson teaches it — never a bare score (plan §6). */}
               {showResult && currentQuestion.explanation && (
-                <div className="rounded-xl bg-craft-soft px-4 py-3 text-sm text-craft-ink ring-1 ring-craft-border">
+                <div className="rounded-xl bg-craft-soft px-4 py-3 text-sm text-craft-ink ring-1 ring-craft-border sm:px-5 sm:py-4 sm:text-base">
                   {currentQuestion.explanation}
                 </div>
               )}
@@ -607,12 +603,12 @@ export function PaginatedExam({
         </div>
 
         {/* Footer navigation — same chrome as the lesson player */}
-        <div className="flex shrink-0 items-center justify-between gap-3 border-t border-craft-border bg-craft-surface/90 px-5 py-2.5 backdrop-blur-sm sm:px-6">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-t border-craft-border bg-craft-surface/90 px-5 py-3 backdrop-blur-sm sm:px-6 sm:py-3.5">
           <button
             type="button"
             onClick={() => navigate("back")}
             disabled={currentIndex === 0}
-            className="btn-secondary flex items-center gap-1.5 disabled:pointer-events-none disabled:opacity-40"
+            className="btn-secondary flex min-h-[40px] items-center gap-1.5 disabled:pointer-events-none disabled:opacity-40 sm:min-h-[44px]"
           >
             <ChevronLeft className="h-4 w-4" />
             Back
@@ -632,7 +628,7 @@ export function PaginatedExam({
                   className={clsx(
                     "h-1.5 w-1.5 rounded-full transition",
                     i === currentIndex
-                      ? "w-4 bg-cyan-500"
+                      ? "w-4 bg-violet-500"
                       : qAnswered
                         ? "bg-emerald-400"
                         : i === reviewIndex
@@ -667,8 +663,8 @@ export function PaginatedExam({
               type="button"
               onClick={() => navigate("forward")}
               disabled={!currentAnswered && !reviewing}
-              className="btn-primary flex items-center gap-1.5 disabled:pointer-events-none disabled:opacity-40"
-            >
+            className="btn-primary flex min-h-[40px] items-center gap-1.5 disabled:pointer-events-none disabled:opacity-40 sm:min-h-[44px]"
+          >
               {nextLabel}
               <ChevronRight className="h-4 w-4" />
             </button>
