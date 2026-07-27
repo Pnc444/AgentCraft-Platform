@@ -16,11 +16,34 @@ curl -fsSL https://claude.ai/install.sh | bash
 irm https://claude.ai/install.ps1 | iex
 ```
 
+**Read what the installer prints before you close that window.** It tells you where `claude` was installed and whether it added that folder to your PATH. If it gives you instructions, follow them — they're specific to your machine.
+
+Then **close your terminal and open a new one.** PATH changes only apply to terminals opened afterwards, so the window you installed from won't find the command.
+
 Verify:
 ```bash
 claude --version
 ```
-You should see a version number followed by `(Claude Code)`. Version drift note: this module was written against the mid-2026 release — if a menu looks different from the screenshots, check the changelog first.
+You should see a version number followed by `(Claude Code)`.
+
+<details>
+<summary><strong>🛠️ Common issues — click to expand</strong></summary>
+
+**"claude: command not found" / "not recognized as a command"**
+This is a PATH problem, not a failed install — the program is on disk, your terminal just doesn't know where to look.
+
+1. Restart your terminal first if you haven't. That fixes it most of the time.
+2. Still failing? Scroll back to the installer output, find the install folder, and add it to your PATH yourself:
+   - **Windows:** search "environment variables" → *Edit the system environment variables* → **Environment Variables** → select **Path** under *User variables* → **Edit** → **New** → paste the folder → **OK**. Open a fresh terminal.
+   - **macOS / Linux:** add `export PATH="$HOME/.local/bin:$PATH"` to `~/.zshrc` (or `~/.bashrc`), then run `source ~/.zshrc` or open a new terminal.
+3. Re-run `claude --version` in the **new** terminal.
+
+**The installer finished but nothing seems to have happened**
+Some installs need a full restart of the machine, not just the terminal. Restart, then verify again.
+
+</details>
+
+Version drift note: this module was written against the mid-2026 release — if a menu looks different from the screenshots, check the changelog first.
 
 ![claude --version output in the terminal](/images/lessons/claude-install/version-check.png)
 
@@ -30,6 +53,8 @@ Claude Code needs either a Claude subscription (Pro/Max) or a **Claude Console**
 1. Create an account at console.anthropic.com.
 2. Buy the minimum credits (**$5 is plenty** for this module).
 3. Do **not** enable auto-reload. Prepaid credits *are* the spending cap — when they're gone, the agent stops.
+
+Stop there — **don't create an API key on the Console site.** Claude Code generates one for you during setup in Step 3. All you need right now is the credit sitting on the account.
 
 If you already pay for Claude Pro, you can use that instead; your subscription's usage limits act as the cap.
 
@@ -43,7 +68,15 @@ mkdir ~/agent-practice && cd ~/agent-practice
 claude
 ```
 
-Follow the login prompt in your browser, then you're at the Claude Code prompt. Note what it shows: model, working directory. That working directory matters — it's the agent's default territory.
+### Choosing your login option
+The first run walks you through setup and asks **how you want to log in**. Two routes:
+
+- **Option 1 — Claude account.** Pick this if you already have a Claude subscription (Pro/Max). It opens your browser, you sign in, done. Your subscription's usage limits act as the cap.
+- **Option 2 — API key.** Pick this if you don't have a subscription. This is the Console route from Step 2, and it's the one this course assumes.
+
+**If you pick option 2, you do not create an API key by hand.** Setup **generates the key for you** and wires it up — the only thing you need in place beforehand is the **$5 of prepaid credit** on your Console account. Don't go hunting through the Console for a key to paste; let setup do it.
+
+Once you're through setup you're at the Claude Code prompt. Note what it shows: model, working directory. That working directory matters — it's the agent's default territory.
 
 ## Step 4 — Watch the permission system work
 Type:
