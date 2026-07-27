@@ -1,5 +1,7 @@
 # Context Windows
 
+## The hard limit
+
 In Module 1 you learned that LLMs predict the next token from patterns in text. But there is a hard limit on **how much text** the model can consider at once. That limit is the **context window**.
 
 ## Definition

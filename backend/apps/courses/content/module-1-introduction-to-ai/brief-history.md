@@ -1,5 +1,7 @@
 # Brief History
 
+## Before you watch
+
 Seventy years of AI: two booms, two winters, and one release that changed the conversation.
 
 **Watch for the timeline:**

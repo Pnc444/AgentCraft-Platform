@@ -1,5 +1,7 @@
 # How Context Affects Responses
 
+## Same question, different answer
+
 The **same question** can get **different answers** depending on what else the model can see. Context is everything in the window that influences the next reply.
 
 ## What counts as context?

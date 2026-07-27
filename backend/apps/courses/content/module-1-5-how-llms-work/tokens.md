@@ -1,5 +1,7 @@
 # Tokens
 
+## Not words, tokens
+
 LLMs do not read English the way you do. They break text into **tokens** — small chunks that get counted, priced, and fed into the model. Understanding tokens helps you estimate cost, respect context limits, and debug surprising outputs.
 
 ## What is a token?

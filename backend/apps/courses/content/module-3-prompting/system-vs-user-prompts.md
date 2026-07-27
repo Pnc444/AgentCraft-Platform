@@ -1,5 +1,7 @@
 # System Prompts vs User Prompts
 
+## Messages have roles
+
 Chat products and APIs split messages into **roles**. The two you will use most when building agents are **system** and **user**.
 
 ## The three common roles

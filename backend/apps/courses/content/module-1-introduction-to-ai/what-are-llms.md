@@ -1,5 +1,7 @@
 # What are LLMs?
 
+## Before you watch
+
 What a large language model actually is, underneath the humanlike output.
 
 **Watch for three things:**

@@ -1,5 +1,7 @@
 # Installing Docker Desktop
 
+## What you're installing
+
 Docker Desktop is the app that runs Docker on your computer and gives you a dashboard to see your containers.
 
 ## Download links

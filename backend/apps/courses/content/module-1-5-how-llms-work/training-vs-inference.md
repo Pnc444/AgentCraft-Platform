@@ -1,5 +1,7 @@
 # Training vs Inference
 
+## Built once, used every day
+
 Module 1 introduced LLMs as models trained on huge amounts of text. This lesson separates **how a model is built** (training) from **how you use it every day** (inference). That distinction explains why chatbots can feel smart but cannot truly "learn" from a single conversation.
 
 ## Two phases, one model

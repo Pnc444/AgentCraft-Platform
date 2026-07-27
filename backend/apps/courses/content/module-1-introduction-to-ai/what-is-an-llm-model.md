@@ -1,5 +1,7 @@
 # Other Types of AI
 
+## Before you watch
+
 Seven types of AI, sorted into two groups — and only one of them exists today.
 
 **Watch for three things:**

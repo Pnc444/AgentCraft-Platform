@@ -1,5 +1,7 @@
 # What Prompts Are
 
+## Steering, not asking
+
 Prompting is how you **steer** a language model. Everything you type — instructions, examples, pasted documents — becomes input the model uses to predict its reply.
 
 ## Definition

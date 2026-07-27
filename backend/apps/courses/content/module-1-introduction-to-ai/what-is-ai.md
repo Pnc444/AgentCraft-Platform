@@ -1,5 +1,7 @@
 # What is AI?
 
+## Before you watch
+
 A working definition of artificial intelligence — and why "narrow" is the word doing the heavy lifting.
 
 **Watch for three things:**

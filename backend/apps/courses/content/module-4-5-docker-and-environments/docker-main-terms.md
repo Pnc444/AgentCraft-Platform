@@ -1,5 +1,7 @@
 # The Main Terms
 
+## A handful of words
+
 You only need a handful of words to be dangerous with Docker. Here they are, introduced in the order you'll meet them.
 
 | Term | What it is | Analogy |

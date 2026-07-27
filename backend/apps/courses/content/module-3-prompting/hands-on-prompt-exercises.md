@@ -1,5 +1,7 @@
 # Hands-on Prompt Exercises
 
+## What you need to practice
+
 Time to **practice judging prompts**. You do not need a special sandbox — use any chat model (ChatGPT, Claude, Cursor, etc.) for the try-it-yourself parts. This lesson gives you a **rubric** and exercises you can repeat.
 
 ## How to judge good vs bad

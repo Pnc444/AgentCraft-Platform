@@ -1,5 +1,7 @@
 # Your First Containers
 
+## Two containers
+
 Time to actually run something. Two containers: one that just says hello, and one that's a real web server.
 
 ## 1. Hello, world

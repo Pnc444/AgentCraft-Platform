@@ -1,5 +1,7 @@
 # Good and Bad Prompts
 
+## Sort of helpful, or exactly right
+
 Prompt quality is the difference between *“sort of helpful”* and *“exactly what I needed.”* Use side-by-side comparisons and a simple checklist.
 
 ## Bad patterns (and why they fail)
