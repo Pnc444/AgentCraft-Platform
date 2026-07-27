@@ -418,11 +418,11 @@ body {
     on a card, and muted discs left it looking like one undifferentiated block.
   */
   .prose-lesson ul {
-    @apply mb-4 list-disc space-y-1.5 pl-5 marker:font-bold marker:text-cyan-500 dark:marker:text-cyan-400;
+    @apply mb-4 list-disc space-y-1.5 pl-5 marker:font-bold marker:text-craft-accent;
   }
 
   .prose-lesson ol {
-    @apply mb-4 list-decimal space-y-1.5 pl-5 marker:font-bold marker:text-cyan-600 dark:marker:text-cyan-400;
+    @apply mb-4 list-decimal space-y-1.5 pl-5 marker:font-bold marker:text-craft-accent;
   }
 
   .prose-lesson code {
