@@ -54,7 +54,7 @@ export default function StudentDashboardPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div className="mx-auto max-w-6xl 2xl:max-w-7xl">
       <Reveal>
         <h1 className="text-3xl font-bold tracking-tight text-craft-ink">
           Hello, {user?.username}

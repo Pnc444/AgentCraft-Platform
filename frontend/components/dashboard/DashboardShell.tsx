@@ -16,7 +16,17 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         <Topbar onOpenSidebar={() => setSidebarOpen(true)} />
         <main className="relative min-h-0 min-w-0 flex-1 overflow-y-auto">
           <AcademyBackdrop subtle />
-          <div className="relative z-10 p-5 lg:px-8 lg:py-6">{children}</div>
+          {/*
+            h-full (not min-h-full) bounds this box to main's height, which is
+            what lets the lesson player's flex-1 card SHRINK to the space that
+            is actually left. With min-h-full the box grew instead, so short
+            viewports — landscape phones especially — scrolled the page.
+            Pages with genuinely tall content still overflow this box and main's
+            overflow-y-auto scrolls them as before.
+          */}
+          <div className="relative z-10 flex h-full flex-col p-5 lg:px-8 lg:py-6">
+            {children}
+          </div>
         </main>
       </div>
 

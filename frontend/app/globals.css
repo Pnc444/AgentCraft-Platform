@@ -2,6 +2,53 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Fluid root size — the single lever for large displays.
+
+  Tailwind sizes everything in rem, so raising the root font grows the type AND
+  every max-w-*, padding, and gap proportionally. That is what makes a 1080p or
+  2K screen feel filled without stretching prose past a readable measure:
+  widening the column alone would push lines well beyond the ~65-75 character
+  target, so the column and the text grow together and the character count per
+  line stays put.
+
+    <1536px   16px  (unchanged: laptops, tablets, phones)
+     1536px   17px  (1080p and similar)
+     2200px   18px  (1440p / "2K" and wider)
+*/
+html {
+  font-size: 16px;
+}
+
+@media (min-width: 1536px) {
+  html {
+    font-size: 17px;
+  }
+}
+
+@media (min-width: 2200px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+/*
+  Landscape phones and other short viewports: the lesson frame has a fixed
+  header (breadcrumb + title) above a viewport-height card, which together do
+  not fit in ~390px. Trim the chrome rather than letting the page scroll.
+*/
+@media (max-height: 560px) {
+  .lesson-shell-title {
+    font-size: 1.25rem;
+    line-height: 1.6rem;
+    margin-top: 0.125rem;
+  }
+  /* Reclaim the card's share of a ~390px-tall landscape viewport. */
+  .lesson-shell-body {
+    margin-top: 0.5rem;
+  }
+}
+
 :root {
   color-scheme: light;
 
@@ -383,7 +430,37 @@ body {
   }
 
   .prose-lesson {
-    @apply text-[15px] leading-7 text-craft-muted;
+    /*
+      text-base, not a hardcoded 15px: the pixel value ignored the fluid root
+      size, so body copy stayed 15px even on a 2K display. Now it rides the
+      root (16 / 17 / 18px).
+
+      max-width caps the LINE, not the container. Measured lines were 85-96
+      characters at every breakpoint — well past the 45-75 readable range.
+
+      Expressed in rem rather than `ch` on purpose: `ch` is the width of the
+      "0" glyph, and this font's figures are unusually wide (0.7em), so 68ch
+      measured out at ~94 real characters. 36rem tracks the fluid root size and
+      lands at ~68 characters at 16, 17 and 18px alike — verified, not assumed.
+
+      The cap lives on the text children, not on this container, so tables,
+      code blocks and images can break out to the full column. Capping the
+      container squeezed a four-column table into the reading measure and
+      wrapped its cells to four lines each — a measure is for running text.
+    */
+    @apply mx-auto text-base leading-relaxed text-craft-muted;
+    max-width: 100%;
+  }
+
+  /*
+    Running text only. Centred individually rather than left-aligned in a wide
+    box: aligning left would push every paragraph to one side and leave a
+    lopsided gutter, whereas centring keeps the text block symmetric and lets
+    wide elements extend evenly past it on both sides.
+  */
+  .prose-lesson > :where(p, ul, ol, h1, h2, h3, h4, blockquote) {
+    max-width: 36rem;
+    margin-inline: auto;
   }
 
   .prose-lesson h1 {

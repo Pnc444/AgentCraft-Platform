@@ -115,14 +115,28 @@ export function LessonPlayer() {
 
   return (
     /*
-      Height is a CEILING, not a fixed size. A fixed height made a 200-character
-      beat render ~1100px of void below three lines of text — and it satisfied a
-      naive zero-scroll check (scrollHeight === clientHeight) precisely because
-      the card never grew. Sizing to content with a viewport cap gives compact
-      beats a compact card and long beats an internally-scrolling one, which is
-      what "no scrollbar, ever" actually meant.
+      The card fills the viewport and the beat is centred inside it.
+
+      Two earlier attempts were both wrong. A fixed height with top-aligned
+      content put ~1100px of void under three lines of text. Sizing purely to
+      content fixed that but left a 336px card stranded in a 1080px screen, and
+      made the frame jump between beats. Filling the height and centring the
+      content keeps one stable frame, no dead band under short beats, and long
+      beats still scroll inside the pane instead of the page.
+
+      Height comes from the flex chain (shell → body → card), not a calc()
+      against 100dvh. The guessed subtractions were always wrong somewhere:
+      they overflowed landscape phones by 54px and 375px portrait by 36px,
+      because the header they were guessing at is a different size on each.
     */
-    <div className="card flex max-h-[calc(100dvh-17rem)] flex-col overflow-hidden sm:max-h-[calc(100dvh-14rem)]">
+    /*
+      flex-1 fills the height the shell gives it, but capped: on a 1440px-tall
+      display an uncapped card stretched to 1220px around ~500px of content,
+      which is the same void a fixed height produced, just further down the
+      resolution ladder. Past the cap the slack moves outside the card (the
+      shell centres it) instead of pooling inside it.
+    */
+    <div className="card flex max-h-[54rem] min-h-0 flex-1 flex-col overflow-hidden">
       {/* Header: beat title + ONE position signal (segmented bar + count). */}
       <div className="flex shrink-0 items-center justify-between gap-4 border-b border-craft-border px-5 py-3 sm:px-6">
         <h2 className="min-w-0 truncate text-base font-bold text-craft-ink">
@@ -148,7 +162,12 @@ export function LessonPlayer() {
 
       {/* One beat. The pane may scroll internally; the page never does. */}
       <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-8 sm:py-6">
-        <div className="mx-auto max-w-2xl">
+        {/*
+          min-h-full + justify-center centres a short beat without clipping a
+          tall one: the wrapper grows past the pane when content overflows, and
+          the pane scrolls normally.
+        */}
+        <div className="mx-auto flex min-h-full w-full max-w-2xl flex-col justify-center">
           {beat.type === "do" && beat.action === "terminal" ? (
             /* The practice terminal persists task state via interaction_log;
                the recap quiz gates completion, so the beat is ungated. */

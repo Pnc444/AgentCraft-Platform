@@ -36,8 +36,19 @@ export function LessonShell({ children }: { children: React.ReactNode }) {
     );
 
   return (
-    <div className="mx-auto w-full max-w-6xl lg:ml-[clamp(0px,calc(50vw-36rem-var(--sidebar-w,18rem)),calc(100%-72rem))] lg:mr-0">
-      <Reveal>
+    /*
+      Centred inside the content column, not the viewport. The old
+      clamp(50vw - 36rem - sidebar) shifted the card left to centre it against
+      the whole window, which with a 272px sidebar left visibly uneven gutters
+      (416px left / 352px right at 1920). Plain mx-auto is symmetric and
+      predictable, and the rem-based cap grows with the fluid root size.
+
+      max-w-4xl rather than 6xl: a 1224px card around a 714px column left 255px
+      of dead gutter inside the card on each side. The frame should track the
+      content it frames.
+    */
+    <div className="mx-auto flex min-h-0 w-full max-w-4xl flex-1 flex-col">
+      <Reveal className="shrink-0">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0 flex-1">
             <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-craft-muted">
@@ -59,7 +70,9 @@ export function LessonShell({ children }: { children: React.ReactNode }) {
                   (audit B1/B2). */}
             </p>
 
-            <h1 className="mt-3 text-3xl font-bold tracking-tight text-craft-ink">{lesson.title}</h1>
+            <h1 className="lesson-shell-title mt-3 text-3xl font-bold tracking-tight text-craft-ink">
+              {lesson.title}
+            </h1>
           </div>
 
           <button
@@ -79,7 +92,11 @@ export function LessonShell({ children }: { children: React.ReactNode }) {
         </div>
       )}
 
-      <div className="mt-6">{children}</div>
+      {/* justify-center so that when a step caps its own height, the leftover
+          space splits above and below it rather than all pooling underneath. */}
+      <div className="lesson-shell-body mt-4 flex min-h-0 flex-1 flex-col justify-center sm:mt-6">
+        {children}
+      </div>
     </div>
   );
 }

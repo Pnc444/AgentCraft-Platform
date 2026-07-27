@@ -24,7 +24,7 @@ export default function ProfilePage() {
   const equippedBadge = stats?.badges.find((b) => b.equipped);
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <div className="mx-auto max-w-5xl 2xl:max-w-6xl">
       <Reveal>
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>

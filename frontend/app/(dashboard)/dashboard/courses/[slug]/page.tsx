@@ -44,7 +44,7 @@ export default function CourseDetailPage() {
     );
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="mx-auto max-w-4xl 2xl:max-w-5xl">
       <Reveal>
         <p className="text-sm text-craft-muted">
           <Link
