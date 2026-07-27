@@ -159,9 +159,16 @@ export function LessonWorkbench({ artifacts, paths, instructions, onAllOpened }:
             )}
           </div>
         </div>
-        <p className="border-t border-craft-border bg-craft-soft/50 px-3 py-1.5 text-[11px] text-craft-faint">
-          {opened.size}/{files.length} files opened · This is a practice copy — you can&apos;t break
-          anything. Reset puts a file back.
+        {/* text-xs, not 11px: this is the line that tells a nervous beginner
+            they cannot break anything, so it is reading copy rather than a
+            label — it was the smallest and widest text in the player, 11px
+            run out to 114 characters. */}
+        <p className="border-t border-craft-border bg-craft-soft/50 px-3 py-1.5 text-xs text-craft-faint">
+          {/* Bar spans the panel; the sentence inside it does not. */}
+          <span className="measure block">
+            {opened.size}/{files.length} files opened · This is a practice copy — you can&apos;t
+            break anything. Reset puts a file back.
+          </span>
         </p>
       </div>
     </div>

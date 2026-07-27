@@ -115,7 +115,7 @@ function StatChip({ label, value }: { label: string; value: number | string }) {
   return (
     <div className="min-w-0 flex-1 rounded-xl border border-craft-border bg-craft-soft px-3 py-2 text-center sm:flex-none sm:min-w-[4.5rem]">
       <p className="text-base font-bold tabular-nums text-craft-ink">{value}</p>
-      <p className="text-[10px] font-medium uppercase tracking-wide text-craft-muted">{label}</p>
+      <p className="text-[0.625rem] font-medium uppercase tracking-wide text-craft-muted">{label}</p>
     </div>
   );
 }

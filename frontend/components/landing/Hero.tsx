@@ -71,8 +71,8 @@ export function Hero() {
                   >
                     <Icon className="h-4 w-4" />
                   </span>
-                  <p className="mt-2 text-[11px] font-semibold text-craft-ink sm:text-xs">{label}</p>
-                  <p className="mt-0.5 hidden text-[10px] text-craft-faint sm:block">{blurb}</p>
+                  <p className="mt-2 text-[0.6875rem] font-semibold text-craft-ink sm:text-xs">{label}</p>
+                  <p className="mt-0.5 hidden text-[0.625rem] text-craft-faint sm:block">{blurb}</p>
                 </div>
               ))}
             </div>
@@ -119,7 +119,7 @@ export function Hero() {
                   </div>
                   {/* Module 3 really has 5 lessons — the mock must not lie
                       about the actual curriculum (audit F3). */}
-                  <p className="mt-1 text-[11px] text-craft-faint">Lesson 2 of 5</p>
+                  <p className="mt-1 text-[0.6875rem] text-craft-faint">Lesson 2 of 5</p>
                 </div>
 
                 <div className="hero-progress-item shrink-0">

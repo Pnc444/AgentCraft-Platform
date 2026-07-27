@@ -268,8 +268,8 @@ function BeatView({
             <Lightbulb className="h-4 w-4 shrink-0" />
             Think first
           </p>
-          <p className="mt-2 text-sm text-craft-ink">{String(beat.question ?? "")}</p>
-          {beat.hint ? <p className="mt-1 text-xs italic text-craft-muted">{beat.hint}</p> : null}
+          <p className="measure mt-2 text-base text-craft-ink">{String(beat.question ?? "")}</p>
+          {beat.hint ? <p className="measure mt-1.5 text-sm text-craft-muted">{beat.hint}</p> : null}
           {!revealed && (
             <button type="button" onClick={onReveal} className="btn-secondary mt-3 px-3 py-2 text-xs">
               I&apos;ve thought about it. Show the explanation
@@ -287,7 +287,7 @@ function BeatView({
     const correct = pick === question.answer_index;
     return (
       <div className="space-y-4">
-        <p className="text-base font-medium leading-relaxed text-craft-ink sm:text-lg">
+        <p className="measure text-base font-medium leading-relaxed text-craft-ink sm:text-lg">
           {question.prompt}
         </p>
         <ul className="space-y-2">
@@ -334,7 +334,7 @@ function BeatView({
         </p>
         <ul className="space-y-2">
           {(beat.bullets ?? []).map((line, i) => (
-            <li key={i} className="flex items-start gap-2 text-sm text-craft-ink">
+            <li key={i} className="measure flex items-start gap-2 text-base text-craft-ink">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
               {line}
             </li>
@@ -369,7 +369,7 @@ function ExplainBody({ beat }: { beat: Beat }) {
             <BookOpen className="h-3.5 w-3.5 shrink-0" />
             Analogy
           </p>
-          <p className="mt-1.5 text-sm text-craft-ink">{beat.analogy}</p>
+          <p className="measure mt-1.5 text-base text-craft-ink">{beat.analogy}</p>
         </div>
       ) : null}
       {beat.try_this?.length ? (
@@ -380,7 +380,7 @@ function ExplainBody({ beat }: { beat: Beat }) {
           </p>
           <ul className="mt-2 space-y-1.5">
             {beat.try_this.map((task, i) => (
-              <li key={i} className="text-sm text-craft-ink">
+              <li key={i} className="measure text-base text-craft-ink">
                 {task}
               </li>
             ))}

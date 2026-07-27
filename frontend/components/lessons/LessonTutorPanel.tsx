@@ -331,7 +331,7 @@ export function LessonTutor({
               </button>
             )}
           </div>
-          <p className="mt-2 text-[11px] text-craft-faint">
+          <p className="mt-2 text-[0.6875rem] text-craft-faint">
             Enter to send · Shift+Enter for a new line. AI can be wrong — check
             anything that matters.
           </p>

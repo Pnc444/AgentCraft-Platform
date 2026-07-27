@@ -192,7 +192,7 @@ export function LessonSandbox({
                 ) : (
                   <span
                     className={clsx(
-                      "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[10px] font-bold",
+                      "mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[0.625rem] font-bold",
                       active
                         ? "bg-cyan-500 text-white"
                         : "bg-craft-soft text-craft-faint"
@@ -242,7 +242,7 @@ export function LessonSandbox({
         <div className="flex items-center gap-2 border-b border-white/10 px-3.5 py-2">
           <TerminalSquare className="h-3.5 w-3.5 text-cyan-300" />
           <p className="text-xs font-medium text-slate-200">Practice terminal</p>
-          <p className="ml-auto text-[11px] text-slate-400">
+          <p className="ml-auto text-[0.6875rem] text-slate-400">
             Simulated · nothing runs on your machine
           </p>
         </div>

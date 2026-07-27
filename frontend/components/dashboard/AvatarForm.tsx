@@ -183,7 +183,7 @@ export function AvatarForm() {
           </div>
 
           <label className="mt-4 block">
-            <span className="mb-1 block text-[11px] font-medium uppercase tracking-wide text-craft-faint">
+            <span className="mb-1 block text-[0.6875rem] font-medium uppercase tracking-wide text-craft-faint">
               Zoom
             </span>
             <input

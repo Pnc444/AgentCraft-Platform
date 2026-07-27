@@ -65,7 +65,7 @@ export default function StudentDashboardPage() {
       <div className="mt-8 grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(18rem,0.65fr)]">
         <Reveal className="lg:col-span-2" delay={60}>
           <div className="card h-full p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-craft-faint">
+            <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-craft-faint">
               Continue learning
             </p>
             {!detailsReady && <p className="mt-4 animate-pulse text-sm text-craft-faint">Loading…</p>}
@@ -102,7 +102,7 @@ export default function StudentDashboardPage() {
 
         <Reveal delay={140} variant="scale">
           <div className="card h-full p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-craft-faint">
+            <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-craft-faint">
               Overall progress
             </p>
             <p className="mt-3 text-4xl font-bold text-craft-ink">
@@ -121,7 +121,7 @@ export default function StudentDashboardPage() {
       <div className="mt-4 grid gap-4 md:grid-cols-2">
         <Reveal delay={100}>
           <div className="card h-full p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-craft-faint">
+            <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-craft-faint">
               Current module
             </p>
             {path?.currentModule ? (
@@ -150,7 +150,7 @@ export default function StudentDashboardPage() {
 
         <Reveal delay={180}>
           <div className="card h-full p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-craft-faint">
+            <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-craft-faint">
               Recently completed
             </p>
             {detailsReady && path && path.recentCompleted.length > 0 ? (
@@ -181,7 +181,7 @@ export default function StudentDashboardPage() {
 
       <Reveal delay={120} className="mt-4">
         <div className="card p-6">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-craft-faint">
+          <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.16em] text-craft-faint">
             Upcoming lessons
           </p>
           {detailsReady && path && path.upcoming.length > 0 ? (
