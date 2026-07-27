@@ -2551,6 +2551,62 @@ MODULE_3_SEAM_CHECKS = {
 }
 
 
+MODULE_2_RECAP = {
+    "video-explaining-each-model": [
+        {
+            "id": "m2-video-rq1",
+            "prompt": "What is the main idea behind choosing a model for a task?",
+            "options": [
+                "The best model depends on the job, budget, and constraints",
+                "The largest model is always the best choice",
+                "Only open-source models are worth considering",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-video-rq2",
+            "prompt": "Which model family is often praised for natural-sounding writing and thoughtful responses?",
+            "options": [
+                "Claude",
+                "Hermes",
+                "Gemini",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-video-rq3",
+            "prompt": "Which model family is especially strong for image and video understanding?",
+            "options": [
+                "Gemini",
+                "OpenAI",
+                "Open-source",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-video-rq4",
+            "prompt": "Why might someone choose an open-source model?",
+            "options": [
+                "For local control, privacy, and customization",
+                "Because they are always more accurate than closed-weight models",
+                "Because they require no setup at all",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-video-rq5",
+            "prompt": "Which model family is often a strong general-purpose default for chat, coding, and tool use?",
+            "options": [
+                "OpenAI",
+                "Hermes",
+                "Claude",
+            ],
+            "answer_index": 0,
+        },
+    ],
+}
+
+
 MODULE_3_RECAP = {
     "what-prompts-are": [
         {
@@ -2941,7 +2997,12 @@ CURRICULUM = [
             ("What Each Model Is Good At", "what-each-model-is-good-at", "theory", 12),
             ("Strengths and Weaknesses", "strengths-and-weaknesses", "theory", 10),
             ("When to Choose One Over Another", "when-to-choose", "theory", 10),
-            ("Video: Explaining Each Model", "video-explaining-each-model", "theory", 15),
+            ("Video: Explaining Each Model", "video-explaining-each-model", "theory", 15, {
+                "questions": MODULE_2_RECAP["video-explaining-each-model"],
+                "video_url": "https://www.youtube-nocookie.com/embed/4FPjAV3cS50",
+                "video_title": "Choosing Your AI",
+                "require_full_watch": False,
+            }),
             ("Comparison Activity", "comparison-activity", "interactive", 15),
         ],
     },
