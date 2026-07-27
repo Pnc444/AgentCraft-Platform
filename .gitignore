@@ -19,6 +19,7 @@ node_modules/
 .env.local
 
 # Editors / OS
+.claude/
 .vscode/
 .idea/
 .DS_Store
