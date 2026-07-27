@@ -123,7 +123,15 @@ export function LessonPlayer() {
   if (!beats.length) return <p className="text-craft-muted">This lesson has no content yet.</p>;
 
   return (
-    <div className="card flex h-full min-h-0 max-h-full flex-col overflow-hidden">
+    /*
+      Sized to content with a viewport cap, not h-full. Forcing full height
+      made a two-bullet recap float in a screen of empty card with the Next
+      button a monitor's-height away — the same defect the pre-redesign player
+      fixed and documented. Compact beats get a compact card; long beats cap at
+      the available height and scroll internally. "No page scrollbar" never
+      required the card to be tall, only never taller than the viewport.
+    */
+    <div className="card flex min-h-0 max-h-full flex-col overflow-hidden">
       {/* Module step progress — all steps in this module, not beats inside one step. */}
       <div className="flex shrink-0 items-center gap-3 border-b border-craft-border/80 px-3 py-2 sm:gap-4 sm:px-4">
         <div className="flex min-w-0 flex-1 gap-1" aria-hidden>
