@@ -36,11 +36,38 @@ Create a student and an admin:
 docker compose exec backend python manage.py seed_demo
 # -> login demo_student / demo1234
 
-# admin for /admin/
+# staff/superuser review account (idempotent; re-run to reset the password)
+docker compose exec backend python manage.py create_admin
+# -> login admin / admin1234 — pass --password for anything not localhost
+
+# or Django's own interactive prompt
 docker compose exec backend python manage.py createsuperuser
 ```
 
 Then open http://localhost:3000, log in, and start Module 1.
+
+### Staff accounts skip the lesson gates
+
+Students move through the course gated: a module stays locked until the one
+before it is complete, an assessment stays locked until the lesson video has
+been watched to the end, and the player makes you answer each check before
+moving on. Any account with Django's **`is_staff`** flag skips all of it —
+module locks, video gates, per-beat gating, the certificate lock, and the
+locked rows in the module overview's step dropdowns. That's what makes
+reviewing Module 7 possible without playing Modules 1–6 first.
+
+Who has the flag: anyone from `createsuperuser` (Django sets `is_staff`
+alongside `is_superuser`), anyone from `create_admin` (use `--staff-only` to
+grant the bypass without superuser), and anyone an existing admin ticks
+"Staff status" for in `/admin/`. The **`ai_instructor` role does not bypass
+anything** — only `is_staff` is consulted.
+
+Two caveats worth knowing. Students can't grant themselves the flag:
+`is_staff` is served read-only by `/api/v1/auth/me/`, and a test pins that a
+PATCH is silently ignored. And the bypass is a review convenience, not a
+security boundary — the API has never enforced lesson progression for
+anyone, so gating that must hold against a hostile client belongs
+server-side (see `frontend/lib/gates.ts`).
 
 Stop with `docker compose down`. Your database survives — only `down -v`
 destroys it.
