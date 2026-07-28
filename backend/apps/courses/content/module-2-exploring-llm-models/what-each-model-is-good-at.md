@@ -13,4 +13,9 @@ While most of the models in the series below can hold reasonable chat conversati
 - While other models now support image and video, Gemini's earliest models were famous for being multimodal. Instead of converting non-text input into a format that could be understood by text-based encoders, Google created a platform that could understand text, image, and video data natively.
 
 ### OpenAI models
+- OpenAI's models are widely used because they are strong general-purpose assistants with good instruction-following, coding support, and integration options.
+- They are often a good default choice for chat applications, tool use, and workflows that need reliable, polished outputs.
+
 ### Open-source models
+- Open-source models are appealing when you want more control over deployment, cost, privacy, or customization.
+- They are especially useful for local experimentation, research, and self-hosted systems, though they may require more setup and tuning than hosted options.

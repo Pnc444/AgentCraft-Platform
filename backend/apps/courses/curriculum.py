@@ -502,6 +502,13 @@ MODULE_3_PROMPTS_VIDEO_URL = "https://www.youtube-nocookie.com/embed/LAF-lACf2QY
 # 1-based and counts the beats the learner sees, matching the player's "3 / 8".
 MODULE_1_5_VIDEO_POSITION = 3
 
+# Module 2: a supplementary overview video that leads the lesson. The second
+# related link stays in the lesson markdown, but the lesson itself still uses a
+# single curriculum video field.
+MODULE_2_CHOOSING_YOUR_AI_VIDEO_URL = "https://www.youtube-nocookie.com/embed/4FPjAV3cS50"
+MODULE_2_HOW_TO_CHOOSE_LARGE_LANGUAGE_MODELS_VIDEO_URL = "https://www.youtube-nocookie.com/embed/pYax2rupKEY"
+MODULE_2_VIDEO_POSITION = 1
+
 MODULE_1_WHAT_IS_AI_VIDEO_URL = "https://www.youtube-nocookie.com/embed/c0m6yaGlZh4"
 MODULE_1_WHAT_ARE_LLMS_VIDEO_URL = "https://www.youtube-nocookie.com/embed/qMxuthTIQq4"
 MODULE_1_OTHER_TYPES_OF_AI_VIDEO_URL = "https://www.youtube-nocookie.com/embed/XFZ-rQ8eeR8"
@@ -2595,6 +2602,385 @@ MODULE_3_SEAM_CHECKS = {
 }
 
 
+MODULE_2_LESSON_QUESTIONS = {
+    "introducing-different-models": [
+        {
+            "id": "m2-idm-1",
+            "prompt": "Which statement best matches the lesson's recap of large language models?",
+            "options": [
+                "They take text in and generate text out based on patterns learned during training",
+                "They only understand images and video",
+                "They are rule-based programs with no training data",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-idm-2",
+            "prompt": "What is the main difference between open-weight and closed-weight models in this lesson?",
+            "options": [
+                "Open-weight models can be hosted openly, while closed-weight models are typically accessed through a provider",
+                "Closed-weight models always run locally and open-weight models do not",
+                "Open-weight models cannot be trained or tuned",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-idm-3",
+            "prompt": "According to the lesson, what does open-source add beyond open-weight?",
+            "options": [
+                "The model weights, data, and methods used to train the model are public",
+                "The model can only answer in JSON",
+                "The model is always smaller than closed-weight options",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-idm-4",
+            "prompt": "Which set of factors does the lesson use when comparing models?",
+            "options": [
+                "Pre-training data, size, post-training, and access/administration",
+                "Font size, theme, and keyboard shortcuts",
+                "Only the number of GPU servers behind the model",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "what-each-model-is-good-at": [
+        {
+            "id": "m2-weg-1",
+            "prompt": "Which model family is described as useful for testing red-teaming scenarios and weaker guardrails?",
+            "options": ["Hermes", "Gemini", "OpenAI models"],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-weg-2",
+            "prompt": "Which family is highlighted for natural-sounding writing and thoughtful responses?",
+            "options": ["Claude", "Hermes", "open-source models"],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-weg-3",
+            "prompt": "Which family is singled out for native multimodal understanding of text, image, and video?",
+            "options": ["Gemini", "Claude", "OpenAI models"],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-weg-4",
+            "prompt": "Which family is presented as a strong general-purpose default for chat, coding, and tool use?",
+            "options": ["OpenAI models", "Hermes", "Gemini"],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-weg-5",
+            "prompt": "When does the lesson say open-source models are appealing?",
+            "options": [
+                "When you want control over deployment, cost, privacy, or customization",
+                "When you need the strongest image and video support",
+                "When you want the fewest setup steps possible",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "strengths-and-weaknesses": [
+        {
+            "id": "m2-saw-1",
+            "prompt": "What strength is associated with Claude models in this lesson?",
+            "options": ["Natural-sounding writing and thoughtful responses", "The strongest multimodal support", "The lowest setup cost"],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-saw-2",
+            "prompt": "What is Gemini especially strong at here?",
+            "options": ["Multimodal inputs such as images or video", "Local self-hosting with no setup", "Formal policy documents"],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-saw-3",
+            "prompt": "What tradeoff is called out for open-source models?",
+            "options": ["They may need more setup, hardware, and tuning", "They are always slower than hosted models", "They cannot be customized"],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-saw-4",
+            "prompt": "Which statement matches the lesson's quick takeaway?",
+            "options": [
+                "Match the model to the job rather than assuming one model is best at everything",
+                "Always choose the largest model available",
+                "Only use open-source models for every task",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "when-to-choose-one-over-another": [
+        {
+            "id": "m2-wtc-1",
+            "prompt": "When should you choose Claude, according to the lesson?",
+            "options": [
+                "When you want polished, natural writing help",
+                "When you need local deployment only",
+                "When image and video understanding is the main requirement",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-wtc-2",
+            "prompt": "When should you choose Gemini?",
+            "options": [
+                "When your work involves images, video, or other multimodal inputs",
+                "When you want the most local control and privacy",
+                "When you only care about self-hosted experiments",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-wtc-3",
+            "prompt": "When is OpenAI presented as the best fit?",
+            "options": [
+                "When you need a strong general-purpose assistant for chat, coding, and tool use",
+                "When you want the most open training data",
+                "When you want to avoid ecosystem support",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-wtc-4",
+            "prompt": "What is the lesson's simple decision checklist asking you to compare?",
+            "options": [
+                "Writing quality, multimodal support, coding/tool use, and local control/privacy",
+                "Only price and model size",
+                "The number of prompts you have already sent",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "video-explaining-each-model": [
+        {
+            "id": "m2-video-rq1",
+            "prompt": "What is the main idea behind choosing a model for a task?",
+            "options": [
+                "The best model depends on the job, budget, and constraints",
+                "The largest model is always the best choice",
+                "Only open-source models are worth considering",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-video-rq2",
+            "prompt": "Which model family is often praised for natural-sounding writing and thoughtful responses?",
+            "options": [
+                "Claude",
+                "Hermes",
+                "Gemini",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-video-rq3",
+            "prompt": "Which model family is especially strong for image and video understanding?",
+            "options": [
+                "Gemini",
+                "OpenAI",
+                "Open-source",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-video-rq4",
+            "prompt": "Why might someone choose an open-source model?",
+            "options": [
+                "For local control, privacy, and customization",
+                "Because they are always more accurate than closed-weight models",
+                "Because they require no setup at all",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-video-rq5",
+            "prompt": "Which model family is often a strong general-purpose default for chat, coding, and tool use?",
+            "options": [
+                "OpenAI",
+                "Hermes",
+                "Claude",
+            ],
+            "answer_index": 0,
+        },
+    ],
+    "comparison-activity": [
+        {
+            "id": "m2-comp-1",
+            "prompt": "What does the comparison activity ask you to identify first?",
+            "options": [
+                "Which model seems better for writing tasks",
+                "Which model has the largest context window",
+                "Which model is the newest release",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-comp-2",
+            "prompt": "What second question does the activity ask you to answer about the models?",
+            "options": [
+                "Which model seems better for coding or tool use",
+                "Which model is cheapest to host locally",
+                "Which model has the most training data",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-comp-3",
+            "prompt": "Which use case example does the lesson suggest for comparison?",
+            "options": [
+                "A privacy-focused chatbot project or a multimodal assistant",
+                "A game console emulator",
+                "A spreadsheet macro only",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-comp-4",
+            "prompt": "What should the activity finish with?",
+            "options": [
+                "A conclusion about which model to recommend for a specific use case",
+                "A list of every model family in alphabetical order",
+                "A warning not to compare models at all",
+            ],
+            "answer_index": 0,
+        },
+    ],
+}
+
+MODULE_2_CHECKPOINT_QUESTIONS = {
+    "video-explaining-each-model": [
+        {
+            "id": "m2-video-check-1",
+            "prompt": "What is the key difference between open-weight and closed-weight models?",
+            "options": [
+                "Open-weight models can be hosted locally and inspected, while closed-weight models are typically accessed through a provider",
+                "Closed-weight models are always smaller than open-weight models",
+                "Open-weight models cannot be customized at all",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-video-check-2",
+            "prompt": "Why does the lesson say pre-training data matters?",
+            "options": [
+                "Different datasets can make models better at different tasks or domains",
+                "Only the newest datasets are allowed to be used",
+                "Pre-training data has no effect once a model is released",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-video-check-3",
+            "prompt": "What can post-training change besides raw capability?",
+            "options": [
+                "Tone, guardrails, and how the model responds to prompts",
+                "The number of physical servers in the data center",
+                "Whether the model can ever be used again",
+            ],
+            "answer_index": 0,
+        },
+        {
+            "id": "m2-video-check-4",
+            "prompt": "What is one advantage of locally hosted models?",
+            "options": [
+                "You control the system prompt, context, and tools more directly",
+                "They automatically outperform every hosted model",
+                "They require no hardware or setup",
+            ],
+            "answer_index": 0,
+        },
+    ],
+}
+
+
+MODULE_2_EXAM_QUESTIONS = [
+    {
+        "id": "m2-exam-1",
+        "prompt": "A team needs a model for text generation, some coding help, and a reliable default across everyday tasks. Which family fits best from this module?",
+        "options": ["OpenAI models", "Gemini", "Open-source models"],
+        "answer_index": 0,
+        "explanation": "The lesson describes OpenAI models as the strong general-purpose default for chat, coding, and tool use.",
+    },
+    {
+        "id": "m2-exam-2",
+        "prompt": "A project depends on image and video understanding more than pure text. Which model family should you start with?",
+        "options": ["Claude", "Gemini", "Hermes"],
+        "answer_index": 1,
+        "explanation": "Gemini is the family the module highlights for multimodal inputs such as images and video.",
+    },
+    {
+        "id": "m2-exam-3",
+        "prompt": "Which statement best explains why someone would choose an open-source model?",
+        "options": [
+            "For local control, privacy, customization, or self-hosted experimentation",
+            "Because it always has the best writing style",
+            "Because it requires no setup or tuning",
+        ],
+        "answer_index": 0,
+        "explanation": "Open-source models are attractive when deployment control and privacy matter.",
+    },
+    {
+        "id": "m2-exam-4",
+        "prompt": "Which factor is part of the module's model-comparison framework?",
+        "options": ["Post-training", "Keyboard layout", "Browser choice"],
+        "answer_index": 0,
+        "explanation": "The lesson compares models by pre-training data, size, post-training, and access/administration.",
+    },
+    {
+        "id": "m2-exam-5",
+        "prompt": "A model is praised for natural-sounding writing and thoughtful responses. Which family is that?",
+        "options": ["Claude", "OpenAI models", "Gemini"],
+        "answer_index": 0,
+        "explanation": "Claude is the family the module associates with polished, conversational writing.",
+    },
+    {
+        "id": "m2-exam-6",
+        "prompt": "What is a common weakness of open-source models mentioned in the module?",
+        "options": ["They often need more setup, hardware, and tuning", "They cannot be run locally", "They never support customization"],
+        "answer_index": 0,
+        "explanation": "Open-source models can be useful, but they often require more setup and tuning.",
+    },
+    {
+        "id": "m2-exam-7",
+        "prompt": "Which model family is described as useful when red-teaming or testing weak guardrails?",
+        "options": ["Hermes", "Claude", "Gemini"],
+        "answer_index": 0,
+        "explanation": "Hermes is the open-weight family the lesson points to for weaker guardrails and red-teaming scenarios.",
+    },
+    {
+        "id": "m2-exam-8",
+        "prompt": "What is the lesson's main rule of thumb for choosing a model?",
+        "options": [
+            "Match the model to the job and constraints instead of assuming one model wins everywhere",
+            "Always pick the largest model available",
+            "Only compare models by popularity",
+        ],
+        "answer_index": 0,
+        "explanation": "The module repeatedly says the right choice depends on the task, budget, and deployment constraints.",
+    },
+    {
+        "id": "m2-exam-9",
+        "prompt": "If writing quality is the top requirement, which choice does the module steer you toward?",
+        "options": ["Claude", "Open-source models", "Gemini"],
+        "answer_index": 0,
+        "explanation": "Claude is the model family the lesson recommends for polished writing and editing help.",
+    },
+    {
+        "id": "m2-exam-10",
+        "prompt": "Which pairing best matches the lesson's comparison activity?",
+        "options": [
+            "Compare writing, coding/tool use, local deployment, and weaknesses before recommending a use case",
+            "Compare only model logos and pricing pages",
+            "Skip the tradeoffs and choose whichever model is newest",
+        ],
+        "answer_index": 0,
+        "explanation": "The activity asks you to compare strengths, weaknesses, and the best use case before making a recommendation.",
+    },
+]
+
+
 MODULE_3_RECAP = {
     "what-prompts-are": [
         {
@@ -2981,12 +3367,21 @@ CURRICULUM = [
         "published": True,
         "difficulty": 1,
         "lessons": [
-            ("Introducing Different Models", "introducing-different-models", "theory", 12),
-            ("What Each Model Is Good At", "what-each-model-is-good-at", "theory", 12),
-            ("Strengths and Weaknesses", "strengths-and-weaknesses", "theory", 10),
-            ("When to Choose One Over Another", "when-to-choose", "theory", 10),
-            ("Video: Explaining Each Model", "video-explaining-each-model", "theory", 15),
-            ("Comparison Activity", "comparison-activity", "interactive", 15),
+            ("Introducing Different Models", "introducing-different-models", "theory", 12, {"questions": MODULE_2_LESSON_QUESTIONS["introducing-different-models"]}),
+            ("What Each Model Is Good At", "what-each-model-is-good-at", "theory", 12, {"questions": MODULE_2_LESSON_QUESTIONS["what-each-model-is-good-at"]}),
+            ("Strengths and Weaknesses", "strengths-and-weaknesses", "theory", 10, {"questions": MODULE_2_LESSON_QUESTIONS["strengths-and-weaknesses"]}),
+            ("When to Choose One Over Another", "when-to-choose", "theory", 10, {"questions": MODULE_2_LESSON_QUESTIONS["when-to-choose-one-over-another"]}),
+            ("Video: Explaining Each Model", "video-explaining-each-model", "theory", 15, {
+                "questions": MODULE_2_LESSON_QUESTIONS["video-explaining-each-model"],
+                "checkpoint_questions": MODULE_2_CHECKPOINT_QUESTIONS["video-explaining-each-model"],
+                "video_url": MODULE_2_CHOOSING_YOUR_AI_VIDEO_URL,
+                "video_title": "Choosing Your AI",
+                "video_position": MODULE_2_VIDEO_POSITION,
+                "require_full_watch": False,
+            }),
+            ("Comparison Activity", "comparison-activity", "interactive", 15, {"questions": MODULE_2_LESSON_QUESTIONS["comparison-activity"]}),
+            ("Module 2 Exam", "module-2-exam", "quiz", 10, {"questions": MODULE_2_EXAM_QUESTIONS}),
+
         ],
     },
     {
