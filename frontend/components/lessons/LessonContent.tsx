@@ -1,13 +1,85 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
-import { Check, ChevronLeft, ChevronRight, Copy } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Copy, X } from "lucide-react";
 
 interface LessonContentProps {
   content: string;
+}
+
+/**
+ * Full-screen image overlay. Lesson screenshots render at card width, which
+ * makes terminal text in them unreadable — every image is click-to-enlarge.
+ *
+ * Portaled to <body>: the lesson card is overflow-hidden and pages animate
+ * with transforms, either of which would clip or mis-anchor a fixed overlay
+ * rendered in place.
+ */
+function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
+  useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return createPortal(
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={alt || "Enlarged image"}
+      className="fixed inset-0 z-[100] flex cursor-zoom-out flex-col items-center justify-center gap-3 bg-black/85 p-4 sm:p-8"
+      onClick={onClose}
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="Close enlarged image"
+        className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20"
+      >
+        <X className="h-5 w-5" />
+      </button>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt={alt}
+        className="max-h-[85vh] max-w-full rounded-xl object-contain shadow-2xl"
+      />
+      {alt ? <p className="max-w-2xl text-center text-sm text-white/80">{alt}</p> : null}
+    </div>,
+    document.body
+  );
+}
+
+/** Markdown <img> renderer: the image, wrapped in a click-to-enlarge button. */
+function ZoomableImage({
+  node: _node,
+  src,
+  alt,
+  ...props
+}: React.ImgHTMLAttributes<HTMLImageElement> & { node?: unknown }) {
+  const [open, setOpen] = useState(false);
+  if (!src || typeof src !== "string") return null;
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-label={`Enlarge image${alt ? `: ${alt}` : ""}`}
+        className="block w-full cursor-zoom-in text-left"
+        title="Click to enlarge"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={src} alt={alt ?? ""} {...props} />
+      </button>
+      {open && <Lightbox src={src} alt={alt ?? ""} onClose={() => setOpen(false)} />}
+    </>
+  );
 }
 
 /** <pre> renderer with a copy-to-clipboard button in the top-right corner. */
@@ -69,6 +141,7 @@ function CodeBlock(props: React.HTMLAttributes<HTMLPreElement>) {
  */
 function ImageCarousel({ images, captions }: { images?: string; captions?: string }) {
   const [index, setIndex] = useState(0);
+  const [zoomed, setZoomed] = useState(false);
   const srcs = (images ?? "").split("|").map((s) => s.trim()).filter(Boolean);
   const caps = (captions ?? "").split("|").map((s) => s.trim());
 
@@ -80,12 +153,27 @@ function ImageCarousel({ images, captions }: { images?: string; captions?: strin
   return (
     <div className="my-6 overflow-hidden rounded-xl border border-craft-border bg-craft-card shadow-card">
       <div className="relative bg-craft-soft">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={srcs[index]}
-          alt={caps[index] || `Slide ${index + 1}`}
-          className="mx-auto block max-h-[480px] w-auto max-w-full"
-        />
+        <button
+          type="button"
+          onClick={() => setZoomed(true)}
+          aria-label={`Enlarge image: ${caps[index] || `Slide ${index + 1}`}`}
+          className="block w-full cursor-zoom-in"
+          title="Click to enlarge"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={srcs[index]}
+            alt={caps[index] || `Slide ${index + 1}`}
+            className="mx-auto block max-h-[480px] w-auto max-w-full"
+          />
+        </button>
+        {zoomed && (
+          <Lightbox
+            src={srcs[index]}
+            alt={caps[index] || `Slide ${index + 1}`}
+            onClose={() => setZoomed(false)}
+          />
+        )}
         {srcs.length > 1 && (
           <>
             <button
@@ -180,6 +268,7 @@ export function LessonContent({ content }: LessonContentProps) {
             pre: CodeBlock,
             carousel: ImageCarousel,
             a: MarkdownLink,
+            img: ZoomableImage,
           } as import("react-markdown").Components
         }
       >
