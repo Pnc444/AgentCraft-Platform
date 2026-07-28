@@ -2,6 +2,6 @@
 
 Here are some related videos that you may find helpful!
 
-[Choosing Your AI](https://youtu.be/4FPjAV3cS50?si=zq969n871OnOwY7N)
+[Choosing Your AI](https://www.youtube-nocookie.com/embed/4FPjAV3cS50)
 
-[How to Choose Large Language Models?](https://youtu.be/pYax2rupKEY)
+[How to Choose Large Language Models?](https://www.youtube-nocookie.com/embed/pYax2rupKEY)
