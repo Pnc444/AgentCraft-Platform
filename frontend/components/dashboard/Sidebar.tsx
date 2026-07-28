@@ -113,7 +113,12 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
         </button>
       </div>
 
-      <nav className={clsx("min-h-0 flex-1 space-y-1 overflow-y-auto py-2", collapsed ? "px-2" : "px-3")}>
+      <nav
+        className={clsx(
+          "min-h-0 flex-1 space-y-1 overflow-y-auto py-2 max-lg:scrollbar-hide",
+          collapsed ? "px-2" : "px-3"
+        )}
+      >
         <Link
           href="/dashboard"
           onClick={onMobileClose}

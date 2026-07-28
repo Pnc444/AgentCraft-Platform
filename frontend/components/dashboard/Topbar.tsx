@@ -42,7 +42,9 @@ export function Topbar({ onOpenSidebar }: TopbarProps) {
               {title}
             </h1>
             {subtitle ? (
-              <p className="mt-0.5 truncate text-xs text-craft-muted sm:text-sm">{subtitle}</p>
+              <p className="mt-0.5 text-[10px] leading-snug text-craft-muted sm:truncate sm:text-sm sm:leading-normal">
+                {subtitle}
+              </p>
             ) : null}
           </div>
         ) : null}

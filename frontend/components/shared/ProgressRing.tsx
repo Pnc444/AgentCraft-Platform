@@ -51,8 +51,24 @@ export function ProgressRing({
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className="text-lg font-bold tabular-nums text-craft-ink">{label ?? `${pct}%`}</span>
-        {sublabel ? <span className="text-[10px] text-craft-faint">{sublabel}</span> : null}
+        <span
+          className={clsx(
+            "font-bold tabular-nums text-craft-ink",
+            size < 64 ? "text-xs" : "text-lg"
+          )}
+        >
+          {label ?? `${pct}%`}
+        </span>
+        {sublabel ? (
+          <span
+            className={clsx(
+              "text-craft-faint",
+              size < 64 ? "text-[8px] leading-none" : "text-[10px]"
+            )}
+          >
+            {sublabel}
+          </span>
+        ) : null}
       </div>
     </div>
   );

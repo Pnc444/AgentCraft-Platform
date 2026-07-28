@@ -20,7 +20,6 @@ import { LessonCapstoneStudio } from "@/components/lessons/LessonCapstoneStudio"
 import { LessonSandbox } from "@/components/lessons/LessonSandbox";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 import { getCapstoneAssignment, lessonStepHref } from "@/lib/lesson-steps";
-import { useCanBypassGates } from "@/lib/gates";
 import type { Beat, CheckpointQuestion, LessonArtifact, SandboxSpec } from "@/types";
 
 /**
@@ -29,7 +28,6 @@ import type { Beat, CheckpointQuestion, LessonArtifact, SandboxSpec } from "@/ty
  */
 export function LessonPlayer() {
   const router = useRouter();
-  const canBypassGates = useCanBypassGates();
   const { slug, lessonSlug, lesson, course, needsVideo, videoDone, markVideoWatched, artifactBundle } =
     useLessonWorkspace();
   const beats = (lesson?.beats ?? []) as Beat[];
@@ -82,22 +80,8 @@ export function LessonPlayer() {
   const pickedCorrect =
     !!checkQuestion && picks[index] === checkQuestion.answer_index;
 
-  // Staff step through beats freely. Every condition below is a teaching
-  // device — commit a guess, answer correctly, watch to the end, open the
-  // files — and all of them are obstacles when the job is reading the lesson
-  // rather than learning it.
-  const satisfied =
-    !beat ||
-    canBypassGates ||
-    (beat.type === "predict"
-      ? !!revealed[index]
-      : beat.type === "check"
-        ? pickedCorrect
-        : beat.type === "do" && beat.action === "video"
-          ? videoDone || !needsVideo
-          : beat.type === "do" && beat.action === "workbench"
-            ? !!workDone[index]
-            : true);
+  // Free pacing — learners can skip beats (including videos) at will.
+  const satisfied = true;
 
   const goForward = useCallback(() => {
     if (!satisfied) return;
@@ -131,7 +115,7 @@ export function LessonPlayer() {
       the available height and scroll internally. "No page scrollbar" never
       required the card to be tall, only never taller than the viewport.
     */
-    <div className="card flex min-h-0 max-h-full flex-col overflow-hidden">
+    <div className="card flex min-h-0 w-full min-w-0 flex-col overflow-hidden sm:max-h-full">
       {/* Module step progress — all steps in this module, not beats inside one step. */}
       <div className="flex shrink-0 items-center gap-3 border-b border-craft-border/80 px-3 py-2 sm:gap-4 sm:px-4">
         <div className="flex min-w-0 flex-1 gap-1" aria-hidden>
@@ -159,10 +143,10 @@ export function LessonPlayer() {
         </span>
       </div>
 
-      {/* One beat. Only this pane scrolls — the page never does. */}
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3 sm:px-5 sm:py-4 lg:px-6">
-        <div className="mx-auto w-full max-w-3xl">
-          <h2 className="mb-3 text-lg font-bold tracking-tight text-craft-ink sm:mb-4 sm:text-xl">
+      {/* Beat body — page scrolls on phone; keep x clipped */}
+      <div className="min-w-0 overflow-x-hidden px-3 py-2.5 sm:min-h-0 sm:flex-1 sm:overflow-y-auto sm:overscroll-contain sm:scrollbar-hide sm:px-5 sm:py-4 lg:px-6">
+        <div className="mx-auto w-full min-w-0 max-w-3xl">
+          <h2 className="mb-2 break-words text-base font-bold tracking-tight text-craft-ink sm:mb-4 sm:text-xl">
             {beat.title || lesson.title}
           </h2>
           {beat.type === "do" && beat.action === "terminal" ? (
@@ -266,14 +250,14 @@ function BeatView({
 
   if (beat.type === "predict") {
     return (
-      <div className="space-y-4">
-        <div className="rounded-xl border-2 border-violet-500/30 bg-violet-50/60 px-4 py-4 dark:bg-violet-500/10">
-          <p className="flex items-center gap-2 text-sm font-semibold text-violet-800 dark:text-violet-200">
-            <Lightbulb className="h-4 w-4 shrink-0" />
+      <div className="space-y-3 sm:space-y-4">
+        <div className="rounded-xl border-2 border-violet-500/30 bg-violet-50/60 px-3 py-3 dark:bg-violet-500/10 sm:px-4 sm:py-4">
+          <p className="flex items-center gap-2 text-xs font-semibold text-violet-800 dark:text-violet-200 sm:text-sm">
+            <Lightbulb className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
             Think first
           </p>
-          <p className="mt-2 text-sm text-craft-ink">{String(beat.question ?? "")}</p>
-          {beat.hint ? <p className="mt-1 text-xs italic text-craft-muted">{beat.hint}</p> : null}
+          <p className="mt-1.5 text-xs text-craft-ink sm:mt-2 sm:text-sm">{String(beat.question ?? "")}</p>
+          {beat.hint ? <p className="mt-1 text-[11px] italic text-craft-muted sm:text-xs">{beat.hint}</p> : null}
           {!revealed && (
             <button type="button" onClick={onReveal} className="btn-secondary mt-3 px-3 py-2 text-xs">
               I&apos;ve thought about it. Show the explanation
@@ -290,11 +274,11 @@ function BeatView({
     if (!question) return <p className="text-craft-muted">This checkpoint is missing its question.</p>;
     const correct = pick === question.answer_index;
     return (
-      <div className="space-y-4">
-        <p className="text-base font-medium leading-relaxed text-craft-ink sm:text-lg">
+      <div className="space-y-3 sm:space-y-4">
+        <p className="text-sm font-medium leading-snug text-craft-ink sm:text-lg sm:leading-relaxed">
           {question.prompt}
         </p>
-        <ul className="space-y-2">
+        <ul className="space-y-1.5 sm:space-y-2">
           {question.options.map((option, i) => (
             <li key={i}>
               <button
@@ -302,7 +286,7 @@ function BeatView({
                 onClick={() => onPick(i)}
                 disabled={correct}
                 className={clsx(
-                  "w-full rounded-xl border px-4 py-3 text-left text-sm transition sm:text-base",
+                  "w-full rounded-xl border px-3 py-2.5 text-left text-xs transition sm:px-4 sm:py-3 sm:text-base",
                   pick === i && i === question.answer_index
                     ? "border-emerald-400 bg-emerald-50 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-200"
                     : pick === i
@@ -317,11 +301,11 @@ function BeatView({
         </ul>
         {pick !== undefined &&
           (correct ? (
-            <p className="flex items-center gap-1.5 text-sm font-medium text-emerald-700 dark:text-emerald-300">
+            <p className="flex items-center gap-1.5 text-xs font-medium text-emerald-700 dark:text-emerald-300 sm:text-sm">
               <Check className="h-4 w-4 shrink-0" /> Right — carry on.
             </p>
           ) : (
-            <p className="text-sm text-amber-700 dark:text-amber-300">
+            <p className="text-xs text-amber-700 dark:text-amber-300 sm:text-sm">
               Not quite — retries are free. Look at the idea again and pick another answer.
             </p>
           ))}
@@ -331,15 +315,15 @@ function BeatView({
 
   if (beat.type === "recap") {
     return (
-      <div className="space-y-3">
-        <p className="flex items-center gap-2 text-sm font-semibold text-craft-ink">
-          <Sparkles className="h-4 w-4 shrink-0 text-violet-600 dark:text-violet-400" />
+      <div className="space-y-2 sm:space-y-3">
+        <p className="flex items-center gap-2 text-xs font-semibold text-craft-ink sm:text-sm">
+          <Sparkles className="h-3.5 w-3.5 shrink-0 text-violet-600 dark:text-violet-400 sm:h-4 sm:w-4" />
           What you now know
         </p>
-        <ul className="space-y-2">
+        <ul className="space-y-1.5 sm:space-y-2">
           {(beat.bullets ?? []).map((line, i) => (
-            <li key={i} className="flex items-start gap-2 text-sm text-craft-ink">
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+            <li key={i} className="flex items-start gap-2 text-xs text-craft-ink sm:text-sm">
+              <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500 sm:h-4 sm:w-4" />
               {line}
             </li>
           ))}
@@ -366,26 +350,26 @@ function BeatView({
 
 function ExplainBody({ beat }: { beat: Beat }) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {beat.body ? <LessonContent content={beat.body} /> : null}
       {beat.analogy ? (
-        <div className="rounded-xl bg-craft-soft px-4 py-3 ring-1 ring-craft-border">
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-craft-muted">
+        <div className="rounded-xl bg-craft-soft px-3 py-2.5 ring-1 ring-craft-border sm:px-4 sm:py-3">
+          <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wide text-craft-muted sm:text-xs">
             <BookOpen className="h-3.5 w-3.5 shrink-0" />
             Analogy
           </p>
-          <p className="mt-1.5 text-sm text-craft-ink">{beat.analogy}</p>
+          <p className="mt-1 text-xs text-craft-ink sm:mt-1.5 sm:text-sm">{beat.analogy}</p>
         </div>
       ) : null}
       {beat.try_this?.length ? (
-        <div className="rounded-xl border border-violet-500/25 px-4 py-3">
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-violet-700 dark:text-violet-300">
+        <div className="rounded-xl border border-violet-500/25 px-3 py-2.5 sm:px-4 sm:py-3">
+          <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wide text-violet-700 dark:text-violet-300 sm:text-xs">
             <ListChecks className="h-3.5 w-3.5 shrink-0" />
             Try this now
           </p>
-          <ul className="mt-2 space-y-1.5">
+          <ul className="mt-1.5 space-y-1 sm:mt-2 sm:space-y-1.5">
             {beat.try_this.map((task, i) => (
-              <li key={i} className="text-sm text-craft-ink">
+              <li key={i} className="text-xs text-craft-ink sm:text-sm">
                 {task}
               </li>
             ))}

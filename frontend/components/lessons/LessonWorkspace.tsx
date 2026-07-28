@@ -284,9 +284,9 @@ export function LessonWorkspaceProvider({ children }: { children: ReactNode }) {
   const next = idx >= 0 && idx < lessons.length - 1 ? lessons[idx + 1] : null;
 
   const videoUrl = (lesson?.video_url || "").trim();
-  // Admin toggle: require_full_watch locks the quiz until the video ends.
-  const needsVideo = !!videoUrl && (lesson?.require_full_watch ?? true);
-  const videoDone = !!lesson && (lesson.video_watched || !needsVideo);
+  // Free pacing: videos never gate the quiz or next beat. Learners can skip.
+  const needsVideo = false;
+  const videoDone = !!lesson && (lesson.video_watched || !videoUrl);
   const recapQuestions = getRecapQuestions(lesson?.sandbox_config ?? {});
   const checkpointQuestions = getCheckpointQuestions(lesson?.sandbox_config ?? {});
   const guidedBlocks = getGuidedLessonBlocks(lesson?.sandbox_config ?? {});

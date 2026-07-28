@@ -33,24 +33,15 @@ describe("frontierIndex", () => {
 describe("isLessonReachable", () => {
   const lessons = [step("completed"), step("in_progress"), step("not_started"), step("not_started")];
 
-  it("opens completed steps and the frontier, locks what follows", () => {
-    expect(isLessonReachable(lessons, 0, true)).toBe(true); // review
-    expect(isLessonReachable(lessons, 1, true)).toBe(true); // continue
-    expect(isLessonReachable(lessons, 2, true)).toBe(false); // not yet
-    expect(isLessonReachable(lessons, 3, true)).toBe(false);
+  it("opens every step under free pacing", () => {
+    expect(isLessonReachable(lessons, 0, true)).toBe(true);
+    expect(isLessonReachable(lessons, 1, true)).toBe(true);
+    expect(isLessonReachable(lessons, 2, true)).toBe(true);
+    expect(isLessonReachable(lessons, 3, true)).toBe(true);
   });
 
-  it("opens everything in a finished module", () => {
-    const done = [step("completed"), step("completed")];
-    expect(isLessonReachable(done, 0, true)).toBe(true);
-    expect(isLessonReachable(done, 1, true)).toBe(true);
-  });
-
-  it("locks every step of a locked module", () => {
-    expect(isLessonReachable(lessons, 0, false)).toBe(false);
-  });
-
-  it("staff bypass opens everything, locked modules included", () => {
-    expect(isLessonReachable(lessons, 3, false, true)).toBe(true);
+  it("opens steps even when the module would previously have been locked", () => {
+    expect(isLessonReachable(lessons, 0, false)).toBe(true);
+    expect(isLessonReachable(lessons, 3, false)).toBe(true);
   });
 });

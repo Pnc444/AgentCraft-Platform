@@ -33,7 +33,7 @@ function CodeBlock(props: React.HTMLAttributes<HTMLPreElement>) {
   };
 
   return (
-    <div className="group relative">
+    <div className="group relative max-w-full min-w-0 overflow-x-auto">
       <pre ref={preRef} {...props} />
       <button
         type="button"
@@ -171,7 +171,7 @@ export function stripDuplicateTitle(content: string, title: string): string {
 /** Renders existing lesson Markdown without altering the source string. */
 export function LessonContent({ content }: LessonContentProps) {
   return (
-    <div className="prose-lesson">
+    <div className="prose-lesson min-w-0 max-w-full">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw]}
@@ -180,6 +180,11 @@ export function LessonContent({ content }: LessonContentProps) {
             pre: CodeBlock,
             carousel: ImageCarousel,
             a: MarkdownLink,
+            table: ({ children, ...props }) => (
+              <div className="table-scroll">
+                <table {...props}>{children}</table>
+              </div>
+            ),
           } as import("react-markdown").Components
         }
       >
