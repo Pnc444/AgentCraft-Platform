@@ -244,16 +244,15 @@ describe("lesson video gating", () => {
     }
   });
 
-  it("redirects direct quiz navigation back to the lesson step while the quiz is locked", async () => {
+  it("lets learners open the quiz without watching the video (free pacing)", async () => {
     pathnameValue = `${LESSON_BASE}/quiz`;
+    workspaceValue.needsVideo = false;
+    workspaceValue.videoDone = false;
     const { container, root } = await render(createElement(LessonQuizPage));
 
     try {
-      expect(replaceMock).toHaveBeenCalledWith(`${LESSON_BASE}/content`);
-      expect(setNoticeMock).toHaveBeenCalledWith(
-        "Watch the lesson video all the way through before taking the Recap Quiz."
-      );
-      expect(container.textContent).toContain("quiz-locked");
+      expect(replaceMock).not.toHaveBeenCalled();
+      expect(container.textContent).toContain("quiz-open");
     } finally {
       root.unmount();
       container.remove();

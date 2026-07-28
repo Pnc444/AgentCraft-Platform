@@ -120,14 +120,58 @@ export default function ProfilePage() {
           <Reveal delay={60}>
             <AvatarForm />
           </Reveal>
-          <Reveal delay={120}>
-            <ProfileForm />
-          </Reveal>
-          <Reveal delay={180}>
-            <PasswordForm />
-          </Reveal>
+          <div className="flex flex-col gap-3 md:col-span-1 lg:col-span-2">
+            <Reveal delay={120}>
+              <SettingsDisclosure label="Details">
+                <ProfileForm />
+              </SettingsDisclosure>
+            </Reveal>
+            <Reveal delay={180}>
+              <SettingsDisclosure label="Change password">
+                <PasswordForm />
+              </SettingsDisclosure>
+            </Reveal>
+          </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function SettingsDisclosure({
+  label,
+  children,
+  defaultOpen = false,
+}: {
+  label: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
+  const [open, setOpen] = useState(defaultOpen);
+  const panelId = `settings-${label.toLowerCase().replace(/\s+/g, "-")}`;
+
+  return (
+    <div className="card overflow-hidden p-0">
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left text-sm font-semibold text-craft-ink transition hover:bg-craft-soft"
+      >
+        {label}
+        <ChevronDown
+          className={clsx(
+            "h-4 w-4 shrink-0 text-craft-faint transition-transform",
+            open && "rotate-180"
+          )}
+        />
+      </button>
+      {open ? (
+        <div id={panelId} className="border-t border-craft-border px-4 pb-4 pt-3">
+          {children}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -274,12 +318,9 @@ function ProfileForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="card flex h-full flex-col space-y-3 p-4">
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold text-craft-ink">Details</h2>
-        <FormMessage message={message} error={error} />
-      </div>
-      <div className="grid flex-1 grid-cols-2 gap-2 content-start">
+    <form onSubmit={handleSubmit} className="flex flex-col space-y-3">
+      <FormMessage message={message} error={error} />
+      <div className="grid grid-cols-2 content-start gap-2">
         <div className="col-span-2">
           <Field label="Username" id="username">
             <input
@@ -366,12 +407,9 @@ function PasswordForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="card flex h-full flex-col space-y-3 p-4">
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold text-craft-ink">Password</h2>
-        <FormMessage message={message} error={error} />
-      </div>
-      <div className="flex flex-1 flex-col gap-2">
+    <form onSubmit={handleSubmit} className="flex flex-col space-y-3">
+      <FormMessage message={message} error={error} />
+      <div className="flex flex-col gap-2">
         <Field label="Current" id="currentPassword">
           <input
             id="currentPassword"

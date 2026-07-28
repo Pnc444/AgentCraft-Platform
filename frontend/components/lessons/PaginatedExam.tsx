@@ -48,6 +48,12 @@ interface PaginatedExamProps {
    * Progress step used to host "Review lesson"; it lives here now.
    */
   reviewLessonHref?: string;
+  /**
+   * Leave without passing. Shown while the learner is still in an attempt —
+   * skipping must not call onPassed, so it never counts toward certificates
+   * or badges.
+   */
+  skipAction?: React.ReactNode;
 }
 
 const DEFAULT_PASS_SCORE = 80;
@@ -78,6 +84,7 @@ export function PaginatedExam({
   previousScore = null,
   storageKey,
   reviewLessonHref,
+  skipAction,
 }: PaginatedExamProps) {
   const bank = useMemo(
     () => questions.filter((q) => q.options?.length && typeof q.answer_index === "number"),
@@ -357,21 +364,16 @@ export function PaginatedExam({
 
       <div className="card flex min-h-0 flex-1 flex-col overflow-hidden">
         {/* Header: title + step counter */}
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b border-craft-border px-5 py-3 sm:px-6 sm:py-3.5">
-          <div className="flex items-center gap-2">
-            <span className="text-violet-600 dark:text-violet-400">
-              <ClipboardCheck className="h-4 w-4 sm:h-5 sm:w-5" />
+        <div className="flex shrink-0 items-center justify-between gap-2 border-b border-craft-border px-3 py-2 sm:gap-3 sm:px-6 sm:py-3.5">
+          <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
+            <span className="shrink-0 text-violet-600 dark:text-violet-400">
+              <ClipboardCheck className="h-4 w-4" />
             </span>
-            <h2 className="text-base font-bold text-craft-ink sm:text-lg">{slideTitle}</h2>
+            <h2 className="truncate text-sm font-bold text-craft-ink sm:text-lg">{slideTitle}</h2>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="hidden text-xs text-craft-muted sm:inline sm:text-sm">
-              {reviewing ? "Reviewing — answers shown" : `${answeredCount}/${bank.length} answered`}
-            </span>
-            <span className="whitespace-nowrap text-xs font-medium uppercase tracking-[0.18em] text-craft-faint sm:text-sm">
-              {isReviewSlide ? "Review" : `${currentIndex + 1} / ${bank.length}`}
-            </span>
-          </div>
+          <span className="shrink-0 whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.14em] text-craft-faint sm:text-sm">
+            {isReviewSlide ? "Review" : `${currentIndex + 1} / ${bank.length}`}
+          </span>
         </div>
 
         {/*
@@ -381,7 +383,7 @@ export function PaginatedExam({
         <div
           ref={slideRef}
           className={clsx(
-            "min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10",
+            "min-h-0 flex-1 overflow-y-auto overscroll-contain scrollbar-hide px-3 py-3 sm:px-8 sm:py-8 lg:px-10 lg:py-10",
             animClass
           )}
         >
@@ -540,12 +542,12 @@ export function PaginatedExam({
               </div>
             </div>
           ) : currentQuestion ? (
-            <div className="mx-auto flex h-full max-w-3xl flex-col justify-center space-y-5 sm:space-y-6 lg:space-y-7">
-              <p className="text-lg font-medium leading-relaxed text-craft-ink sm:text-xl lg:text-2xl">
-                <span className="mr-2 text-craft-faint">{currentIndex + 1}.</span>
+            <div className="mx-auto flex h-full max-w-3xl flex-col justify-center space-y-3 sm:space-y-6 lg:space-y-7">
+              <p className="text-sm font-medium leading-snug text-craft-ink sm:text-xl sm:leading-relaxed lg:text-2xl">
+                <span className="mr-1.5 text-craft-faint sm:mr-2">{currentIndex + 1}.</span>
                 {currentQuestion.prompt}
               </p>
-              <ul className="space-y-3 sm:space-y-3.5">
+              <ul className="space-y-2 sm:space-y-3.5">
                 {currentQuestion.options.map((option, index) => {
                   const chosen = answers[currentQuestion.id] === index;
                   const isCorrect = index === currentQuestion.answer_index;
@@ -556,7 +558,7 @@ export function PaginatedExam({
                         disabled={passed}
                         onClick={() => selectAnswer(currentQuestion.id, index)}
                         className={clsx(
-                          "w-full rounded-xl border px-4 py-3.5 text-left text-sm transition sm:px-5 sm:py-4 sm:text-base lg:text-lg",
+                          "w-full rounded-xl border px-3 py-2.5 text-left text-xs transition sm:px-5 sm:py-4 sm:text-base lg:text-lg",
                           chosen &&
                             !showResult &&
                             "border-violet-400 bg-craft-accent-soft text-craft-ink ring-1 ring-violet-400/30",
@@ -584,17 +586,17 @@ export function PaginatedExam({
                 })}
               </ul>
               {!currentAnswered && !reviewing && (
-                <p className="text-sm text-craft-faint">
-                  Select an answer to continue to the next question.
+                <p className="text-[11px] text-craft-faint sm:text-sm">
+                  Select an answer, or Next / Skip to move on.
                 </p>
               )}
               {reviewing && (
-                <p className="text-sm text-craft-faint">
+                <p className="text-[11px] text-craft-faint sm:text-sm">
                   The correct answer is highlighted. Use Next and Back to page through.
                 </p>
               )}
               {showResult && currentQuestion.explanation && (
-                <div className="rounded-xl bg-craft-soft px-4 py-3 text-sm text-craft-ink ring-1 ring-craft-border sm:px-5 sm:py-4 sm:text-base">
+                <div className="rounded-xl bg-craft-soft px-3 py-2.5 text-xs text-craft-ink ring-1 ring-craft-border sm:px-5 sm:py-4 sm:text-base">
                   {currentQuestion.explanation}
                 </div>
               )}
@@ -602,43 +604,51 @@ export function PaginatedExam({
           ) : null}
         </div>
 
-        {/* Footer navigation — same chrome as the lesson player */}
-        <div className="flex shrink-0 items-center justify-between gap-3 border-t border-craft-border bg-craft-surface/90 px-5 py-3 backdrop-blur-sm sm:px-6 sm:py-3.5">
+        {/* Footer — single compact row so it always fits on phone */}
+        <div className="flex shrink-0 items-center gap-1.5 border-t border-craft-border bg-craft-surface/95 px-2.5 py-2 sm:gap-3 sm:px-6 sm:py-3">
           <button
             type="button"
             onClick={() => navigate("back")}
             disabled={currentIndex === 0}
-            className="btn-secondary flex min-h-[40px] items-center gap-1.5 disabled:pointer-events-none disabled:opacity-40 sm:min-h-[44px]"
+            className="btn-secondary min-h-[36px] flex-1 px-2 text-xs disabled:pointer-events-none disabled:opacity-40 sm:min-h-[44px] sm:flex-none sm:px-5 sm:text-sm"
           >
-            <ChevronLeft className="h-4 w-4" />
-            Back
+            <ChevronLeft className="h-4 w-4 shrink-0" />
+            <span className="sm:inline">Back</span>
           </button>
 
-          {/* Progress dots for quick orientation */}
-          <div
-            className="hidden max-w-[40%] flex-wrap items-center justify-center gap-1.5 sm:flex"
-            aria-hidden
-          >
-            {Array.from({ length: totalSlides }, (_, i) => {
-              const isQ = i < bank.length;
-              const qAnswered = isQ && typeof answers[bank[i].id] === "number";
-              return (
-                <span
-                  key={i}
-                  className={clsx(
-                    "h-1.5 w-1.5 rounded-full transition",
-                    i === currentIndex
-                      ? "w-4 bg-violet-500"
-                      : qAnswered
-                        ? "bg-emerald-400"
-                        : i === reviewIndex
-                          ? "bg-craft-faint/60"
-                          : "bg-craft-border"
-                  )}
-                />
-              );
-            })}
-          </div>
+          {skipAction && !previouslyPassed && !(showResult && passed) ? (
+            <div
+              className="min-w-0 flex-[1.2] text-center text-[11px] font-semibold text-craft-muted [&_a]:inline-flex [&_a]:max-w-full [&_a]:items-center [&_a]:justify-center [&_a]:gap-0.5 [&_a]:truncate [&_a]:px-1 [&_a]:py-2 [&_a]:text-craft-muted hover:[&_a]:text-violet-600 dark:hover:[&_a]:text-violet-400 sm:text-sm"
+              title="Skipping does not count toward your certificate or badges"
+            >
+              {skipAction}
+            </div>
+          ) : (
+            <div
+              className="hidden max-w-[40%] flex-wrap items-center justify-center gap-1.5 sm:flex"
+              aria-hidden
+            >
+              {Array.from({ length: totalSlides }, (_, i) => {
+                const isQ = i < bank.length;
+                const qAnswered = isQ && typeof answers[bank[i].id] === "number";
+                return (
+                  <span
+                    key={i}
+                    className={clsx(
+                      "h-1.5 w-1.5 rounded-full transition",
+                      i === currentIndex
+                        ? "w-4 bg-violet-500"
+                        : qAnswered
+                          ? "bg-emerald-400"
+                          : i === reviewIndex
+                            ? "bg-craft-faint/60"
+                            : "bg-craft-border"
+                    )}
+                  />
+                );
+              })}
+            </div>
+          )}
 
           {isReviewSlide ? (
             !passed && !showResult ? (
@@ -646,27 +656,30 @@ export function PaginatedExam({
                 type="button"
                 disabled={!allAnswered}
                 onClick={submit}
-                className="btn-primary flex items-center gap-1.5 disabled:pointer-events-none disabled:opacity-40"
+                className="btn-primary min-h-[36px] flex-1 px-2 text-xs disabled:pointer-events-none disabled:opacity-40 sm:min-h-[44px] sm:flex-none sm:px-5 sm:text-sm"
               >
-                {`Submit ${label}`}
+                Submit
               </button>
             ) : showResult && !passed ? (
-              <button type="button" onClick={reset} className="btn-secondary flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={reset}
+                className="btn-secondary min-h-[36px] flex-1 px-2 text-xs sm:min-h-[44px] sm:flex-none sm:px-5 sm:text-sm"
+              >
                 <RotateCcw className="h-4 w-4" />
                 Retry
               </button>
             ) : (
-              <span className="min-w-[5rem]" />
+              <span className="min-w-[3rem] flex-1 sm:flex-none" />
             )
           ) : (
             <button
               type="button"
               onClick={() => navigate("forward")}
-              disabled={!currentAnswered && !reviewing}
-            className="btn-primary flex min-h-[40px] items-center gap-1.5 disabled:pointer-events-none disabled:opacity-40 sm:min-h-[44px]"
-          >
+              className="btn-primary min-h-[36px] flex-1 px-2 text-xs sm:min-h-[44px] sm:flex-none sm:px-5 sm:text-sm"
+            >
               {nextLabel}
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4 shrink-0" />
             </button>
           )}
         </div>

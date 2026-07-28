@@ -2,6 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Hide scrollbars while keeping scroll (phones / drawers). */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
+
 :root {
   color-scheme: light;
 
@@ -383,23 +397,24 @@ body {
   }
 
   .prose-lesson {
-    @apply text-[15px] leading-7 text-craft-muted;
+    @apply max-w-full min-w-0 overflow-x-hidden break-words text-[13px] leading-5 text-craft-muted sm:text-[15px] sm:leading-7;
+    overflow-wrap: anywhere;
   }
 
   .prose-lesson h1 {
-    @apply mb-4 text-2xl font-bold tracking-tight text-craft-ink;
+    @apply mb-3 text-lg font-bold tracking-tight text-craft-ink sm:mb-4 sm:text-2xl;
   }
 
   .prose-lesson h2 {
-    @apply mb-3 mt-8 text-xl font-bold text-craft-ink;
+    @apply mb-2 mt-5 text-base font-bold text-craft-ink sm:mb-3 sm:mt-8 sm:text-xl;
   }
 
   .prose-lesson h3 {
-    @apply mb-2 mt-6 text-lg font-semibold text-craft-ink;
+    @apply mb-1.5 mt-4 text-sm font-semibold text-craft-ink sm:mb-2 sm:mt-6 sm:text-lg;
   }
 
   .prose-lesson p {
-    @apply mb-4;
+    @apply mb-3 sm:mb-4;
   }
 
   /*
@@ -418,19 +433,19 @@ body {
     on a card, and muted discs left it looking like one undifferentiated block.
   */
   .prose-lesson ul {
-    @apply mb-4 list-disc space-y-1.5 pl-5 marker:font-bold marker:text-craft-accent;
+    @apply mb-3 list-disc space-y-1 pl-4 text-[13px] marker:font-bold marker:text-craft-accent sm:mb-4 sm:space-y-1.5 sm:pl-5 sm:text-[15px];
   }
 
   .prose-lesson ol {
-    @apply mb-4 list-decimal space-y-1.5 pl-5 marker:font-bold marker:text-craft-accent;
+    @apply mb-3 list-decimal space-y-1 pl-4 text-[13px] marker:font-bold marker:text-craft-accent sm:mb-4 sm:space-y-1.5 sm:pl-5 sm:text-[15px];
   }
 
   .prose-lesson code {
-    @apply rounded-md bg-craft-soft px-1.5 py-0.5 font-mono text-[13px] text-violet-700 dark:text-violet-300;
+    @apply rounded-md bg-craft-soft px-1 py-0.5 font-mono text-[11px] text-violet-700 dark:text-violet-300 sm:px-1.5 sm:text-[13px];
   }
 
   .prose-lesson pre {
-    @apply mb-4 overflow-x-auto rounded-xl bg-craft-navy p-4 text-sm text-slate-100;
+    @apply mb-3 max-w-full overflow-x-auto rounded-xl bg-craft-navy p-3 text-xs text-slate-100 sm:mb-4 sm:p-4 sm:text-sm;
   }
 
   .prose-lesson pre code {
@@ -441,23 +456,29 @@ body {
     @apply font-medium text-violet-600 underline-offset-2 hover:underline dark:text-violet-400;
   }
 
-  /* Tables: full lines + boxed cells */
+  /* Tables scroll inside the card instead of widening the page */
+  .prose-lesson .table-scroll {
+    @apply mb-4 max-w-full overflow-x-auto rounded-xl sm:mb-6;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .prose-lesson table {
-    @apply mb-6 w-full border-collapse overflow-hidden rounded-xl text-sm;
+    @apply mb-0 w-full border-collapse text-[11px] sm:text-sm;
     border: 1px solid var(--craft-border);
     box-shadow: var(--shadow-soft);
   }
 
   .prose-lesson thead th {
-    @apply px-4 py-3 text-left font-semibold;
+    @apply px-2 py-2 text-left font-semibold sm:px-4 sm:py-3;
     background: var(--craft-soft);
     color: var(--craft-ink);
     border: 1px solid var(--craft-border);
   }
 
   .prose-lesson tbody td {
-    @apply px-4 py-3 align-top;
+    @apply px-2 py-2 align-top sm:px-4 sm:py-3;
     border: 1px solid var(--craft-border);
+    word-break: break-word;
   }
 
   .prose-lesson tbody tr:nth-child(even) td {
@@ -540,22 +561,42 @@ body {
    so they must not depend on Tailwind JIT scanning) */
 .lesson-diagram {
   display: flex;
+  flex-direction: column;
   align-items: stretch;
   justify-content: center;
   gap: 0.5rem;
-  flex-wrap: wrap;
-  margin: 1.5rem 0;
+  margin: 1rem 0;
+  max-width: 100%;
+  min-width: 0;
+}
+
+@media (min-width: 640px) {
+  .lesson-diagram {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    margin: 1.5rem 0;
+  }
 }
 
 .lesson-diagram .ld-box {
   flex: 1 1 0;
-  min-width: 160px;
+  min-width: 0;
+  width: 100%;
   border: 2px solid var(--craft-border);
   border-radius: 0.75rem;
   background: var(--craft-card);
   box-shadow: var(--shadow-card);
-  padding: 1rem;
+  padding: 0.75rem;
   text-align: center;
+}
+
+@media (min-width: 640px) {
+  .lesson-diagram .ld-box {
+    min-width: 140px;
+    width: auto;
+    padding: 1rem;
+  }
 }
 
 .lesson-diagram .ld-box.ld-accent {

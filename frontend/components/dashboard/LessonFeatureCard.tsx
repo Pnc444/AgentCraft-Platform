@@ -76,36 +76,59 @@ export function LessonFeatureCard({
 
   return (
     <article className={className ?? "card overflow-hidden p-0"}>
+      {/* Mobile: short frosted header. sm+: side accent strip. */}
       <div className="flex flex-col sm:flex-row">
         <div
-          className="flex min-h-[9rem] items-center justify-center bg-gradient-to-br from-[#1e1233] via-[#2e1f4a] to-violet-700 sm:min-h-0 sm:w-44 sm:shrink-0 lg:w-52"
+          className="relative flex h-10 shrink-0 items-center justify-center overflow-hidden bg-gradient-to-br from-[#1e1233] via-[#2e1f4a] to-violet-700 sm:h-auto sm:w-40 sm:bg-gradient-to-b lg:w-48"
           aria-hidden
         >
-          <Sparkles className="h-14 w-14 text-violet-200/85" />
+          <div className="pointer-events-none absolute -right-4 -top-6 h-16 w-16 rounded-full bg-violet-400/25 blur-2xl sm:hidden" />
+          <div className="pointer-events-none absolute -bottom-6 left-4 h-12 w-12 rounded-full bg-fuchsia-400/20 blur-2xl sm:hidden" />
+          <div className="relative flex h-7 w-7 items-center justify-center rounded-xl border border-white/20 bg-white/10 shadow-soft backdrop-blur-sm sm:h-auto sm:w-auto sm:rounded-none sm:border-0 sm:bg-transparent sm:shadow-none sm:backdrop-blur-none">
+            <Sparkles className="h-3.5 w-3.5 text-violet-100 sm:h-12 sm:w-12 sm:text-violet-200/85" />
+          </div>
         </div>
 
-        <div className="flex min-w-0 flex-1 flex-col justify-between gap-4 p-5 sm:p-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+        <div className="flex min-w-0 flex-1 flex-col justify-between gap-2 bg-gradient-to-b from-violet-50/50 to-transparent p-3 dark:from-violet-950/20 sm:gap-4 sm:bg-none sm:p-6 sm:dark:from-transparent">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
             <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-craft-faint">
-                Lesson
-              </p>
-              <div className="mt-1 flex flex-wrap items-center gap-2">
-                <h2 className="text-xl font-bold text-craft-ink sm:text-2xl">
-                  {TRACK_LESSON_TITLE}
-                </h2>
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-violet-500/80 dark:text-violet-300/70 sm:text-[11px] sm:tracking-[0.14em] sm:text-craft-faint sm:dark:text-craft-faint">
+                    Lesson
+                  </p>
+                  <h2 className="mt-0.5 text-sm font-bold leading-snug tracking-tight text-craft-ink sm:mt-1 sm:text-2xl">
+                    {TRACK_LESSON_TITLE}
+                  </h2>
+                </div>
+                {showProgress ? (
+                  <ProgressRing
+                    value={pct}
+                    size={40}
+                    stroke={4}
+                    className="shrink-0 sm:hidden"
+                    sublabel="done"
+                  />
+                ) : null}
               </div>
-              <p className="mt-2 flex flex-wrap items-center gap-2 text-sm font-medium text-craft-ink">
-                <span>Module · {moduleDisplayTitle(active)}</span>
+
+              <div className="mt-1.5 flex flex-wrap items-center gap-1 sm:mt-2 sm:gap-2">
+                <span className="inline-flex max-w-full items-center rounded-full border border-craft-border/80 bg-craft-surface/80 px-2 py-0.5 text-[10px] font-medium text-craft-ink shadow-soft sm:rounded-none sm:border-0 sm:bg-transparent sm:px-0 sm:py-0 sm:text-sm sm:shadow-none">
+                  <span className="truncate">
+                    <span className="text-craft-faint sm:text-craft-ink">Module · </span>
+                    {moduleDisplayTitle(active)}
+                  </span>
+                </span>
                 <DifficultyBadge difficulty={active.difficulty} />
-              </p>
-              <p className="mt-1.5 line-clamp-3 text-sm leading-relaxed text-craft-muted">
+              </div>
+
+              <p className="mt-1.5 hidden text-sm leading-relaxed text-craft-muted sm:mt-1.5 sm:line-clamp-3 sm:block">
                 {blurb}
               </p>
             </div>
 
             {showProgress ? (
-              <div className="flex shrink-0 items-center gap-3 self-start sm:gap-4">
+              <div className="hidden shrink-0 items-center gap-4 self-start sm:flex">
                 <ProgressRing
                   value={pct}
                   size={72}
@@ -137,9 +160,24 @@ export function LessonFeatureCard({
             ) : null}
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          {showProgress ? (
+            <div className="flex flex-wrap gap-1 sm:hidden">
+              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-700 dark:text-emerald-300">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                Done {formatModuleProgress(completed, total)}
+              </span>
+              <span className="inline-flex max-w-full items-center gap-1 rounded-full border border-violet-500/20 bg-violet-500/10 px-2 py-0.5 text-[10px] font-medium text-violet-700 dark:text-violet-300">
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-violet-500" />
+                <span className="truncate">
+                  Now {inProgressMod ? moduleDisplayTitle(inProgressMod) : "—"}
+                </span>
+              </span>
+            </div>
+          ) : null}
+
+          <div className="flex flex-wrap items-center justify-between gap-2 border-t border-craft-border/60 pt-2 sm:gap-3 sm:border-0 sm:pt-0">
             {!showProgress ? (
-              <p className="text-sm text-craft-muted">
+              <p className="text-[10px] text-craft-muted sm:text-sm">
                 {formatModuleProgress(completed, total)}
                 {inProgressMod
                   ? ` · Current: ${moduleDisplayTitle(inProgressMod)}`
@@ -148,25 +186,36 @@ export function LessonFeatureCard({
             ) : (
               <span className="hidden sm:block" />
             )}
-            <div className="ml-auto flex flex-wrap items-center gap-2">
+            <div className="ml-auto flex w-full items-center gap-2 sm:w-auto sm:flex-wrap">
               {overviewHref ? (
-                <Link href={overviewHref} className="btn-secondary min-h-[44px] px-4">
-                  Module overview
+                <Link
+                  href={overviewHref}
+                  className="btn-secondary min-h-[36px] flex-1 rounded-2xl px-3 text-xs sm:min-h-[44px] sm:flex-none sm:rounded-xl sm:px-4 sm:text-sm"
+                >
+                  <span className="sm:hidden">Overview</span>
+                  <span className="hidden sm:inline">Module overview</span>
                 </Link>
               ) : null}
               {ctaHref ? (
                 <Link
                   href={ctaHref}
-                  className="btn-primary min-h-[44px] px-5"
+                  className="btn-primary min-h-[36px] flex-1 rounded-2xl px-3 text-xs sm:min-h-[44px] sm:flex-none sm:rounded-xl sm:px-5 sm:text-sm"
                   onMouseEnter={() => onWarm?.()}
                   onFocus={() => onWarm?.()}
                   onTouchStart={() => onWarm?.()}
                 >
-                  {showStart ? "Start Lesson" : "Continue"}
-                  <ArrowRight className="h-4 w-4" />
+                  {showStart ? (
+                    <>
+                      <span className="sm:hidden">Start</span>
+                      <span className="hidden sm:inline">Start Lesson</span>
+                    </>
+                  ) : (
+                    "Continue"
+                  )}
+                  <ArrowRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 </Link>
               ) : (
-                <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
+                <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 sm:text-sm">
                   Lesson complete
                 </p>
               )}

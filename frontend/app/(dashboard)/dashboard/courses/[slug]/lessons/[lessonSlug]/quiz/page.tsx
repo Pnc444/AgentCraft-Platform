@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowRight, ChevronLeft } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { PaginatedExam } from "@/components/lessons/PaginatedExam";
 import { useLessonWorkspace } from "@/components/lessons/LessonWorkspace";
 import {
@@ -11,41 +9,26 @@ import {
   isExamLessonType,
   lessonStepHref,
 } from "@/lib/lesson-steps";
-import { useCanBypassGates } from "@/lib/gates";
 
 /**
  * The assessment step, and the last screen of a lesson.
  *
- * There is no Progress step after this one. Progress was a report wearing a
- * step's clothes: it restated "complete" four times and then hid the only
- * forward button in its bottom-right corner, so finishing a mid-module quiz
- * meant being routed to a dashboard to hunt for the way on. The forward action
- * now lives on this card, where the result is.
+ * Learners may skip without answering. Skip navigates onward but does not
+ * mark the lesson completed — so certificates and badges stay locked until
+ * they actually pass.
  */
 export default function LessonQuizPage() {
-  const router = useRouter();
-  const canBypassGates = useCanBypassGates();
   const {
     slug,
     lessonSlug,
     lesson,
-    prev,
     next,
     recapQuestions,
-    needsVideo,
-    videoDone,
     setNotice,
     updateProgress,
     atModuleEnd,
     nextModule,
   } = useLessonWorkspace();
-
-  useEffect(() => {
-    if (!lesson || !needsVideo || videoDone) return;
-    setNotice("Watch the lesson video all the way through before taking the Recap Quiz.");
-    // Back to the lesson step — that is where the video now lives.
-    router.replace(lessonStepHref(slug, lessonSlug, "content"));
-  }, [lesson, needsVideo, videoDone, lessonSlug, router, setNotice, slug]);
 
   if (!lesson) return null;
 
@@ -53,59 +36,77 @@ export default function LessonQuizPage() {
   const assessmentLabel = assessmentLabelForLessonType(lesson.lesson_type);
   // Finishing the module's last lesson hands off to the next module instead.
   const endsModule = atModuleEnd;
+  const alreadyPassed = lesson.status === "completed";
 
   /*
     One primary action, always present, named after where it goes. Every branch
     resolves to something real — a passed assessment is never a dead end.
   */
-  const forwardAction = endsModule ? (
-    nextModule ? (
-      <Link href={nextModule.href} className="btn-primary">
-        Start {nextModule.title}
-        <ArrowRight className="h-4 w-4 shrink-0" />
-      </Link>
-    ) : nextModule === undefined ? (
-      // The course list has not resolved yet — never claim "course complete"
-      // on unknown data.
-      <Link href="/dashboard" className="btn-primary">
-        Back to dashboard
-        <ArrowRight className="h-4 w-4 shrink-0" />
-      </Link>
-    ) : (
-      <Link href="/dashboard" className="btn-primary">
-        You finished the course — back to dashboard
-        <ArrowRight className="h-4 w-4 shrink-0" />
-      </Link>
-    )
-  ) : next ? (
-    <Link href={lessonStepHref(slug, next.slug, "content")} className="btn-primary">
-      Next: {next.title}
-      <ArrowRight className="h-4 w-4 shrink-0" />
-    </Link>
-  ) : (
-    <Link href={`/dashboard/courses/${slug}`} className="btn-primary">
-      Back to the module
+  const forwardHref = endsModule
+    ? nextModule
+      ? nextModule.href
+      : "/dashboard"
+    : next
+      ? lessonStepHref(slug, next.slug, "content")
+      : `/dashboard/courses/${slug}`;
+
+  const forwardLabel = endsModule
+    ? nextModule
+      ? `Start ${nextModule.title}`
+      : nextModule === undefined
+        ? "Back to dashboard"
+        : "You finished the course — back to dashboard"
+    : next
+      ? `Next: ${next.title}`
+      : "Back to the module";
+
+  const skipLabel = "Skip";
+  const skipTitle = endsModule
+    ? nextModule
+      ? `Skip without credit — go to ${moduleDisplayTitleSafe(nextModule.title)}`
+      : "Skip without credit"
+    : next
+      ? `Skip without credit — next: ${next.title}`
+      : "Skip without credit";
+
+  const forwardAction = (
+    <Link href={forwardHref} className="btn-primary">
+      {forwardLabel}
       <ArrowRight className="h-4 w-4 shrink-0" />
     </Link>
   );
 
+  const skipAction = alreadyPassed ? null : (
+    <Link
+      href={forwardHref}
+      title={skipTitle}
+      className="inline-flex items-center gap-1"
+      onClick={() => {
+        try {
+          window.sessionStorage.removeItem(`agentcraft-quiz-draft:${lesson.id}`);
+        } catch {
+          /* ignore */
+        }
+        setNotice(
+          `Skipped ${assessmentLabel.toLowerCase()} — it won’t count toward your certificate until you pass it.`
+        );
+      }}
+    >
+      {skipLabel}
+      <ArrowRight className="h-3 w-3 shrink-0" />
+    </Link>
+  );
+
   return (
-    <div className="flex h-full min-h-0 flex-col gap-3">
+    <div className="flex h-full min-h-0 flex-col">
       <div className="min-h-0 flex-1">
         <PaginatedExam
           questions={recapQuestions}
           label={assessmentLabel}
-          previouslyPassed={lesson.status === "completed"}
+          previouslyPassed={alreadyPassed}
           previousScore={lesson.score}
           storageKey={`agentcraft-quiz-draft:${lesson.id}`}
-          locked={needsVideo && !videoDone && !canBypassGates}
-          lockedReason={`Watch the lesson video to the end before taking the ${assessmentLabel}.`}
-          onLockedAction={() => {
-            setNotice(
-              `Watch the lesson video all the way through before taking the ${assessmentLabel}.`
-            );
-            router.push(lessonStepHref(slug, lessonSlug, "content"));
-          }}
+          locked={false}
           onPassed={(score) => {
             if (lesson.status !== "completed") {
               updateProgress({ status: "completed", score });
@@ -113,41 +114,16 @@ export default function LessonQuizPage() {
             setNotice(null);
           }}
           completionAction={forwardAction}
+          skipAction={skipAction}
           reviewLessonHref={
             isExamLesson ? undefined : lessonStepHref(slug, lessonSlug, "content")
           }
         />
       </div>
-
-      <div className="flex shrink-0 flex-wrap items-center justify-between gap-2">
-        {isExamLesson ? (
-          prev ? (
-            <Link
-              href={lessonStepHref(slug, prev.slug, "content")}
-              className="inline-flex items-center gap-1 text-sm text-craft-muted transition hover:text-craft-ink"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              {prev.title}
-            </Link>
-          ) : (
-            <Link
-              href={`/dashboard/courses/${slug}`}
-              className="inline-flex items-center gap-1 text-sm text-craft-muted transition hover:text-craft-ink"
-            >
-              <ChevronLeft className="h-4 w-4" />
-              Back to Module
-            </Link>
-          )
-        ) : (
-          <Link
-            href={lessonStepHref(slug, lessonSlug, "content")}
-            className="inline-flex items-center gap-1 text-sm text-craft-muted transition hover:text-craft-ink"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            Back to Lesson
-          </Link>
-        )}
-      </div>
     </div>
   );
+}
+
+function moduleDisplayTitleSafe(title: string) {
+  return title.replace(/^Module\s+[\d.]+:\s*/i, "").trim() || title;
 }

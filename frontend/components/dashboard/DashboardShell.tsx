@@ -21,8 +21,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         <Topbar onOpenSidebar={() => setSidebarOpen(true)} />
         <main
           className={clsx(
-            "relative min-h-0 min-w-0 flex-1",
-            isLessonView ? "overflow-hidden" : "overflow-y-auto"
+            "relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto scrollbar-hide"
           )}
         >
           <AcademyBackdrop subtle />
@@ -30,7 +29,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             className={clsx(
               "relative z-10",
               isLessonView
-                ? "flex h-full min-h-0 flex-col p-3 sm:p-4 lg:px-6 lg:py-4"
+                ? "flex min-h-full flex-col p-3 sm:p-4 lg:px-6 lg:py-4"
                 : "p-4 pb-[calc(4.75rem+env(safe-area-inset-bottom))] sm:p-5 lg:px-8 lg:py-6 lg:pb-6"
             )}
           >
