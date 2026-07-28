@@ -7,11 +7,11 @@ You build an agent on your machine and it works. Your friend runs the same code 
 
 ## Why this matters for agents
 - **Isolation:** an agent running in a container can't wreck the rest of your computer. It gets its own little sandboxed world.
-- **Reproducibility:** every student in this course runs the *exact same* environment, so the builds in Modules 5–7 behave the same for everyone.
+- **Reproducibility:** every student in this course runs the *exact same* environment, so the Hermes build in Module 5 behaves the same on every machine.
 - **Disposability:** broke something? Delete the container and start fresh in seconds. Nothing on your actual machine changes.
 
 ## Mental model
 Think of a container like a **shipping container**: the ship (your computer) doesn't care what's inside — it just knows how to carry containers. Docker is the crane.
 
 ## Takeaway
-Docker gives every agent a clean, disposable, identical environment. Modules 5 and 6 run their agents inside Docker, so we set it up now.
+Docker gives an agent a clean, disposable, identical environment. Module 5 runs its agent inside a Docker sandbox, so we set it up now — and the isolation habit you build here carries into every build after it, even the ones that guard themselves differently.

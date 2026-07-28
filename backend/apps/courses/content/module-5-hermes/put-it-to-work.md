@@ -21,7 +21,9 @@ Watch the tool line. In one go, with no further input from you, the agent will:
 3. **read** — open `fib.txt` to see what came out
 4. **answer** — report the largest number
 
-![The agent writing a script, running it, and reporting the result](/images/lessons/hermes-lab/put-it-to-work.png)
+<!-- TODO screenshot: the agent writing the script, running it, and reporting the result.
+     Save as frontend/public/images/lessons/hermes-lab/put-it-to-work.png and restore:
+     ![The agent writing a script, running it, and reporting the result](/images/lessons/hermes-lab/put-it-to-work.png) -->
 
 That's the whole point in four steps: it didn't *tell* you the numbers, it **wrote a program and ran it on a real machine** — one that happens to be a locked-down container, exactly as you designed. A chatbot cannot do step 2. Your agent just did it unsupervised.
 
